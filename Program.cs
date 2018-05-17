@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using InventoryScanner.Data.Functions;
 
 namespace InventoryScanner
 {
@@ -16,7 +17,12 @@ namespace InventoryScanner
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ScanningUI());
+
+            AttributeFunctions.PopulateAttributeIndexes();
+            var scanUI = new ScanningUI();
+            var scanController = new ScanningController(scanUI);
+
+            Application.Run(scanUI);
         }
     }
 }

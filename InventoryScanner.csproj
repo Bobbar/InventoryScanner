@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdvancedDialog">
+      <HintPath>..\..\AssetManagerCSharp\AdvancedDialog\bin\Release\AdvancedDialog.dll</HintPath>
+    </Reference>
     <Reference Include="Databases">
       <HintPath>..\..\AssetManagerCSharp\Databases\bin\Release\Databases.dll</HintPath>
     </Reference>
@@ -49,18 +52,52 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ClassMapping\ColumnNameAttribute.cs" />
+    <Compile Include="Data\ClassMapping\DataMapObject.cs" />
+    <Compile Include="Data\DataConsistency.cs" />
+    <Compile Include="Data\Functions\MapObjectFunctions.cs" />
+    <Compile Include="Data\Munis\MunisDatabase.cs" />
+    <Compile Include="Data\Tables\AssetTables.cs" />
+    <Compile Include="Data\Classes\AttributeInstances.cs" />
+    <Compile Include="Data\Classes\AttributeTypes.cs" />
     <Compile Include="Data\DBFactory.cs" />
+    <Compile Include="Data\Functions\AttributeFunctions.cs" />
+    <Compile Include="Data\Tables\MunisTables.cs" />
+    <Compile Include="Data\Queries.cs" />
+    <Compile Include="Helpers\DataGridHelpers\DataGridViewExtensions.cs" />
+    <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
+    <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
+    <Compile Include="UI Management\ComboBoxExtensions.cs" />
+    <Compile Include="Helpers\MiscExtensions.cs" />
+    <Compile Include="Helpers\OtherFunctions.cs" />
     <Compile Include="IScanner.cs" />
+    <Compile Include="Data\Classes\Location.cs" />
+    <Compile Include="Data\Classes\Scan.cs" />
     <Compile Include="ScanningController.cs" />
-    <Compile Include="ScanningUI.cs">
+    <Compile Include="Data\Classes\DBAttributes.cs" />
+    <Compile Include="UI\CustomControls\LabeledTextBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\LabeledTextBox.Designer.cs">
+      <DependentUpon>LabeledTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UI\ScanningUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ScanningUI.Designer.cs">
+    <Compile Include="UI\ScanningUI.Designer.cs">
       <DependentUpon>ScanningUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ScanningUI.resx">
+    <Compile Include="UI Management\DBControlExtensions.cs" />
+    <Compile Include="UI Management\DBControlInfo.cs" />
+    <Compile Include="UI Management\DBControlParser.cs" />
+    <Compile Include="UI Management\DBRemappingInfo.cs" />
+    <Compile Include="UI Management\ParseType.cs" />
+    <EmbeddedResource Include="UI\CustomControls\LabeledTextBox.resx">
+      <DependentUpon>LabeledTextBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\ScanningUI.resx">
       <DependentUpon>ScanningUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -85,6 +122,7 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
