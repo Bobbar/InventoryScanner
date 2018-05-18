@@ -19,7 +19,10 @@ namespace InventoryScanner
         [DataColumnName(Scans.Datestamp)]
         public DateTime Datestamp { get; private set; }
 
-        public Location Location { get; private set; }
+        [DataColumnName(Scans.Location)]
+        public string ScanLocation { get; private set; }
+
+        public Location MunisLocation { get; private set; }
 
         [DataColumnName(Scans.Id)]
         public override string Guid
@@ -27,17 +30,16 @@ namespace InventoryScanner
             get { return ID; } set { ID = value; }
         }
 
-        [DataColumnName(Scans.TableName)]
-        public override string TableName
-        {
-            get; set;
-        }
+        // [DataColumnName(Scans.TableName)]
+        public override string TableName { get; set; } = Scans.TableName;
+
 
         public Scan(string id, string employee, Location location)
         {
             ID = id;
             Employee = employee;
-            Location = location;
+            MunisLocation = location;
+            ScanLocation = location.AssetCode;
         }
 
         public Scan(DateTime datestamp, string employee, Location location)
@@ -45,7 +47,8 @@ namespace InventoryScanner
             ID = null;
             Datestamp = datestamp;
             Employee = employee;
-            Location = location;
+            MunisLocation = location;
+            ScanLocation = location.AssetCode;
         }
 
     }

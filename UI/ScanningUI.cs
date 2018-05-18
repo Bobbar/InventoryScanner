@@ -38,7 +38,7 @@ namespace InventoryScanner
             InitializeComponent();
             PopulateLocationsCombo();
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
-           // this.Show();
+            // this.Show();
         }
 
         public void SetController(ScanningController controller)
@@ -96,13 +96,20 @@ namespace InventoryScanner
             var columnList = new List<GridColumnAttrib>();
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Asset, "Asset #"));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Serial, "Serial"));
-            columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Description, "Description"));
+            columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Description, "Munis Description"));
+            columnList.Add(new GridColumnAttrib(DeviceTable.Description, "Asset Description"));
+            columnList.Add(new GridColumnAttrib(DeviceTable.Location, "Asset Location"));
+            columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
+            columnList.Add(new GridColumnAttrib(DeviceTable.DeviceType, "Device Type", AttributeInstances.DeviceAttributes.EquipType, ColumnFormatType.AttributeDisplayMemberOnly));
+            columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
+
             return columnList;
         }
 
         public void LoadScanItems(DataTable data)
         {
-            
+            ScanItemsGrid.Populate(data, ScanItemsGridColumns(), true);
+           // ScanItemsGrid.FastAutoSizeColumns();
         }
 
         public void LockScanInfoUI()
@@ -121,6 +128,11 @@ namespace InventoryScanner
             {
                 ScanLocation = controller.GetLocation(ScanLocationCombo.SelectedValue.ToString());
             }
+        }
+
+        private void StartScanButton_Click(object sender, EventArgs e)
+        {
+            controller.StartScan(ScanLocation, DateTime.Now, ScanEmployeeTextBox.Text.Trim());
         }
     }
 }

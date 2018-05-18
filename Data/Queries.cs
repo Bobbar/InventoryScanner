@@ -29,10 +29,15 @@ namespace InventoryScanner.Data
         public static string SelectScanItemsByDepartment(string departmentCode)
         {
             var query = "";
-            query += "SELECT a_asset_number, fa_status,fa_class_code,fs_subclass_code,fa_tag_number,fa_serial_number,a_asset_desc,a_location,fa_purchase_memo";
+            query += "SELECT a_asset_number, a_department_code, fa_acquire_date, fa_status,fa_class_code,fs_subclass_code,fa_tag_number,fa_serial_number,a_asset_desc,a_location,fa_purchase_memo";
             query += " FROM fa_master";
             query += " WHERE a_department_code = '" + departmentCode + "' AND fa_status = 'A' AND fs_subclass_code IN (411,403,422,410,430,400,438,415,437,416,429)";
             return query;
+        }
+
+        public static string SelectDeviceBySerial(string deviceSerial)
+        {
+            return "SELECT * FROM " + DeviceTable.TableName + " WHERE " + DeviceTable.Serial + " = '" + deviceSerial + "'";
         }
     }
 }

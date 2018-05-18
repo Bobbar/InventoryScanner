@@ -26,11 +26,8 @@ namespace InventoryScanner
             get; set;
         }
 
-        [DataColumnName(MunisDepartments.TableName)]
-        public override string TableName
-        {
-            get; set;
-        }
+        // [DataColumnName(MunisDepartments.TableName)]
+        public override string TableName { get; set; } = MunisDepartments.TableName;
 
         public Location(string assetCode, string departmentCode, string munisCode)
         {

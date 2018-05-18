@@ -39,22 +39,30 @@ namespace InventoryScanner.Helpers.DataGridHelpers
                 // Add columns to the new table.
                 foreach (GridColumnAttrib col in columns)
                 {
-                    if (col.ColumnType != null)
+                    if (data.Columns.Contains(col.ColumnName))
                     {
-                        newTable.Columns.Add(col.ColumnName, col.ColumnType);
+                        if (col.ColumnType != null)
+                        {
+                            newTable.Columns.Add(col.ColumnName, col.ColumnType);
+                        }
+                        else
+                        {
+                            newTable.Columns.Add(col.ColumnName, data.Columns[col.ColumnName].DataType);
+                        }
                     }
-                    else
-                    {
-                        newTable.Columns.Add(col.ColumnName, data.Columns[col.ColumnName].DataType);
-                    }
+
                 }
 
                 foreach (DataRow row in data.Rows)
                 {
+
                     DataRow newRow = newTable.NewRow();
 
                     foreach (GridColumnAttrib col in columns)
                     {
+
+                        if (!data.Columns.Contains(col.ColumnName)) continue;
+
                         switch (col.ColumnFormatType)
                         {
                             case ColumnFormatType.DefaultFormat:
@@ -80,10 +88,10 @@ namespace InventoryScanner.Helpers.DataGridHelpers
 
                                 break;
 
-                            //case ColumnFormatType.Image:
-                            //    newRow[col.ColumnName] = FileIcon.GetFileIcon(row[col.ColumnName].ToString());
+                                //case ColumnFormatType.Image:
+                                //    newRow[col.ColumnName] = FileIcon.GetFileIcon(row[col.ColumnName].ToString());
 
-                            //    break;
+                                //    break;
                         }
                     }
                     newTable.Rows.Add(newRow);
