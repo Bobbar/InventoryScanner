@@ -64,14 +64,14 @@ namespace InventoryScanner.UIManagement
                     if (ctl is TextBox)
                     {
                         var dbTxt = (TextBox)ctl;
-                        //if (dbInfo.Attributes != null)
-                        //{
-                        //    dbTxt.Text = dbInfo.Attributes[(dataRow[columnName].ToString())].DisplayValue;
-                        //}
-                        //else
-                        //{
+                        if (dbInfo.Attributes != null)
+                        {
+                            dbTxt.Text = dbInfo.Attributes[(dataRow[columnName].ToString())].DisplayValue;
+                        }
+                        else
+                        {
                             dbTxt.Text = dataRow[columnName].ToString();
-                        //}
+                        }
                     }
                     else if (ctl is MaskedTextBox)
                     {

@@ -12,15 +12,15 @@ namespace InventoryScanner.Data.Functions
     public static class SqliteFunctions
     {
 
-        public static void AddTableToDB(DataTable table, string primaryKeyColumn, string scanId)
+        public static void AddTableToDB(DataTable table, string primaryKeyColumn, string scanId, DbTransaction trans)
         {
             var createStatement = BuildCreateStatement(table, primaryKeyColumn);
 
-            DBFactory.GetSqliteDatabase(scanId).ExecuteNonQuery(createStatement);
+            DBFactory.GetSqliteDatabase(scanId).ExecuteNonQuery(createStatement, trans);
 
             // Update the DB with a copy of the original table. This is done so that the row states are set to
             // 'Added'. This ensures that the update command will insert the new rows.
-            DBFactory.GetSqliteDatabase(scanId).UpdateTable("SELECT * FROM " + table.TableName, CopyTable(table));
+            DBFactory.GetSqliteDatabase(scanId).UpdateTable("SELECT * FROM " + table.TableName, CopyTable(table), trans);
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace InventoryScanner.Data.Functions
                 {
                     statement += "datetime";
                 }
-                else if (type == typeof(sbyte))
+                else if (type == typeof(sbyte) || type == typeof(byte) || type == typeof(bool))
                 {
                     statement += "tinyint(1)";
                 }

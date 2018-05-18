@@ -21,9 +21,25 @@ namespace InventoryScanner.Data.Functions
                 AttributeInstances.DeviceAttributes.StatusType = BuildIndex("dev_codes", AttributeTypes.Device.StatusType);
 
                 PopulateMunisAttributes();
+                PopulateSubnetLocationAttributes();
                 // PopulateDepartments();
             });
             BuildIdxs.Wait();
+        }
+
+        private static void PopulateSubnetLocationAttributes()
+        {
+            var tmpAttribs = new DbAttributes();
+
+            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectSubnetLocations()))
+            {
+                foreach (DataRow row in results.Rows)
+                {
+                    tmpAttribs.Add(row[SubnetLocationsTable.Description].ToString(), row[SubnetLocationsTable.Subnet].ToString(), Convert.ToInt32(row[SubnetLocationsTable.Id]));
+                }
+            }
+
+            AttributeInstances.DeviceAttributes.SubnetLocation = tmpAttribs;
         }
 
         private static void PopulateMunisAttributes()

@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Classes\ScanType.cs" />
     <Compile Include="Data\ClassMapping\ColumnNameAttribute.cs" />
     <Compile Include="Data\ClassMapping\DataMapObject.cs" />
     <Compile Include="Data\DataConsistency.cs" />

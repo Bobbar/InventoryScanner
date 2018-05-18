@@ -4,6 +4,7 @@ using InventoryScanner.Data.Munis;
 using InventoryScanner.Data.Tables;
 using System;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 
 namespace InventoryScanner
@@ -28,14 +29,15 @@ namespace InventoryScanner
             using (var munisResults = await MunisDatabase.ReturnSqlTableAsync(scanItemsQuery))
             using (var assetResults = GetAssetManagerResults(munisResults))
             {
-                view.LoadScanItems(JoinResults(munisResults, assetResults));
-
                 munisResults.TableName = MunisFixedAssetTable.TableName;
-                SqliteFunctions.AddTableToDB(munisResults, MunisFixedAssetTable.Asset, scanId);
-                SqliteFunctions.AddTableToDB(assetResults, DeviceTable.Id, scanId);
-            }
+                CleanMunisFields(munisResults);
+                CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, scanId);
 
-            CachePingHistory();
+                using (var detailResults = DBFactory.GetSqliteDatabase(scanId).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
+                {
+                    view.LoadScanItems(detailResults);
+                }
+            }
         }
 
         public DataTable DetailOfAsset(string serial)
@@ -46,12 +48,65 @@ namespace InventoryScanner
             }
         }
 
-        private void CachePingHistory()
+        private void CacheScanDetails(DataTable munisResults, string munisKeyColumn, DataTable assetResults, string assetKeyColumn, string scanId)
+        {
+            using (var trans = DBFactory.GetSqliteDatabase(scanId).StartTransaction())
+            {
+                // Add tables to Sqlite cache.
+                SqliteFunctions.AddTableToDB(munisResults, munisKeyColumn, scanId, trans);
+                SqliteFunctions.AddTableToDB(assetResults, assetKeyColumn, scanId, trans);
+                CachePingHistory(trans);
+
+                // Join the tables and add the result to the Sqlite cache.
+                using (var cmd = DBFactory.GetSqliteDatabase(scanId).GetCommand(Queries.Sqlite.JoinAllAssetDetails()))
+                using (var allDetails = DBFactory.GetSqliteDatabase(scanId).DataTableFromCommand(cmd, trans))
+                {
+                    allDetails.TableName = ItemDetailTable.TableName;
+                    AddScanStatusColumns(allDetails);
+                    SqliteFunctions.AddTableToDB(allDetails, MunisFixedAssetTable.Asset, scanId, trans);
+                }
+
+                trans.Commit();
+            }
+        }
+
+        private void CachePingHistory(DbTransaction trans)
         {
             using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectMaxPingHistory()))
             {
-                results.TableName = "device_ping_history";
-                SqliteFunctions.AddTableToDB(results, "id", scanId);
+                results.TableName = PingHistoryTable.TableName;
+                SetSubnets(results);
+                SqliteFunctions.AddTableToDB(results, PingHistoryTable.Id, scanId, trans);
+            }
+        }
+
+        private void AddScanStatusColumns(DataTable detailsResults)
+        {
+            detailsResults.Columns.Add(ItemDetailTable.Scanned, typeof(bool));
+            detailsResults.Columns.Add(ItemDetailTable.ScanDate, typeof(DateTime));
+            detailsResults.Columns.Add(ItemDetailTable.ScanType, typeof(string));
+            detailsResults.Columns.Add(ItemDetailTable.ScanUser, typeof(string));
+        }
+
+        private void CleanMunisFields(DataTable munisResults)
+        {
+            foreach (DataRow row in munisResults.Rows)
+            {
+                for (int i = 0; i < munisResults.Columns.Count; i++)
+                {
+                    if (row[i].GetType() == typeof(string))
+                    {
+                        row[i] = row[i].ToString().Trim();
+                    }
+                }
+            }
+        }
+
+        private void SetSubnets(DataTable pinghistoryResults)
+        {
+            foreach (DataRow row in pinghistoryResults.Rows)
+            {
+                row[PingHistoryTable.IPAddress] = row[PingHistoryTable.IPAddress].ToString().Substring(0, 8) + ".0";
             }
         }
 

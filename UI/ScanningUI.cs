@@ -91,7 +91,7 @@ namespace InventoryScanner
             AssetTypeTextBox.SetDBInfo(DeviceTable.DeviceType, AttributeInstances.DeviceAttributes.EquipType);
             AssetCurUserTextBox.SetDBInfo(DeviceTable.CurrentUser);
             AssetStatusTextBox.SetDBInfo(DeviceTable.Status, AttributeInstances.DeviceAttributes.StatusType);
-
+            AssetLastLocationTextBox.SetDBInfo(PingHistoryTable.IPAddress, AttributeInstances.DeviceAttributes.SubnetLocation);
 
 
         }
@@ -123,8 +123,26 @@ namespace InventoryScanner
             columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
             columnList.Add(new GridColumnAttrib(DeviceTable.DeviceType, "Device Type", AttributeInstances.DeviceAttributes.EquipType, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
+            columnList.Add(new GridColumnAttrib(ItemDetailTable.Scanned, "Scanned"));
+            columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanDate, "Scan Time"));
+            columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanUser, "Scan User"));
+            columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanType, "Scan Type"));
+
 
             return columnList;
+        }
+
+        public void LockControls()
+        {
+            ScanLocationCombo.Enabled = false;
+            ScanDateTimeTextBox.Enabled = false;
+            ScanEmployeeTextBox.Enabled = false;
+        }
+
+        public void StartScan()
+        {
+            controller.StartScan(ScanLocation, DateTime.Now, ScanEmployeeTextBox.Text.Trim());
+            LockControls();
         }
 
         public void LoadScanItems(DataTable data)
@@ -153,10 +171,10 @@ namespace InventoryScanner
 
         private void StartScanButton_Click(object sender, EventArgs e)
         {
-            controller.StartScan(ScanLocation, DateTime.Now, ScanEmployeeTextBox.Text.Trim());
+            StartScan();
         }
 
-        private void ScanItemsGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        private void ScanItemsGrid_SelectionChanged(object sender, EventArgs e)
         {
             var selectedSerial = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Serial);
 

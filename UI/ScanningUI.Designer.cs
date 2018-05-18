@@ -136,11 +136,14 @@
             this.ScanItemsGrid.Name = "ScanItemsGrid";
             this.ScanItemsGrid.RowHeadersVisible = false;
             this.ScanItemsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.ScanItemsGrid.ShowCellErrors = false;
+            this.ScanItemsGrid.ShowCellToolTips = false;
             this.ScanItemsGrid.ShowEditingIcon = false;
+            this.ScanItemsGrid.ShowRowErrors = false;
             this.ScanItemsGrid.Size = new System.Drawing.Size(1292, 386);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
-            this.ScanItemsGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ScanItemsGrid_CellClick);
+            this.ScanItemsGrid.SelectionChanged += new System.EventHandler(this.ScanItemsGrid_SelectionChanged);
             // 
             // groupBox2
             // 

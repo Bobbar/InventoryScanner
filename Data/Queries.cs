@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InventoryScanner.Data.Tables;
+﻿using InventoryScanner.Data.Tables;
 
 namespace InventoryScanner.Data
 {
     public static class Queries
     {
-       public static class Assets
+        public static class Assets
         {
             /// <summary>
             /// SELECT * FROM <paramref name="attribTable"/> LEFT OUTER JOIN munis_codes on <paramref name="attribName"/>.db_value = munis_codes.asset_man_code WHERE type_name ='<paramref name="attribName"/>' ORDER BY <see cref="ComboCodesBaseCols.DisplayValue"/>
@@ -21,7 +16,7 @@ namespace InventoryScanner.Data
             {
                 return "SELECT * FROM " + attribTable + " LEFT OUTER JOIN munis_codes on " + attribTable + ".db_value = munis_codes.asset_man_code WHERE type_name ='" + attribName + "' ORDER BY " + ComboCodesBaseCols.DisplayValue;
             }
-            
+
             public static string SelectDeviceBySerial(string deviceSerial)
             {
                 return "SELECT * FROM " + DeviceTable.TableName + " WHERE " + DeviceTable.Serial + " = '" + deviceSerial + "'";
@@ -39,9 +34,12 @@ namespace InventoryScanner.Data
 
                 return query;
             }
-        }
-       
 
+            public static string SelectSubnetLocations()
+            {
+                return "SELECT * FROM " + SubnetLocationsTable.TableName;
+            }
+        }
 
         public static class Munis
         {
@@ -57,30 +55,60 @@ namespace InventoryScanner.Data
                 query += " FROM fa_master";
                 query += " WHERE a_department_code = '" + departmentCode + "' AND fa_status = 'A' AND fs_subclass_code IN (411,403,422,410,430,400,438,415,437,416,429)";
                 query += " ORDER BY a_location";
+
                 return query;
             }
 
             public static string SelectLocations()
             {
                 var query = "SELECT * FROM " + MunisLocations.TableName;
+
                 return query;
             }
         }
 
         public static class Sqlite
         {
+            //           public static string SelectAssetDetailBySerial(string serial)
+            //           {
+            //               var query = @"SELECT * FROM fa_master
+            //LEFT JOIN devices
+            //ON TRIM(fa_master.fa_serial_number) = devices.dev_serial
+            //LEFT JOIN device_ping_history
+            //ON device_ping_history.device_guid = devices.dev_UID
+            //WHERE fa_master.fa_serial_number LIKE '" + serial + "%'";
+
+            //               return query;
+            //           }
+
             public static string SelectAssetDetailBySerial(string serial)
             {
-
-                var query = @"SELECT * FROM fa_master
- LEFT JOIN devices 
- ON TRIM(fa_master.fa_serial_number) = devices.dev_serial 
- LEFT JOIN device_ping_history 
- ON device_ping_history.device_guid = devices.dev_UID 
- WHERE fa_master.fa_serial_number LIKE '" + serial + "%'";
+                var query = "SELECT * FROM " + ItemDetailTable.TableName + " WHERE " + MunisFixedAssetTable.Serial + " = '" + serial + "'";
 
                 return query;
             }
+            public static string SelectAllAssetDetails()
+            {
+                var query = "SELECT * FROM " + ItemDetailTable.TableName;
+
+                return query;
+            }
+
+
+            public static string JoinAllAssetDetails()
+            {
+                var query = @"SELECT * FROM fa_master
+ LEFT JOIN devices
+ ON TRIM(fa_master.fa_serial_number) = devices.dev_serial
+ LEFT JOIN device_ping_history
+ ON device_ping_history.device_guid = devices.dev_UID";
+
+                return query;
+            }
+
+
+
+
         }
     }
 }
