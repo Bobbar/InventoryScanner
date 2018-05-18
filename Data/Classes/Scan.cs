@@ -13,25 +13,25 @@ namespace InventoryScanner
         //[DataColumnName(Scans.Id)]
         public string ID { get; private set; }
 
-        [DataColumnName(Scans.Employee)]
+        [DataColumnName(ScansTable.Employee)]
         public string Employee { get; private set; }
 
-        [DataColumnName(Scans.Datestamp)]
+        [DataColumnName(ScansTable.Datestamp)]
         public DateTime Datestamp { get; private set; }
 
-        [DataColumnName(Scans.Location)]
+        [DataColumnName(ScansTable.Location)]
         public string ScanLocation { get; private set; }
 
         public Location MunisLocation { get; private set; }
 
-        [DataColumnName(Scans.Id)]
+        [DataColumnName(ScansTable.Id)]
         public override string Guid
         {
             get { return ID; } set { ID = value; }
         }
 
         // [DataColumnName(Scans.TableName)]
-        public override string TableName { get; set; } = Scans.TableName;
+        public override string TableName { get; set; } = ScansTable.TableName;
 
 
         public Scan(string id, string employee, Location location)

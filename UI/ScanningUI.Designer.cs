@@ -33,6 +33,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ScanItemsGrid = new System.Windows.Forms.DataGridView();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.StartScanButton = new System.Windows.Forms.Button();
             this.ScanEmployeeTextBox = new System.Windows.Forms.TextBox();
             this.ScanDateTimeTextBox = new System.Windows.Forms.TextBox();
             this.ScanLocationCombo = new System.Windows.Forms.ComboBox();
@@ -73,7 +74,6 @@
             this.label9 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.StartScanButton = new System.Windows.Forms.Button();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
@@ -97,10 +97,10 @@
             this.MainLayoutPanel.Location = new System.Drawing.Point(0, 0);
             this.MainLayoutPanel.Name = "MainLayoutPanel";
             this.MainLayoutPanel.RowCount = 3;
-            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 13.84248F));
-            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 45.37713F));
-            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40.87591F));
-            this.MainLayoutPanel.Size = new System.Drawing.Size(1251, 822);
+            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
+            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 350F));
+            this.MainLayoutPanel.Size = new System.Drawing.Size(1304, 877);
             this.MainLayoutPanel.TabIndex = 1;
             // 
             // groupBox1
@@ -110,18 +110,19 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox1.Location = new System.Drawing.Point(3, 116);
+            this.groupBox1.Location = new System.Drawing.Point(3, 113);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1245, 366);
+            this.groupBox1.Size = new System.Drawing.Size(1298, 411);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items To Scan";
             // 
             // ScanItemsGrid
             // 
+            this.ScanItemsGrid.AllowUserToResizeRows = false;
             this.ScanItemsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Gray;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             dataGridViewCellStyle1.ForeColor = System.Drawing.Color.WhiteSmoke;
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
@@ -136,9 +137,10 @@
             this.ScanItemsGrid.RowHeadersVisible = false;
             this.ScanItemsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ScanItemsGrid.ShowEditingIcon = false;
-            this.ScanItemsGrid.Size = new System.Drawing.Size(1239, 341);
+            this.ScanItemsGrid.Size = new System.Drawing.Size(1292, 386);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
+            this.ScanItemsGrid.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ScanItemsGrid_CellClick);
             // 
             // groupBox2
             // 
@@ -153,10 +155,22 @@
             this.groupBox2.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1245, 107);
+            this.groupBox2.Size = new System.Drawing.Size(1298, 104);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Scan Info";
+            // 
+            // StartScanButton
+            // 
+            this.StartScanButton.BackColor = System.Drawing.Color.DimGray;
+            this.StartScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.StartScanButton.Location = new System.Drawing.Point(971, 34);
+            this.StartScanButton.Name = "StartScanButton";
+            this.StartScanButton.Size = new System.Drawing.Size(230, 48);
+            this.StartScanButton.TabIndex = 8;
+            this.StartScanButton.Text = "Start Scan";
+            this.StartScanButton.UseVisualStyleBackColor = false;
+            this.StartScanButton.Click += new System.EventHandler(this.StartScanButton_Click);
             // 
             // ScanEmployeeTextBox
             // 
@@ -217,11 +231,11 @@
             this.ScanLayoutTable.Controls.Add(this.groupBox3, 0, 0);
             this.ScanLayoutTable.Controls.Add(this.groupBox6, 1, 0);
             this.ScanLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 488);
+            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 530);
             this.ScanLayoutTable.Name = "ScanLayoutTable";
             this.ScanLayoutTable.RowCount = 1;
             this.ScanLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ScanLayoutTable.Size = new System.Drawing.Size(1245, 331);
+            this.ScanLayoutTable.Size = new System.Drawing.Size(1298, 344);
             this.ScanLayoutTable.TabIndex = 2;
             // 
             // groupBox3
@@ -234,7 +248,7 @@
             this.groupBox3.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(462, 325);
+            this.groupBox3.Size = new System.Drawing.Size(515, 338);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scanning";
@@ -286,9 +300,9 @@
             this.groupBox6.Controls.Add(this.tableLayoutPanel1);
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox6.Location = new System.Drawing.Point(471, 3);
+            this.groupBox6.Location = new System.Drawing.Point(524, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(771, 325);
+            this.groupBox6.Size = new System.Drawing.Size(771, 338);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Current Item Info";
@@ -306,7 +320,7 @@
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(765, 300);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(765, 313);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox4
@@ -321,10 +335,11 @@
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.label2);
+            this.groupBox4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox4.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(348, 294);
+            this.groupBox4.Size = new System.Drawing.Size(349, 307);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Munis";
@@ -434,7 +449,7 @@
             this.groupBox5.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox5.Location = new System.Drawing.Point(358, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(404, 294);
+            this.groupBox5.Size = new System.Drawing.Size(404, 307);
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Asset Manager";
@@ -558,24 +573,12 @@
             this.label11.TabIndex = 5;
             this.label11.Text = "Serial";
             // 
-            // StartScanButton
-            // 
-            this.StartScanButton.BackColor = System.Drawing.Color.DimGray;
-            this.StartScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.StartScanButton.Location = new System.Drawing.Point(971, 34);
-            this.StartScanButton.Name = "StartScanButton";
-            this.StartScanButton.Size = new System.Drawing.Size(230, 48);
-            this.StartScanButton.TabIndex = 8;
-            this.StartScanButton.Text = "Start Scan";
-            this.StartScanButton.UseVisualStyleBackColor = false;
-            this.StartScanButton.Click += new System.EventHandler(this.StartScanButton_Click);
-            // 
             // ScanningUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.ClientSize = new System.Drawing.Size(1251, 822);
+            this.ClientSize = new System.Drawing.Size(1304, 877);
             this.Controls.Add(this.MainLayoutPanel);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));

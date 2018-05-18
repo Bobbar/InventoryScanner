@@ -18,4 +18,13 @@ namespace InventoryScanner.Data.Tables
         public const string Department = "a_department_code";
         public const string PurchaseDate = "fa_acquire_date";
     }
+
+    public static class MunisLocations
+    {
+        public const string TableName = "fa_loc_desc";
+        public const string Code = "spms_code";
+        public const string Description = "spms_short";
+        public const string Address = "spms_long";
+
+    }
 }

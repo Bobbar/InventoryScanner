@@ -16,5 +16,10 @@ namespace InventoryScanner.Data.Classes
             public static DbAttributes OSType;
             public static DbAttributes StatusType;
         }
+
+        public static class MunisAttributes
+        {
+            public static DbAttributes Locations;
+        }
     }
 }

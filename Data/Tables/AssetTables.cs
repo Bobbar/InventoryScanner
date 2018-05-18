@@ -20,7 +20,7 @@ namespace InventoryScanner.Data.Tables
 
     }
 
-    public class MunisDepartments
+    public class MunisDepartmentsTable
     {
         public const string TableName = "munis_departments";
         public const string Id = "id";
@@ -31,7 +31,7 @@ namespace InventoryScanner.Data.Tables
     }
 
 
-    public class Scans
+    public class ScansTable
     {
         public const string TableName = "asset_scans";
         public const string Id = "id";
@@ -40,6 +40,7 @@ namespace InventoryScanner.Data.Tables
         public const string Employee = "scan_employee";
         
     }
+
     //public static class DeviceCodesTable
     //{
     //    public const string TableName = "dev_codes";

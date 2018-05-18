@@ -11,23 +11,23 @@ namespace InventoryScanner
 {
    public  class Location : DataMapObject
     {
-        [DataColumnName(MunisDepartments.AssetLocation)]
+        [DataColumnName(MunisDepartmentsTable.AssetLocation)]
         public string AssetCode { get; private set; }
 
-        [DataColumnName(MunisDepartments.Department)]
+        [DataColumnName(MunisDepartmentsTable.Department)]
         public string DepartmentCode { get; private set; }
 
-        [DataColumnName(MunisDepartments.MunisLocation)]
+        [DataColumnName(MunisDepartmentsTable.MunisLocation)]
         public string MunisCode { get; private set; }
 
-        [DataColumnName(MunisDepartments.Id)]
+        [DataColumnName(MunisDepartmentsTable.Id)]
         public override string Guid
         {
             get; set;
         }
 
         // [DataColumnName(MunisDepartments.TableName)]
-        public override string TableName { get; set; } = MunisDepartments.TableName;
+        public override string TableName { get; set; } = MunisDepartmentsTable.TableName;
 
         public Location(string assetCode, string departmentCode, string munisCode)
         {

@@ -12,6 +12,7 @@ using InventoryScanner.Data;
 using InventoryScanner.Data.Classes;
 using InventoryScanner.Data.Tables;
 using InventoryScanner.Helpers.DataGridHelpers;
+using InventoryScanner.Helpers;
 
 namespace InventoryScanner
 {
@@ -19,6 +20,7 @@ namespace InventoryScanner
     {
         private ScanningController controller;
         private Location location;
+        private DBControlParser controlParser;
 
         public Location ScanLocation
         {
@@ -36,6 +38,9 @@ namespace InventoryScanner
         public ScanningUI()
         {
             InitializeComponent();
+            InitDBControls();
+            controlParser = new DBControlParser(this);
+            ScanItemsGrid.DoubleBuffered(true);
             PopulateLocationsCombo();
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
             // this.Show();
@@ -91,14 +96,30 @@ namespace InventoryScanner
 
         }
 
+        private void DisplayDetails(string serial)
+        {
+            using (var detailData = controller.DetailOfAsset(serial))
+            {
+                PopulateControls(detailData);
+            }
+
+        }
+
+        private void PopulateControls(DataTable data)
+        {
+            controlParser.FillDBFields(data);
+        }
+
         private List<GridColumnAttrib> ScanItemsGridColumns()
         {
             var columnList = new List<GridColumnAttrib>();
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Asset, "Asset #"));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Serial, "Serial"));
+            columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Location, "Munis Location", AttributeInstances.MunisAttributes.Locations, ColumnFormatType.AttributeDisplayMemberOnly));
+            columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Department, "Munis Department"));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Description, "Munis Description"));
             columnList.Add(new GridColumnAttrib(DeviceTable.Description, "Asset Description"));
-            columnList.Add(new GridColumnAttrib(DeviceTable.Location, "Asset Location"));
+            columnList.Add(new GridColumnAttrib(DeviceTable.Location, "Asset Location", AttributeInstances.DeviceAttributes.Locations, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
             columnList.Add(new GridColumnAttrib(DeviceTable.DeviceType, "Device Type", AttributeInstances.DeviceAttributes.EquipType, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
@@ -108,8 +129,8 @@ namespace InventoryScanner
 
         public void LoadScanItems(DataTable data)
         {
-            ScanItemsGrid.Populate(data, ScanItemsGridColumns(), true);
-           // ScanItemsGrid.FastAutoSizeColumns();
+            ScanItemsGrid.Populate(data, ScanItemsGridColumns());
+            ScanItemsGrid.FastAutoSizeColumns();
         }
 
         public void LockScanInfoUI()
@@ -133,6 +154,16 @@ namespace InventoryScanner
         private void StartScanButton_Click(object sender, EventArgs e)
         {
             controller.StartScan(ScanLocation, DateTime.Now, ScanEmployeeTextBox.Text.Trim());
+        }
+
+        private void ScanItemsGrid_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            var selectedSerial = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Serial);
+
+            if (!string.IsNullOrEmpty(selectedSerial))
+            {
+                DisplayDetails(selectedSerial);
+            }
         }
     }
 }

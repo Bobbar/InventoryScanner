@@ -31,7 +31,12 @@ namespace InventoryScanner.Data.Classes
         {
             get
             {
-                return attributes[codeValue];
+                if (!string.IsNullOrEmpty(codeValue))
+                {
+                    return attributes[codeValue];
+                }
+                return new DbAttribute();
+                
             }
         }
 
