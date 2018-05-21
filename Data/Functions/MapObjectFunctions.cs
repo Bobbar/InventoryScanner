@@ -24,6 +24,17 @@ namespace InventoryScanner.Data.Functions
             }
         }
 
+        //public static void UpdateMapObject(DataMapObject mapObject)
+        //{
+        //    var guidProp = mapObject.GetType().GetProperty(nameof(mapObject.Guid));
+        //    var guidCol = ((DataColumnNameAttribute)guidProp.GetCustomAttributes(false)[0]).ColumnName;
+        //    var selectQuery = "SELECT * FROM " + mapObject.TableName + " WHERE " + guidCol + " = '" + mapObject.Guid + "'";
+            
+        //    using (var results = )
+
+
+        //}
+
         private static void PopulateRowFromObject(DataRow row, object obj)
         {
             // Collect list of all properties in the object class.

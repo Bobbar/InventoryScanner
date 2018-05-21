@@ -17,7 +17,7 @@ namespace InventoryScanner.Data
 
         public static IDatabase GetMySqlDatabase()
         {
-            return new MySQLDatabase(serverIp, "asset_mgr_usr", "A553tP455", "test_db");
+            return new MySqlDatabase(serverIp, "asset_mgr_usr", "A553tP455", "test_db");
         }
 
         public static IDatabase GetSqliteDatabase(string scanId)

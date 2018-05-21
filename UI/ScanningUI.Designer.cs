@@ -42,10 +42,11 @@
             this.label14 = new System.Windows.Forms.Label();
             this.ScanLayoutTable = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.SubmitScanButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.AssetTagTextBox = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
@@ -143,6 +144,7 @@
             this.ScanItemsGrid.Size = new System.Drawing.Size(1292, 386);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
+            this.ScanItemsGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ScanItemsGrid_Scroll);
             this.ScanItemsGrid.SelectionChanged += new System.EventHandler(this.ScanItemsGrid_SelectionChanged);
             // 
             // groupBox2
@@ -243,10 +245,11 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.button3);
             this.groupBox3.Controls.Add(this.button2);
-            this.groupBox3.Controls.Add(this.button1);
+            this.groupBox3.Controls.Add(this.SubmitScanButton);
             this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.textBox1);
+            this.groupBox3.Controls.Add(this.AssetTagTextBox);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
@@ -255,6 +258,16 @@
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scanning";
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(6, 301);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(128, 31);
+            this.button3.TabIndex = 4;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button2
             // 
@@ -267,16 +280,17 @@
             this.button2.Text = "Clear";
             this.button2.UseVisualStyleBackColor = false;
             // 
-            // button1
+            // SubmitScanButton
             // 
-            this.button1.BackColor = System.Drawing.Color.DimGray;
-            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button1.Location = new System.Drawing.Point(29, 118);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(230, 52);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "Submit";
-            this.button1.UseVisualStyleBackColor = false;
+            this.SubmitScanButton.BackColor = System.Drawing.Color.DimGray;
+            this.SubmitScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SubmitScanButton.Location = new System.Drawing.Point(29, 118);
+            this.SubmitScanButton.Name = "SubmitScanButton";
+            this.SubmitScanButton.Size = new System.Drawing.Size(230, 52);
+            this.SubmitScanButton.TabIndex = 2;
+            this.SubmitScanButton.Text = "Submit";
+            this.SubmitScanButton.UseVisualStyleBackColor = false;
+            this.SubmitScanButton.Click += new System.EventHandler(this.SubmitScanButton_Click);
             // 
             // label1
             // 
@@ -287,16 +301,15 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "Asset Tag:";
             // 
-            // textBox1
+            // AssetTagTextBox
             // 
-            this.textBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(160)))), ((int)(((byte)(1)))));
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox1.Location = new System.Drawing.Point(28, 64);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(232, 45);
-            this.textBox1.TabIndex = 0;
-            this.textBox1.Text = "12345";
+            this.AssetTagTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(160)))), ((int)(((byte)(1)))));
+            this.AssetTagTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.AssetTagTextBox.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AssetTagTextBox.Location = new System.Drawing.Point(28, 64);
+            this.AssetTagTextBox.Name = "AssetTagTextBox";
+            this.AssetTagTextBox.Size = new System.Drawing.Size(232, 45);
+            this.AssetTagTextBox.TabIndex = 0;
             // 
             // groupBox6
             // 
@@ -617,10 +630,10 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TableLayoutPanel ScanLayoutTable;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox AssetTagTextBox;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button SubmitScanButton;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
@@ -655,6 +668,7 @@
         private System.Windows.Forms.TextBox ScanEmployeeTextBox;
         private System.Windows.Forms.TextBox ScanDateTimeTextBox;
         private System.Windows.Forms.Button StartScanButton;
+        private System.Windows.Forms.Button button3;
     }
 }
 

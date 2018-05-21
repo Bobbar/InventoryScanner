@@ -2,6 +2,7 @@
 using InventoryScanner.Data.Functions;
 using InventoryScanner.Data.Munis;
 using InventoryScanner.Data.Tables;
+using InventoryScanner.Data.Classes;
 using System;
 using System.Data;
 using System.Data.Common;
@@ -12,7 +13,8 @@ namespace InventoryScanner
     public class ScanningController
     {
         private IScanning view;
-        private string scanId;
+        // private string scanId;
+        private Scan currentScan;
 
         public ScanningController(IScanning view)
         {
@@ -22,27 +24,39 @@ namespace InventoryScanner
 
         public async void StartScan(Location location, DateTime datestamp, string scanEmployee)
         {
-            scanId = InsertNewScan(location, datestamp, scanEmployee).ToString();
+            currentScan = InsertNewScan(location, datestamp, scanEmployee);
 
-            var scanItemsQuery = Queries.Munis.SelectScanItemsByDepartment(location.DepartmentCode);
+            //var scanItemsQuery = Queries.Munis.SelectScanItemsByDepartment(location.DepartmentCode);
+            var scanItemsQuery = Queries.Munis.SelectScanItemsByLocation(location.MunisCode);
+
 
             using (var munisResults = await MunisDatabase.ReturnSqlTableAsync(scanItemsQuery))
             using (var assetResults = GetAssetManagerResults(munisResults))
             {
                 munisResults.TableName = MunisFixedAssetTable.TableName;
                 CleanMunisFields(munisResults);
-                CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, scanId);
+                CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, currentScan.ID);
 
-                using (var detailResults = DBFactory.GetSqliteDatabase(scanId).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
-                {
-                    view.LoadScanItems(detailResults);
-                }
+                LoadCurrentScanItems();
+
+                //using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
+                //{
+                //    view.LoadScanItems(detailResults);
+                //}
+            }
+        }
+
+        private void LoadCurrentScanItems()
+        {
+            using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
+            {
+                view.LoadScanItems(detailResults);
             }
         }
 
         public DataTable DetailOfAsset(string serial)
         {
-            using (var results = DBFactory.GetSqliteDatabase(scanId).DataTableFromQueryString(Queries.Sqlite.SelectAssetDetailBySerial(serial)))
+            using (var results = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAssetDetailBySerial(serial)))
             {
                 return results;
             }
@@ -76,16 +90,19 @@ namespace InventoryScanner
             {
                 results.TableName = PingHistoryTable.TableName;
                 SetSubnets(results);
-                SqliteFunctions.AddTableToDB(results, PingHistoryTable.Id, scanId, trans);
+                SqliteFunctions.AddTableToDB(results, PingHistoryTable.Id, currentScan.ID, trans);
             }
         }
 
         private void AddScanStatusColumns(DataTable detailsResults)
         {
-            detailsResults.Columns.Add(ItemDetailTable.Scanned, typeof(bool));
-            detailsResults.Columns.Add(ItemDetailTable.ScanDate, typeof(DateTime));
-            detailsResults.Columns.Add(ItemDetailTable.ScanType, typeof(string));
-            detailsResults.Columns.Add(ItemDetailTable.ScanUser, typeof(string));
+          //  detailsResults.Columns.Add(ItemDetailTable.Scanned, typeof(bool));
+            detailsResults.Columns.Add(ScanItemsTable.Locaton, typeof(string));
+            detailsResults.Columns.Add(ScanItemsTable.Datestamp, typeof(DateTime));
+            detailsResults.Columns.Add(ScanItemsTable.ScanType, typeof(string));
+            detailsResults.Columns.Add(ScanItemsTable.ScanUser, typeof(string));
+            detailsResults.Columns.Add(ScanItemsTable.ScanStatus, typeof(string));
+            detailsResults.Columns.Add(ScanItemsTable.ScanYear, typeof(string));
         }
 
         private void CleanMunisFields(DataTable munisResults)
@@ -200,6 +217,54 @@ namespace InventoryScanner
             return assetTable;
         }
 
+        public void SubmitNewScanItem(string serial, ScanType scanType)
+        {
+            using (var itemDetail = DetailOfAsset(serial))
+            {
+
+                var itemRow = itemDetail.Rows[0];
+
+                itemRow[ScanItemsTable.Locaton] = currentScan.MunisLocation.MunisCode;
+                itemRow[ScanItemsTable.ScanType] = scanType.ToString();
+                itemRow[ScanItemsTable.ScanUser] = currentScan.User;
+                itemRow[ScanItemsTable.Datestamp] = DateTime.Now.ToString(DataConsistency.DBDateTimeFormat);
+                itemRow[ScanItemsTable.ScanStatus] = ScanStatus.OK.ToString();
+
+                var updatedRows = DBFactory.GetSqliteDatabase(currentScan.ID).UpdateTable(Queries.Sqlite.SelectAssetDetailBySerial(serial), itemDetail);
+
+                LoadCurrentScanItems();
+                //var newScanItem = new ScanItem(itemDetail);
+                //newScanItem.ScanType = scanType;
+                //newScanItem.Scan = currentScan;
+                //newScanItem.ScanLocation = currentScan.MunisLocation.MunisCode;
+                //newScanItem.Datestamp = DateTime.Now;
+                //newScanItem.ScanId = currentScan.ID;
+                //newScanItem.ScanYear = DateTime.Now.Year.ToString();
+            }
+        }
+
+        public void SyncScans()
+        {
+            //1. Update remote db scans from backing store.
+            // Non existant items are added, existing items are added and marked duplicate?
+
+            using (var localResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
+            using (var remoteResults = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectScanItemsByScanYear(currentScan.Datestamp.Year.ToString())))
+            {
+
+                foreach (DataRow row in localResults.Rows)
+                {
+                    var remoteScan = remoteResults.Rows.Find(row[MunisFixedAssetTable.Serial]);
+
+                }
+
+
+            }
+
+            //2. Update backing store from remote db.
+            // Iterate rows and update scan info if changed.
+        }
+
         public Location GetLocation(string locationCode)
         {
             using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Munis.SelectDepartmentByLocation(locationCode)))
@@ -208,14 +273,17 @@ namespace InventoryScanner
             }
         }
 
-        private int InsertNewScan(Location location, DateTime datestamp, string scanEmployee)
+
+        private Scan InsertNewScan(Location location, DateTime datestamp, string scanEmployee)
         {
             var newScan = new Scan(datestamp, scanEmployee, location);
             MapObjectFunctions.InsertMapObject(newScan);
 
             var scanId = (int)DBFactory.GetMySqlDatabase().ExecuteScalarFromQueryString("SELECT MAX(" + ScansTable.Id + ") FROM " + ScansTable.TableName);
 
-            return scanId;
+            newScan.ID = scanId.ToString();
+
+            return newScan;
         }
     }
 }

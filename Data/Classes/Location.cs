@@ -7,7 +7,7 @@ using InventoryScanner.Data.ClassMapping;
 using InventoryScanner.Data.Tables;
 using System.Data;
 
-namespace InventoryScanner
+namespace InventoryScanner.Data.Classes
 {
    public  class Location : DataMapObject
     {

@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 using InventoryScanner.Data.ClassMapping;
 using InventoryScanner.Data.Tables;
 
-namespace InventoryScanner
+namespace InventoryScanner.Data.Classes
 {
     public class Scan : DataMapObject
     {
         //[DataColumnName(Scans.Id)]
-        public string ID { get; private set; }
+        public string ID { get; set; }
 
-        [DataColumnName(ScansTable.Employee)]
-        public string Employee { get; private set; }
+        [DataColumnName(ScansTable.User)]
+        public string User { get; private set; }
 
         [DataColumnName(ScansTable.Datestamp)]
         public DateTime Datestamp { get; private set; }
@@ -37,7 +37,7 @@ namespace InventoryScanner
         public Scan(string id, string employee, Location location)
         {
             ID = id;
-            Employee = employee;
+            User = employee;
             MunisLocation = location;
             ScanLocation = location.AssetCode;
         }
@@ -46,7 +46,7 @@ namespace InventoryScanner
         {
             ID = null;
             Datestamp = datestamp;
-            Employee = employee;
+            User = employee;
             MunisLocation = location;
             ScanLocation = location.AssetCode;
         }

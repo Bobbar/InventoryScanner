@@ -27,7 +27,7 @@
         public const string Id = "id";
         public const string Datestamp = "datestamp";
         public const string Location = "location";
-        public const string Employee = "scan_employee";
+        public const string User = "scan_user";
     }
 
     public class PingHistoryTable
@@ -51,10 +51,27 @@
     public class ItemDetailTable
     {
         public const string TableName = "item_detail";
+        public const string ScanLocation = "scan_location";
         public const string ScanDate = "scan_date";
         public const string Scanned = "was_scanned";
         public const string ScanUser = "scan_user";
         public const string ScanType = "scan_type";
+    }
+
+    public class ScanItemsTable
+    {
+        public const string TableName = "asset_scan_items";
+        public const string Id = "id";
+
+        public const string AssetTag = "asset_tag";
+        public const string Serial = "serial";
+        public const string Locaton = "scan_location";
+        public const string ScanType = "scan_type";
+        public const string ScanUser = "scan_user";
+        public const string Datestamp = "scan_date";
+        public const string ScanId = "scan_id";
+        public const string ScanYear = "scan_year";
+        public const string ScanStatus = "scan_staus";
 
     }
 

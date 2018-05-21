@@ -1,18 +1,13 @@
-﻿using System;
+﻿using InventoryScanner.Data.Classes;
+using InventoryScanner.Data.Tables;
+using InventoryScanner.Helpers;
+using InventoryScanner.Helpers.DataGridHelpers;
+using InventoryScanner.UIManagement;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using InventoryScanner.UIManagement;
-using InventoryScanner.Data;
-using InventoryScanner.Data.Classes;
-using InventoryScanner.Data.Tables;
-using InventoryScanner.Helpers.DataGridHelpers;
-using InventoryScanner.Helpers;
 
 namespace InventoryScanner
 {
@@ -51,10 +46,8 @@ namespace InventoryScanner
             this.controller = controller;
         }
 
-
         private void ScanningUI_Load(object sender, EventArgs e)
         {
-
         }
 
         private void PopulateLocationsCombo()
@@ -93,7 +86,7 @@ namespace InventoryScanner
             AssetStatusTextBox.SetDBInfo(DeviceTable.Status, AttributeInstances.DeviceAttributes.StatusType);
             AssetLastLocationTextBox.SetDBInfo(PingHistoryTable.IPAddress, AttributeInstances.DeviceAttributes.SubnetLocation);
 
-
+            AssetTagTextBox.SetDBInfo(MunisFixedAssetTable.Asset);
         }
 
         private void DisplayDetails(string serial)
@@ -102,7 +95,6 @@ namespace InventoryScanner
             {
                 PopulateControls(detailData);
             }
-
         }
 
         private void PopulateControls(DataTable data)
@@ -123,11 +115,17 @@ namespace InventoryScanner
             columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
             columnList.Add(new GridColumnAttrib(DeviceTable.DeviceType, "Device Type", AttributeInstances.DeviceAttributes.EquipType, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
-            columnList.Add(new GridColumnAttrib(ItemDetailTable.Scanned, "Scanned"));
-            columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanDate, "Scan Time"));
-            columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanUser, "Scan User"));
-            columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanType, "Scan Type"));
+            columnList.Add(new GridColumnAttrib(ScanItemsTable.Locaton, "Scan Location"));
+            columnList.Add(new GridColumnAttrib(ScanItemsTable.Datestamp, "Scan Datestamp"));
+            columnList.Add(new GridColumnAttrib(ScanItemsTable.ScanUser, "Scan User"));
+            columnList.Add(new GridColumnAttrib(ScanItemsTable.ScanType, "Scan Type"));
+            columnList.Add(new GridColumnAttrib(ScanItemsTable.ScanStatus, "Scan Status"));
 
+            //columnList.Add(new GridColumnAttrib(ItemDetailTable.Scanned, "Scanned"));
+            //columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanLocation, "Scan Location"));
+            //columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanDate, "Scan Time"));
+            //columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanUser, "Scan User"));
+            //columnList.Add(new GridColumnAttrib(ItemDetailTable.ScanType, "Scan Type"));
 
             return columnList;
         }
@@ -147,8 +145,49 @@ namespace InventoryScanner
 
         public void LoadScanItems(DataTable data)
         {
+            var savedScrollRow = ScanItemsGrid.FirstDisplayedScrollingRowIndex;
+            var savedHScrollPos = ScanItemsGrid.HorizontalScrollingOffset;
+
             ScanItemsGrid.Populate(data, ScanItemsGridColumns());
             ScanItemsGrid.FastAutoSizeColumns();
+            SetRowColors();
+
+            ScanItemsGrid.HorizontalScrollingOffset = savedHScrollPos;
+
+            if (savedScrollRow > 0)
+                ScanItemsGrid.FirstDisplayedScrollingRowIndex = savedScrollRow;
+        }
+
+        private void SetRowColors()
+        {
+            foreach (DataGridViewRow row in ScanItemsGrid.Rows)
+            {
+                var statusCell = row.Cells[ScanItemsTable.ScanStatus];
+
+                if (statusCell.Value != null)
+                {
+                    var backColor = new Color();
+
+                    if (statusCell.Value.ToString() == ScanStatus.OK.ToString())
+                    {
+                        backColor = Color.DarkGreen;
+                    }
+                    else if (statusCell.Value.ToString() == ScanStatus.Duplicate.ToString())
+                    {
+                        backColor = Color.DarkOrange;
+                    }
+                    else if (statusCell.Value.ToString() == ScanStatus.Error.ToString())
+                    {
+                        backColor = Color.DarkRed;
+                    }
+
+                    row.DefaultCellStyle.BackColor = backColor;
+                }
+            }
+        }
+
+        public void UpdateScanItem(string serial, ScanType scanType)
+        {
         }
 
         public void LockScanInfoUI()
@@ -182,6 +221,26 @@ namespace InventoryScanner
             {
                 DisplayDetails(selectedSerial);
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            controller.SyncScans();
+        }
+
+        private void SubmitScanButton_Click(object sender, EventArgs e)
+        {
+            var selectedSerial = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Serial);
+
+            if (!string.IsNullOrEmpty(selectedSerial))
+            {
+                controller.SubmitNewScanItem(selectedSerial, ScanType.Scanned);
+            }
+        }
+
+        private void ScanItemsGrid_Scroll(object sender, ScrollEventArgs e)
+        {
+            //  Console.WriteLine(e.NewValue);
         }
     }
 }
