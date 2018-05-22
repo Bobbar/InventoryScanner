@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using iTextSharp.text;
+﻿using iTextSharp.text;
 using iTextSharp.text.pdf.parser;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace InventoryScanner.PDFProcessing
 {
@@ -16,7 +13,6 @@ namespace InventoryScanner.PDFProcessing
         public string SearchText { get; set; }
 
         public CompareOptions CompareOptions { get; set; }
-
 
         public MyLocationTextExtractionStrategy(string searchText, CompareOptions compareOptions = CompareOptions.None)
         {
@@ -45,8 +41,6 @@ namespace InventoryScanner.PDFProcessing
             myPoints.Add(new RectAndText(rect, this.SearchText));
 
             //oh boy....
-
         }
-
     }
 }

@@ -1,4 +1,5 @@
 ﻿using InventoryScanner.Data.Tables;
+using InventoryScanner.Data.Classes;
 
 namespace InventoryScanner.Data
 {
@@ -49,6 +50,12 @@ namespace InventoryScanner.Data
             public static string SelectScanById(string id)
             {
                 var query = "SELECT * FROM " + ScansTable.TableName + " WHERE " + ScansTable.Id + " = '" + id + "'";
+                return query;
+            }
+
+            public static string SelectCompletedScansByYear(string year)
+            {
+                var query = "SELECT * FROM " + ScanItemsTable.TableName + " WHERE " + ScanItemsTable.ScanYear + " = '" + year + "' AND " + ScanItemsTable.ScanStatus + " = '" + ScanStatus.OK.ToString() + "'";
                 return query;
             }
         }

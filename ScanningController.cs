@@ -71,6 +71,16 @@ namespace InventoryScanner
             syncTimer.Start();
         }
 
+        public void PauseSync()
+        {
+            syncTimer.Stop();
+        }
+
+        public void ResumeSync()
+        {
+            syncTimer.Start();
+        }
+        
         private void LoadCurrentScanItems()
         {
             using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
@@ -469,6 +479,20 @@ namespace InventoryScanner
             }
 
             return scanList;
+        }
+
+        public List<string> GetListOfScannedTags()
+        {
+            var tagList = new List<string>();
+
+            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectCompletedScansByYear(currentScan.Datestamp.Year.ToString())))
+            {
+                foreach (DataRow row in results.Rows)
+                {
+                    tagList.Add(row[ScanItemsTable.AssetTag].ToString());
+                }
+            }
+            return tagList;
         }
     }
 }
