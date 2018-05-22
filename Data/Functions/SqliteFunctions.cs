@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InventoryScanner.Data;
 using System.Data;
 using System.Data.Common;
 
@@ -11,7 +7,6 @@ namespace InventoryScanner.Data.Functions
 {
     public static class SqliteFunctions
     {
-
         public static void AddTableToDB(DataTable table, string primaryKeyColumn, string scanId, DbTransaction trans)
         {
             var createStatement = BuildCreateStatement(table, primaryKeyColumn);
@@ -45,8 +40,6 @@ namespace InventoryScanner.Data.Functions
             // List for primary keys.
             var keys = new List<string>();
 
-
-
             string statement = "CREATE TABLE ";
 
             // Add the table name from the results parameter.
@@ -56,8 +49,7 @@ namespace InventoryScanner.Data.Functions
             // Iterate through the table columns.
             foreach (DataColumn column in table.Columns)
             {
-
-                //// Add the field/column name and data type to the statement.
+                // Add the field/column name and data type to the statement.
                 statement += "`" + column.ColumnName.ToString() + "` ";
 
                 var type = column.DataType;
@@ -82,15 +74,6 @@ namespace InventoryScanner.Data.Functions
                     throw new Exception("Unexpected type.");
                 }
 
-
-
-
-                //// If the current field/column is a primary key, add it to the keys list.
-                //if (row["Key"].ToString() == "PRI")
-                //{
-                //    keys.Add(row["Field"].ToString());
-                //}
-
                 // Add a column delimiter if we are not on the last item.
                 if (table.Columns.IndexOf(column) != (table.Columns.Count - 1)) statement += ", ";
             }
@@ -98,31 +81,10 @@ namespace InventoryScanner.Data.Functions
             // Add primary keys declaration.
             statement += ", PRIMARY KEY (" + primaryKeyColumn + ")";
 
-
-
-
-
-            //if (keys.Count > 0)
-            //{
-            //    // Declaration header and open parentheses.
-            //    statement += ", PRIMARY KEY (";
-
-            //    foreach (string key in keys)
-            //    {
-            //        // Add keys string and delimiter, if needed.
-            //        statement += key;
-            //        if (keys.IndexOf(key) != (keys.Count - 1)) statement += ", ";
-            //    }
-
-            //    // Close parentheses.
-            //    statement += ")";
-            //}
-
             // End of statement close parentheses.
             statement += ");";
 
-            Console.WriteLine(statement);
-
+           // Console.WriteLine(statement);
 
             return statement;
         }

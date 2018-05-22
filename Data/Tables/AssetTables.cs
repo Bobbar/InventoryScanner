@@ -75,6 +75,24 @@
 
     }
 
+    public class ScanItemDuplicatesTable
+    {
+        public const string TableName = "asset_scan_duplicates";
+        public const string Id = "id";
+
+        public const string AssetTag = "asset_tag";
+        public const string Serial = "serial";
+        public const string Locaton = "scan_location";
+        public const string ScanType = "scan_type";
+        public const string ScanUser = "scan_user";
+        public const string Datestamp = "scan_date";
+        public const string ScanId = "scan_id";
+        public const string ScanYear = "scan_year";
+       
+    }
+
+
+
     //public static class DeviceCodesTable
     //{
     //    public const string TableName = "dev_codes";

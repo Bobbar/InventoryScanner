@@ -209,6 +209,9 @@ namespace InventoryScanner
                     else if (statusCell.Value.ToString() == ScanStatus.Duplicate.ToString())
                     {
                         backColor = Color.DarkOrange;
+                        selectColor = Color.Orange;
+                        foreColor = Color.Black;
+
                     }
                     else if (statusCell.Value.ToString() == ScanStatus.Error.ToString())
                     {
@@ -256,7 +259,7 @@ namespace InventoryScanner
 
         private void button3_Click(object sender, EventArgs e)
         {
-            controller.SyncScans();
+            controller.SyncDataAsync();
         }
 
         private void SubmitScanButton_Click(object sender, EventArgs e)

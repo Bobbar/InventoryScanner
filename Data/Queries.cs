@@ -65,6 +65,18 @@ namespace InventoryScanner.Data
                 return query;
             }
 
+            public static string SelectAllScanItems()
+            {
+                var query = "";
+                query += "SELECT a_asset_number, a_department_code, fa_acquire_date, fa_status,fa_class_code,fs_subclass_code,fa_tag_number,fa_serial_number,a_asset_desc,a_location,fa_purchase_memo";
+                query += " FROM fa_master";
+                query += " WHERE a_department_code IN ('5200','5205','5210') AND fa_status = 'A' AND fs_subclass_code IN (411,403,422,410,430,400,438,415,437,416,429)";
+                query += " ORDER BY a_location";
+
+                return query;
+            }
+
+
             public static string SelectScanItemsByLocation(string locationCode)
             {
                 var query = "";

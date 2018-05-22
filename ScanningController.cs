@@ -1,26 +1,42 @@
 ﻿using InventoryScanner.Data;
+using InventoryScanner.Data.Classes;
 using InventoryScanner.Data.Functions;
 using InventoryScanner.Data.Munis;
 using InventoryScanner.Data.Tables;
-using InventoryScanner.Data.Classes;
 using InventoryScanner.Helpers;
 using System;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace InventoryScanner
 {
     public class ScanningController
     {
         private IScanning view;
-        // private string scanId;
         private Scan currentScan;
+        private Timer syncTimer;
+        private bool syncRunning = false;
 
         public ScanningController(IScanning view)
         {
             this.view = view;
             view.SetController(this);
+            InitSyncTimer();
+        }
+
+        private void InitSyncTimer()
+        {
+            syncTimer = new Timer();
+            syncTimer.Interval = 1000;
+            syncTimer.Elapsed += SyncTimer_Elapsed;
+        }
+
+        private void SyncTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (currentScan != null) SyncDataAsync();
         }
 
         public async void StartScan(Location location, DateTime datestamp, string scanEmployee)
@@ -28,8 +44,8 @@ namespace InventoryScanner
             currentScan = InsertNewScan(location, datestamp, scanEmployee);
 
             //var scanItemsQuery = Queries.Munis.SelectScanItemsByDepartment(location.DepartmentCode);
-            var scanItemsQuery = Queries.Munis.SelectScanItemsByLocation(location.MunisCode);
-
+            //var scanItemsQuery = Queries.Munis.SelectScanItemsByLocation(location.MunisCode);
+            var scanItemsQuery = Queries.Munis.SelectAllScanItems();
 
             using (var munisResults = await MunisDatabase.ReturnSqlTableAsync(scanItemsQuery))
             using (var assetResults = GetAssetManagerResults(munisResults))
@@ -38,22 +54,18 @@ namespace InventoryScanner
                 CleanMunisFields(munisResults);
                 CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, currentScan.ID);
 
-                LoadCurrentScanItems();
+                SyncDataAsync();
 
-                //using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
-                //{
-                //    view.LoadScanItems(detailResults);
-                //}
+                LoadCurrentScanItems();
             }
+            syncTimer.Start();
         }
 
         private void LoadCurrentScanItems()
         {
             using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
             {
-
                 view.LoadScanItems(detailResults);
-
             }
         }
 
@@ -107,7 +119,6 @@ namespace InventoryScanner
             detailsResults.Columns.Add(ScanItemsTable.ScanStatus, typeof(string));
             detailsResults.Columns.Add(ScanItemsTable.ScanYear, typeof(string));
             detailsResults.Columns.Add(ScanItemsTable.ScanId, typeof(string));
-
         }
 
         private void CleanMunisFields(DataTable munisResults)
@@ -226,7 +237,6 @@ namespace InventoryScanner
         {
             using (var itemDetail = DetailOfAsset(assetTag))
             {
-
                 var itemRow = itemDetail.Rows[0];
 
                 itemRow[ScanItemsTable.Locaton] = currentScan.MunisLocation.MunisCode;
@@ -240,74 +250,163 @@ namespace InventoryScanner
                 var updatedRows = DBFactory.GetSqliteDatabase(currentScan.ID).UpdateTable(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag), itemDetail);
 
                 LoadCurrentScanItems();
-                //var newScanItem = new ScanItem(itemDetail);
-                //newScanItem.ScanType = scanType;
-                //newScanItem.Scan = currentScan;
-                //newScanItem.ScanLocation = currentScan.MunisLocation.MunisCode;
-                //newScanItem.Datestamp = DateTime.Now;
-                //newScanItem.ScanId = currentScan.ID;
-                //newScanItem.ScanYear = DateTime.Now.Year.ToString();
             }
         }
 
-        public void SyncScans()
+        public async void SyncDataAsync()
         {
-            //1. Update remote db scans from backing store.
-            // Non existant items are added, existing items are added and marked duplicate?
+            if (syncRunning) return;
 
+            OtherFunctions.StartTimer();
+            try
+            {
+                syncRunning = true;
+                var hasChanged = await Task.Run(() => { return TrySyncData(); });
+
+                // Refresh view.
+                if (hasChanged) LoadCurrentScanItems();
+            }
+            catch (Exception)
+            {
+                // We want this to fail silently.
+            }
+            finally
+            {
+                syncRunning = false;
+            }
+
+            OtherFunctions.StopTimer();
+        }
+
+        private bool TrySyncData()
+        {
+            bool hasChanged = false;
             var localQuery = Queries.Sqlite.SelectAllAssetDetails();
             var remoteQuery = Queries.Assets.SelectScanItemsByScanYear(currentScan.Datestamp.Year.ToString());
 
-            using (var localResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(localQuery))
+            using (var remoteTrans = DBFactory.GetMySqlDatabase().StartTransaction())
             using (var remoteResults = DBFactory.GetMySqlDatabase().DataTableFromQueryString(remoteQuery))
+            using (var localTrans = DBFactory.GetSqliteDatabase(currentScan.ID).StartTransaction())
+            using (var localResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(localQuery))
             {
-
-                foreach (DataRow localRow in localResults.Rows)
+                try
                 {
-                    var remoteRow = remoteResults.AsEnumerable().Where(r => r[ScanItemsTable.AssetTag].ToString() == localRow[MunisFixedAssetTable.Asset].ToString()).SingleOrDefault();
+                    foreach (DataRow localRow in localResults.Rows)
+                    {
+                        var remoteRow = remoteResults.AsEnumerable().Where(r => r[ScanItemsTable.AssetTag].ToString() == localRow[MunisFixedAssetTable.Asset].ToString()).SingleOrDefault();
 
-                    if (remoteRow != null)
-                    {
-                        // Update local with remote.
-                        localRow[ScanItemsTable.Locaton] = remoteRow[ScanItemsTable.Locaton];
-                        localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
-                        localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
-                        localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
-                        localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
-                        localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
-                    }
-                    else
-                    {
-                        // If local item has been scanned, add it to remote.
-                        if (!string.IsNullOrEmpty(localRow[ScanItemsTable.Datestamp].ToString()))
+                        // If a matching entry on remote exists.
+                        if (remoteRow != null)
                         {
-                            // Map local scan fields to remote fields.
-                            var newRow = remoteResults.Rows.Add();
-                            newRow[ScanItemsTable.AssetTag] = localRow[MunisFixedAssetTable.Asset];
-                            newRow[ScanItemsTable.Serial] = localRow[MunisFixedAssetTable.Serial];
-                            newRow[ScanItemsTable.Locaton] = localRow[ScanItemsTable.Locaton];
-                            newRow[ScanItemsTable.ScanType] = localRow[ScanItemsTable.ScanType];
-                            newRow[ScanItemsTable.ScanUser] = localRow[ScanItemsTable.ScanUser];
-                            newRow[ScanItemsTable.Datestamp] = localRow[ScanItemsTable.Datestamp];
-                            newRow[ScanItemsTable.ScanId] = localRow[ScanItemsTable.ScanId];
-                            newRow[ScanItemsTable.ScanYear] = localRow[ScanItemsTable.ScanYear];
-                            newRow[ScanItemsTable.ScanStatus] = localRow[ScanItemsTable.ScanStatus];
-                        }
+                            // If local entry DOES NOT HAVE a scan.
+                            if (string.IsNullOrEmpty(localRow[ScanItemsTable.Datestamp].ToString()))
+                            {
+                                // Update local with remote.
+                                hasChanged = true;
+                                localRow[ScanItemsTable.Locaton] = remoteRow[ScanItemsTable.Locaton];
+                                localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
+                                localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
+                                localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
+                                localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
+                                localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
+                            }
+                            else
+                            {
+                                // If local HAS a scan and the locations match.
+                                if (localRow[ScanItemsTable.Locaton].ToString() == remoteRow[ScanItemsTable.Locaton].ToString())
+                                {
+                                    // If the entry is from another scan.
+                                    if (localRow[ScanItemsTable.ScanId].ToString() != remoteRow[ScanItemsTable.ScanId].ToString() || localRow[ScanItemsTable.ScanStatus].ToString() != remoteRow[ScanItemsTable.ScanStatus].ToString())
+                                    {
+                                        // Update local with remote.
+                                        hasChanged = true;
+                                        localRow[ScanItemsTable.Locaton] = remoteRow[ScanItemsTable.Locaton];
+                                        localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
+                                        localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
+                                        localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
+                                        localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
+                                        localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
+                                    }
+                                }
+                                else
+                                {
+                                    // If local and remote locations DO NOT MATCH and not already marked duplicate,
+                                    // set both to duplicate and add entries to duplicate table for later resolution.
+                                    if (remoteRow[ScanItemsTable.ScanStatus].ToString() != ScanStatus.Duplicate.ToString())
+                                    {
+                                        hasChanged = true;
+                                        localRow[ScanItemsTable.ScanStatus] = ScanStatus.Duplicate.ToString();
+                                        remoteRow[ScanItemsTable.ScanStatus] = ScanStatus.Duplicate.ToString();
 
+                                        AddDuplicateScanEntries(localRow, remoteRow, remoteTrans);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // If local item has been scanned, add it to remote.
+                            if (!string.IsNullOrEmpty(localRow[ScanItemsTable.Datestamp].ToString()))
+                            {
+                                // Map local scan fields to remote fields.
+                                var newRow = remoteResults.Rows.Add();
+                                newRow[ScanItemsTable.AssetTag] = localRow[MunisFixedAssetTable.Asset];
+                                newRow[ScanItemsTable.Serial] = localRow[MunisFixedAssetTable.Serial];
+                                newRow[ScanItemsTable.Locaton] = localRow[ScanItemsTable.Locaton];
+                                newRow[ScanItemsTable.ScanType] = localRow[ScanItemsTable.ScanType];
+                                newRow[ScanItemsTable.ScanUser] = localRow[ScanItemsTable.ScanUser];
+                                newRow[ScanItemsTable.Datestamp] = localRow[ScanItemsTable.Datestamp];
+                                newRow[ScanItemsTable.ScanId] = localRow[ScanItemsTable.ScanId];
+                                newRow[ScanItemsTable.ScanYear] = localRow[ScanItemsTable.ScanYear];
+                                newRow[ScanItemsTable.ScanStatus] = localRow[ScanItemsTable.ScanStatus];
+                            }
+                        }
                     }
 
+                    // Update local and remote tables.
+                    DBFactory.GetSqliteDatabase(currentScan.ID).UpdateTable(localQuery, localResults, localTrans);
+                    DBFactory.GetMySqlDatabase().UpdateTable(remoteQuery, remoteResults, remoteTrans);
+
+                    localTrans.Commit();
+                    remoteTrans.Commit();
+                    return hasChanged;
                 }
-
-                // Update local and remote tables.
-                DBFactory.GetSqliteDatabase(currentScan.ID).UpdateTable(localQuery, localResults);
-                DBFactory.GetMySqlDatabase().UpdateTable(remoteQuery, remoteResults);
-
+                catch (Exception)
+                {
+                    localTrans.Rollback();
+                    remoteTrans.Rollback();
+                    return false;
+                }
             }
+        }
 
-            LoadCurrentScanItems();
+        private void AddDuplicateScanEntries(DataRow localRow, DataRow remoteRow, DbTransaction remoteTrans)
+        {
+            var emptyTableQuery = "SELECT * FROM " + ScanItemDuplicatesTable.TableName + " LIMIT 0";
+            using (var dupTable = DBFactory.GetMySqlDatabase().DataTableFromQueryString(emptyTableQuery))
+            {
+                var localDupRow = dupTable.Rows.Add();
+                localDupRow[ScanItemDuplicatesTable.AssetTag] = localRow[MunisFixedAssetTable.Asset];
+                localDupRow[ScanItemDuplicatesTable.Serial] = localRow[MunisFixedAssetTable.Serial];
+                localDupRow[ScanItemDuplicatesTable.Locaton] = localRow[ScanItemsTable.Locaton];
+                localDupRow[ScanItemDuplicatesTable.ScanType] = localRow[ScanItemsTable.ScanType];
+                localDupRow[ScanItemDuplicatesTable.ScanUser] = localRow[ScanItemsTable.ScanUser];
+                localDupRow[ScanItemDuplicatesTable.Datestamp] = localRow[ScanItemsTable.Datestamp];
+                localDupRow[ScanItemDuplicatesTable.ScanId] = localRow[ScanItemsTable.ScanId];
+                localDupRow[ScanItemDuplicatesTable.ScanYear] = localRow[ScanItemsTable.ScanYear];
 
-            //2. Update backing store from remote db.
-            // Iterate rows and update scan info if changed.
+                var remoteDupRow = dupTable.Rows.Add();
+                remoteDupRow[ScanItemDuplicatesTable.AssetTag] = remoteRow[ScanItemsTable.AssetTag];
+                remoteDupRow[ScanItemDuplicatesTable.Serial] = remoteRow[ScanItemsTable.Serial];
+                remoteDupRow[ScanItemDuplicatesTable.Locaton] = remoteRow[ScanItemsTable.Locaton];
+                remoteDupRow[ScanItemDuplicatesTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
+                remoteDupRow[ScanItemDuplicatesTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
+                remoteDupRow[ScanItemDuplicatesTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
+                remoteDupRow[ScanItemDuplicatesTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
+                remoteDupRow[ScanItemDuplicatesTable.ScanYear] = remoteRow[ScanItemsTable.ScanYear];
+
+                DBFactory.GetMySqlDatabase().UpdateTable(emptyTableQuery, dupTable, remoteTrans);
+            }
         }
 
         public Location GetLocation(string locationCode)
@@ -317,7 +416,6 @@ namespace InventoryScanner
                 return new Location(results);
             }
         }
-
 
         private Scan InsertNewScan(Location location, DateTime datestamp, string scanEmployee)
         {
