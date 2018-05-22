@@ -37,7 +37,8 @@ namespace InventoryScanner.PDFProcessing
         /// </summary>
         /// <param name="file"></param>
         /// <param name="tagList"></param>
-        /// <remarks>Credits and HUGE thanks to: 
+        /// <remarks>
+        /// Credits and HUGE thanks to: 
         /// https://stackoverflow.com/questions/23909893/getting-coordinates-of-string-using-itextextractionstrategy-and-locationtextextr
         /// and
         /// https://stackoverflow.com/questions/3992617/itextsharp-insert-text-to-an-existing-pdf
