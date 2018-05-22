@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using InventoryScanner.PDFProcessing;
 
 namespace InventoryScanner.UI
 {
@@ -253,6 +254,12 @@ namespace InventoryScanner.UI
             }
         }
 
+        private void ProcessWorksheet()
+        {
+            var processor = new WorksheetProcessor();
+            processor.LoadWorksheet();
+        }
+
         public void UpdateScanItem(string serial, ScanType scanType)
         {
         }
@@ -318,6 +325,11 @@ namespace InventoryScanner.UI
         private void SelectPreviousScanButton_Click(object sender, EventArgs e)
         {
             SelectPreviousScan();
+        }
+
+        private void processWorksheetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ProcessWorksheet();
         }
     }
 }

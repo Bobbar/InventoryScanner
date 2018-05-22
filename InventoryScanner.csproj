@@ -39,6 +39,9 @@
     <Reference Include="Databases">
       <HintPath>..\..\AssetManagerCSharp\Databases\bin\Release\Databases.dll</HintPath>
     </Reference>
+    <Reference Include="itextsharp">
+      <HintPath>..\..\AssetManagerCSharp\AssetManager\itextsharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -71,6 +74,9 @@
     <Compile Include="Helpers\DataGridHelpers\DataGridViewExtensions.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
+    <Compile Include="PDFProcessing\RectAndText.cs" />
+    <Compile Include="PDFProcessing\TextLocationExtractionStrategy.cs" />
+    <Compile Include="PDFProcessing\WorksheetProcessor.cs" />
     <Compile Include="UI Management\ComboBoxExtensions.cs" />
     <Compile Include="Helpers\MiscExtensions.cs" />
     <Compile Include="Helpers\OtherFunctions.cs" />
