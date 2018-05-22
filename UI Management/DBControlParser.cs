@@ -44,6 +44,8 @@ namespace InventoryScanner.UIManagement
         /// <param name="remappingList">List of remapping objects for mapping between different column names.</param>
         public void FillDBFields(DataTable data, List<DBRemappingInfo> remappingList = null)
         {
+            if (data.Rows.Count < 1) return;
+
             var dataRow = data.Rows[0];
             foreach (var ctl in GetDBControls(parentForm))
             {

@@ -89,6 +89,16 @@ namespace InventoryScanner
             AssetTagTextBox.SetDBInfo(MunisFixedAssetTable.Asset);
         }
 
+        private void DisplayDetailsOfSelected()
+        {
+            var selectedAssetTag = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Asset);
+
+            if (!string.IsNullOrEmpty(selectedAssetTag))
+            {
+                DisplayDetails(selectedAssetTag);
+            }
+        }
+
         private void DisplayDetails(string serial)
         {
             using (var detailData = controller.DetailOfAsset(serial))
@@ -110,11 +120,11 @@ namespace InventoryScanner
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Location, "Munis Location", AttributeInstances.MunisAttributes.Locations, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Department, "Munis Department"));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Description, "Munis Description"));
-            columnList.Add(new GridColumnAttrib(DeviceTable.Description, "Asset Description"));
-            columnList.Add(new GridColumnAttrib(DeviceTable.Location, "Asset Location", AttributeInstances.DeviceAttributes.Locations, ColumnFormatType.AttributeDisplayMemberOnly));
-            columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
+            //   columnList.Add(new GridColumnAttrib(DeviceTable.Description, "Asset Description"));
+            //  columnList.Add(new GridColumnAttrib(DeviceTable.Location, "Asset Location", AttributeInstances.DeviceAttributes.Locations, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(DeviceTable.DeviceType, "Device Type", AttributeInstances.DeviceAttributes.EquipType, ColumnFormatType.AttributeDisplayMemberOnly));
-            columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
+            columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
+            //      columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(ScanItemsTable.Locaton, "Scan Location"));
             columnList.Add(new GridColumnAttrib(ScanItemsTable.Datestamp, "Scan Datestamp"));
             columnList.Add(new GridColumnAttrib(ScanItemsTable.ScanUser, "Scan User"));
@@ -135,6 +145,7 @@ namespace InventoryScanner
             ScanLocationCombo.Enabled = false;
             ScanDateTimeTextBox.Enabled = false;
             ScanEmployeeTextBox.Enabled = false;
+            StartScanButton.Enabled = false;
         }
 
         public void StartScan()
@@ -145,17 +156,36 @@ namespace InventoryScanner
 
         public void LoadScanItems(DataTable data)
         {
-            var savedScrollRow = ScanItemsGrid.FirstDisplayedScrollingRowIndex;
-            var savedHScrollPos = ScanItemsGrid.HorizontalScrollingOffset;
+            if (ScanItemsGrid.InvokeRequired)
+            {
+                var del = new Action(() => LoadScanItems(data));
+                ScanItemsGrid.BeginInvoke(del);
+            }
+            else
+            {
+                ScanItemsGrid.SuspendLayout();
+                var savedScrollRow = ScanItemsGrid.FirstDisplayedScrollingRowIndex;
+                var savedHScrollPos = ScanItemsGrid.HorizontalScrollingOffset;
+                var savedSelectRow = (ScanItemsGrid.SelectedRows.Count > 0 ? ScanItemsGrid.SelectedRows[0].Index : -1);
 
-            ScanItemsGrid.Populate(data, ScanItemsGridColumns());
-            ScanItemsGrid.FastAutoSizeColumns();
-            SetRowColors();
+                ScanItemsGrid.Populate(data, ScanItemsGridColumns());
+                ScanItemsGrid.FastAutoSizeColumns();
+                SetRowColors();
 
-            ScanItemsGrid.HorizontalScrollingOffset = savedHScrollPos;
+                if (savedSelectRow > 0)
+                {
+                    ScanItemsGrid.ClearSelection();
+                    ScanItemsGrid.CurrentCell = ScanItemsGrid.Rows[savedSelectRow].Cells[0];
+                    DisplayDetailsOfSelected();
+                }
 
-            if (savedScrollRow > 0)
-                ScanItemsGrid.FirstDisplayedScrollingRowIndex = savedScrollRow;
+                ScanItemsGrid.HorizontalScrollingOffset = savedHScrollPos;
+
+                if (savedScrollRow > 0)
+                    ScanItemsGrid.FirstDisplayedScrollingRowIndex = savedScrollRow;
+
+                ScanItemsGrid.ResumeLayout();
+            }
         }
 
         private void SetRowColors()
@@ -167,10 +197,14 @@ namespace InventoryScanner
                 if (statusCell.Value != null)
                 {
                     var backColor = new Color();
+                    var selectColor = new Color();
+                    var foreColor = new Color();
 
                     if (statusCell.Value.ToString() == ScanStatus.OK.ToString())
                     {
                         backColor = Color.DarkGreen;
+                        selectColor = Color.LightGreen;
+                        foreColor = Color.Black;
                     }
                     else if (statusCell.Value.ToString() == ScanStatus.Duplicate.ToString())
                     {
@@ -182,6 +216,8 @@ namespace InventoryScanner
                     }
 
                     row.DefaultCellStyle.BackColor = backColor;
+                    row.DefaultCellStyle.SelectionBackColor = selectColor;
+                    row.DefaultCellStyle.SelectionForeColor = foreColor;
                 }
             }
         }
@@ -215,12 +251,7 @@ namespace InventoryScanner
 
         private void ScanItemsGrid_SelectionChanged(object sender, EventArgs e)
         {
-            var selectedSerial = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Serial);
-
-            if (!string.IsNullOrEmpty(selectedSerial))
-            {
-                DisplayDetails(selectedSerial);
-            }
+            DisplayDetailsOfSelected();
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -230,11 +261,13 @@ namespace InventoryScanner
 
         private void SubmitScanButton_Click(object sender, EventArgs e)
         {
-            var selectedSerial = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Serial);
+            var selectedAssetTag = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Asset);
 
-            if (!string.IsNullOrEmpty(selectedSerial))
+            if (!string.IsNullOrEmpty(selectedAssetTag))
             {
-                controller.SubmitNewScanItem(selectedSerial, ScanType.Scanned);
+                OtherFunctions.StartTimer();
+                controller.SubmitNewScanItem(selectedAssetTag, ScanType.Scanned);
+                OtherFunctions.StopTimer();
             }
         }
 

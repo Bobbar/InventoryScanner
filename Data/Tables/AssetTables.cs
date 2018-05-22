@@ -71,7 +71,7 @@
         public const string Datestamp = "scan_date";
         public const string ScanId = "scan_id";
         public const string ScanYear = "scan_year";
-        public const string ScanStatus = "scan_staus";
+        public const string ScanStatus = "scan_status";
 
     }
 

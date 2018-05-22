@@ -11,7 +11,7 @@ namespace InventoryScanner.Helpers
         private static RichTextBox rtfBox = new RichTextBox();
         public static Stopwatch stpw = new Stopwatch();
 
-        private static int intTimerHits = 0;
+        private static int stpwHits = 0;
 
         public static void StartTimer()
         {
@@ -23,16 +23,16 @@ namespace InventoryScanner.Helpers
         public static string StopTimer()
         {
             stpw.Stop();
-            intTimerHits += 1;
-            string Results = intTimerHits + "  Stopwatch: MS:" + stpw.ElapsedMilliseconds + " Ticks: " + stpw.ElapsedTicks;
-            Debug.Print(Results);
-            return Results;
+            stpwHits++;
+            string results = stpwHits + "  Stopwatch: MS:" + stpw.ElapsedMilliseconds + " Ticks: " + stpw.ElapsedTicks;
+            Console.WriteLine(results);
+            return results;
         }
 
         public static string ElapTime()
         {
-            string results = intTimerHits + "  Elapsed: MS:" + stpw.ElapsedMilliseconds + " Ticks: " + stpw.ElapsedTicks;
-            Debug.Print(results);
+            string results = stpwHits + "  Elapsed: MS:" + stpw.ElapsedMilliseconds + " Ticks: " + stpw.ElapsedTicks;
+            Console.WriteLine(results);
             return results;
         }
 

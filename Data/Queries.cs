@@ -104,13 +104,20 @@ namespace InventoryScanner.Data
 
                 return query;
             }
+
+            public static string SelectAssetDetailByAssetTag(string assetTag)
+            {
+                var query = "SELECT * FROM " + ItemDetailTable.TableName + " WHERE " + MunisFixedAssetTable.Asset + " = '" + assetTag + "'";
+
+                return query;
+            }
+
             public static string SelectAllAssetDetails()
             {
                 var query = "SELECT * FROM " + ItemDetailTable.TableName;
 
                 return query;
             }
-
 
             public static string JoinAllAssetDetails()
             {
@@ -122,10 +129,6 @@ namespace InventoryScanner.Data
 
                 return query;
             }
-
-
-
-
         }
     }
 }
