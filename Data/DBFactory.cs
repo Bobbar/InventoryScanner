@@ -27,7 +27,9 @@ namespace InventoryScanner.Data
 
         private static string SqlitePath(string scanId)
         {
-            return Directory.GetCurrentDirectory() + "scan" + scanId + "cache.db";
+            var scanIdInt = Convert.ToInt32(scanId);
+
+            return Directory.GetCurrentDirectory() + "/scan_" + scanIdInt.ToString("0000") + ".db";
         }
     }
 }

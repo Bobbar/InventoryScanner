@@ -45,6 +45,12 @@ namespace InventoryScanner.Data
                 var query = "SELECT * FROM " + ScanItemsTable.TableName + " WHERE " + ScanItemsTable.ScanYear + " = '" + year + "'";
                 return query;
             }
+
+            public static string SelectScanById(string id)
+            {
+                var query = "SELECT * FROM " + ScansTable.TableName + " WHERE " + ScansTable.Id + " = '" + id + "'";
+                return query;
+            }
         }
 
         public static class Munis

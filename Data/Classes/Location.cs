@@ -9,7 +9,7 @@ using System.Data;
 
 namespace InventoryScanner.Data.Classes
 {
-   public  class Location : DataMapObject
+    public class Location : DataMapObject
     {
         [DataColumnName(MunisDepartmentsTable.AssetLocation)]
         public string AssetCode { get; private set; }
@@ -34,6 +34,11 @@ namespace InventoryScanner.Data.Classes
             AssetCode = assetCode;
             DepartmentCode = departmentCode;
             MunisCode = munisCode;
+        }
+
+        public Location(string assetCode)
+        {
+            AssetCode = assetCode;
         }
 
         public Location(DataTable data) : base(data) { }

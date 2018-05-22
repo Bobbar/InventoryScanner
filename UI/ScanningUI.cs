@@ -9,7 +9,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace InventoryScanner
+namespace InventoryScanner.UI
 {
     public partial class ScanningUI : Form, IScanning
     {
@@ -48,26 +48,12 @@ namespace InventoryScanner
 
         private void ScanningUI_Load(object sender, EventArgs e)
         {
+            //controller.GetPreviousScansList();
         }
 
         private void PopulateLocationsCombo()
         {
             ScanLocationCombo.FillComboBox(AttributeInstances.DeviceAttributes.Locations);
-
-            //var locations = new Dictionary<int, string>
-            //{
-            //    { 0, "" },
-            //    { 750, "Admin" },
-            //    { 757, "Art & Clay" },
-            //    { 759, "Discover U" },
-            //    { 758, "Pickerington Regional Office" },
-            //    { 754, "Opportunity Center" },
-            //    { 753, "Forest Rose School" }
-            //};
-
-            //ScanLocationCombo.DataSource = new BindingSource(locations, null);
-            //ScanLocationCombo.DisplayMember = "Value";
-            //ScanLocationCombo.ValueMember = "Key";
         }
 
         private void InitDBControls()
@@ -146,6 +132,7 @@ namespace InventoryScanner
             ScanDateTimeTextBox.Enabled = false;
             ScanEmployeeTextBox.Enabled = false;
             StartScanButton.Enabled = false;
+            SelectPreviousScanButton.Enabled = false;
         }
 
         public void StartScan()
@@ -211,7 +198,6 @@ namespace InventoryScanner
                         backColor = Color.DarkOrange;
                         selectColor = Color.Orange;
                         foreColor = Color.Black;
-
                     }
                     else if (statusCell.Value.ToString() == ScanStatus.Error.ToString())
                     {
@@ -222,6 +208,48 @@ namespace InventoryScanner
                     row.DefaultCellStyle.SelectionBackColor = selectColor;
                     row.DefaultCellStyle.SelectionForeColor = foreColor;
                 }
+            }
+        }
+
+        private void SetupContextMenu()
+        {
+            var selectedStatus = ScanItemsGrid.CurrentRowStringValue(ScanItemsTable.ScanStatus);
+
+            if (string.IsNullOrEmpty(selectedStatus))
+            {
+                ResolveDupMenuItem.Enabled = false;
+            }
+            else
+            {
+                if (selectedStatus == ScanStatus.Duplicate.ToString())
+                {
+                    ResolveDupMenuItem.Enabled = true;
+                }
+                else
+                {
+                    ResolveDupMenuItem.Enabled = false;
+                }
+            }
+        }
+
+        private void SelectPreviousScan()
+        {
+            var scanList = controller.GetPreviousScansList();
+
+            var scanSelector = new SelectScanForm();
+            scanSelector.SetScanSelection(scanList);
+            scanSelector.ShowDialog();
+
+            if (scanSelector.DialogResult == DialogResult.OK)
+            {
+                var selectedScan = scanSelector.SelectedScan;
+                var location = controller.GetLocation(selectedScan.ScanLocation);
+                selectedScan.MunisLocation = location;
+                ScanLocationCombo.SetSelectedAttributeByValue(selectedScan.ScanLocation);
+                ScanDateTimeTextBox.Text = selectedScan.Datestamp.ToString();
+                ScanEmployeeTextBox.Text = selectedScan.User;
+                controller.StartScan(selectedScan);
+                LockControls();
             }
         }
 
@@ -274,9 +302,22 @@ namespace InventoryScanner
             }
         }
 
-        private void ScanItemsGrid_Scroll(object sender, ScrollEventArgs e)
+        private void ScanItemsGrid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
         {
-            //  Console.WriteLine(e.NewValue);
+            if (e.ColumnIndex >= 0 & e.RowIndex >= 0)
+            {
+                if (e.Button == MouseButtons.Right & !ScanItemsGrid[e.ColumnIndex, e.RowIndex].Selected)
+                {
+                    ScanItemsGrid.Rows[e.RowIndex].Selected = true;
+                    ScanItemsGrid.CurrentCell = ScanItemsGrid[e.ColumnIndex, e.RowIndex];
+                }
+            }
+            SetupContextMenu();
+        }
+
+        private void SelectPreviousScanButton_Click(object sender, EventArgs e)
+        {
+            SelectPreviousScan();
         }
     }
 }

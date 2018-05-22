@@ -1,4 +1,4 @@
-﻿namespace InventoryScanner
+﻿namespace InventoryScanner.UI
 {
     partial class ScanningUI
     {
@@ -28,11 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.ScanItemsGrid = new System.Windows.Forms.DataGridView();
+            this.RightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ResolveDupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.SelectPreviousScanButton = new System.Windows.Forms.Button();
             this.StartScanButton = new System.Windows.Forms.Button();
             this.ScanEmployeeTextBox = new System.Windows.Forms.TextBox();
             this.ScanDateTimeTextBox = new System.Windows.Forms.TextBox();
@@ -78,6 +82,7 @@
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
+            this.RightClickMenu.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.ScanLayoutTable.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -101,7 +106,7 @@
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 350F));
-            this.MainLayoutPanel.Size = new System.Drawing.Size(1304, 877);
+            this.MainLayoutPanel.Size = new System.Drawing.Size(1238, 877);
             this.MainLayoutPanel.TabIndex = 1;
             // 
             // groupBox1
@@ -113,7 +118,7 @@
             this.groupBox1.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox1.Location = new System.Drawing.Point(3, 113);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1298, 411);
+            this.groupBox1.Size = new System.Drawing.Size(1232, 411);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items To Scan";
@@ -122,6 +127,7 @@
             // 
             this.ScanItemsGrid.AllowUserToResizeRows = false;
             this.ScanItemsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ScanItemsGrid.ContextMenuStrip = this.RightClickMenu;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -141,14 +147,28 @@
             this.ScanItemsGrid.ShowCellToolTips = false;
             this.ScanItemsGrid.ShowEditingIcon = false;
             this.ScanItemsGrid.ShowRowErrors = false;
-            this.ScanItemsGrid.Size = new System.Drawing.Size(1292, 386);
+            this.ScanItemsGrid.Size = new System.Drawing.Size(1226, 386);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
-            this.ScanItemsGrid.Scroll += new System.Windows.Forms.ScrollEventHandler(this.ScanItemsGrid_Scroll);
+            this.ScanItemsGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScanItemsGrid_CellMouseDown);
             this.ScanItemsGrid.SelectionChanged += new System.EventHandler(this.ScanItemsGrid_SelectionChanged);
+            // 
+            // RightClickMenu
+            // 
+            this.RightClickMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ResolveDupMenuItem});
+            this.RightClickMenu.Name = "RightClickMenu";
+            this.RightClickMenu.Size = new System.Drawing.Size(168, 26);
+            // 
+            // ResolveDupMenuItem
+            // 
+            this.ResolveDupMenuItem.Name = "ResolveDupMenuItem";
+            this.ResolveDupMenuItem.Size = new System.Drawing.Size(167, 22);
+            this.ResolveDupMenuItem.Text = "Resolve Duplicate";
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.SelectPreviousScanButton);
             this.groupBox2.Controls.Add(this.StartScanButton);
             this.groupBox2.Controls.Add(this.ScanEmployeeTextBox);
             this.groupBox2.Controls.Add(this.ScanDateTimeTextBox);
@@ -160,33 +180,45 @@
             this.groupBox2.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1298, 104);
+            this.groupBox2.Size = new System.Drawing.Size(1232, 104);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Scan Info";
+            // 
+            // SelectPreviousScanButton
+            // 
+            this.SelectPreviousScanButton.BackColor = System.Drawing.Color.DimGray;
+            this.SelectPreviousScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.SelectPreviousScanButton.Location = new System.Drawing.Point(838, 23);
+            this.SelectPreviousScanButton.Name = "SelectPreviousScanButton";
+            this.SelectPreviousScanButton.Size = new System.Drawing.Size(230, 28);
+            this.SelectPreviousScanButton.TabIndex = 9;
+            this.SelectPreviousScanButton.Text = "Select Previous Scan";
+            this.SelectPreviousScanButton.UseVisualStyleBackColor = false;
+            this.SelectPreviousScanButton.Click += new System.EventHandler(this.SelectPreviousScanButton_Click);
             // 
             // StartScanButton
             // 
             this.StartScanButton.BackColor = System.Drawing.Color.DimGray;
             this.StartScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.StartScanButton.Location = new System.Drawing.Point(971, 34);
+            this.StartScanButton.Location = new System.Drawing.Point(838, 57);
             this.StartScanButton.Name = "StartScanButton";
-            this.StartScanButton.Size = new System.Drawing.Size(230, 48);
+            this.StartScanButton.Size = new System.Drawing.Size(230, 28);
             this.StartScanButton.TabIndex = 8;
-            this.StartScanButton.Text = "Start Scan";
+            this.StartScanButton.Text = "Start New Scan";
             this.StartScanButton.UseVisualStyleBackColor = false;
             this.StartScanButton.Click += new System.EventHandler(this.StartScanButton_Click);
             // 
             // ScanEmployeeTextBox
             // 
-            this.ScanEmployeeTextBox.Location = new System.Drawing.Point(703, 56);
+            this.ScanEmployeeTextBox.Location = new System.Drawing.Point(600, 51);
             this.ScanEmployeeTextBox.Name = "ScanEmployeeTextBox";
             this.ScanEmployeeTextBox.Size = new System.Drawing.Size(225, 26);
             this.ScanEmployeeTextBox.TabIndex = 7;
             // 
             // ScanDateTimeTextBox
             // 
-            this.ScanDateTimeTextBox.Location = new System.Drawing.Point(421, 56);
+            this.ScanDateTimeTextBox.Location = new System.Drawing.Point(358, 51);
             this.ScanDateTimeTextBox.Name = "ScanDateTimeTextBox";
             this.ScanDateTimeTextBox.Size = new System.Drawing.Size(225, 26);
             this.ScanDateTimeTextBox.TabIndex = 6;
@@ -194,7 +226,7 @@
             // ScanLocationCombo
             // 
             this.ScanLocationCombo.FormattingEnabled = true;
-            this.ScanLocationCombo.Location = new System.Drawing.Point(66, 55);
+            this.ScanLocationCombo.Location = new System.Drawing.Point(31, 51);
             this.ScanLocationCombo.Name = "ScanLocationCombo";
             this.ScanLocationCombo.Size = new System.Drawing.Size(310, 27);
             this.ScanLocationCombo.TabIndex = 3;
@@ -203,7 +235,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(699, 34);
+            this.label16.Location = new System.Drawing.Point(596, 29);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(81, 19);
             this.label16.TabIndex = 2;
@@ -212,7 +244,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(417, 33);
+            this.label15.Location = new System.Drawing.Point(354, 28);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(90, 19);
             this.label15.TabIndex = 1;
@@ -221,7 +253,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(62, 33);
+            this.label14.Location = new System.Drawing.Point(27, 29);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(81, 19);
             this.label14.TabIndex = 0;
@@ -240,7 +272,7 @@
             this.ScanLayoutTable.Name = "ScanLayoutTable";
             this.ScanLayoutTable.RowCount = 1;
             this.ScanLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ScanLayoutTable.Size = new System.Drawing.Size(1298, 344);
+            this.ScanLayoutTable.Size = new System.Drawing.Size(1232, 344);
             this.ScanLayoutTable.TabIndex = 2;
             // 
             // groupBox3
@@ -254,7 +286,7 @@
             this.groupBox3.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(515, 338);
+            this.groupBox3.Size = new System.Drawing.Size(449, 338);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scanning";
@@ -316,7 +348,7 @@
             this.groupBox6.Controls.Add(this.tableLayoutPanel1);
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox6.Location = new System.Drawing.Point(524, 3);
+            this.groupBox6.Location = new System.Drawing.Point(458, 3);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(771, 338);
             this.groupBox6.TabIndex = 3;
@@ -594,18 +626,20 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.ClientSize = new System.Drawing.Size(1304, 877);
+            this.ClientSize = new System.Drawing.Size(1238, 877);
             this.Controls.Add(this.MainLayoutPanel);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.White;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "ScanningUI";
-            this.Text = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Inventory Scanner";
             this.Load += new System.EventHandler(this.ScanningUI_Load);
             this.MainLayoutPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).EndInit();
+            this.RightClickMenu.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ScanLayoutTable.ResumeLayout(false);
@@ -669,6 +703,9 @@
         private System.Windows.Forms.TextBox ScanDateTimeTextBox;
         private System.Windows.Forms.Button StartScanButton;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.ContextMenuStrip RightClickMenu;
+        private System.Windows.Forms.ToolStripMenuItem ResolveDupMenuItem;
+        private System.Windows.Forms.Button SelectPreviousScanButton;
     }
 }
 

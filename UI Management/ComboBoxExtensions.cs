@@ -34,6 +34,18 @@ namespace InventoryScanner.UIManagement
             combo.SelectedIndex = combo.Items.IndexOf(attribute);
         }
 
+        public static void SetSelectedAttributeByValue(this ComboBox combo, string value)
+        {
+            foreach (var item in combo.Items)
+            {
+                var attrib = (DbAttribute)item;
+                if (attrib.Code == value)
+                {
+                    combo.SelectedIndex = combo.Items.IndexOf(attrib);
+                }
+            }
+        }
+
         private static void AdjustComboBoxWidth(object sender, EventArgs e)
         {
             var senderComboBox = (ComboBox)sender;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using InventoryScanner.Data.Functions;
+using InventoryScanner.UI;
 
 namespace InventoryScanner
 {

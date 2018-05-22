@@ -5,8 +5,10 @@ using InventoryScanner.Data.Munis;
 using InventoryScanner.Data.Tables;
 using InventoryScanner.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
@@ -58,6 +60,14 @@ namespace InventoryScanner
 
                 LoadCurrentScanItems();
             }
+            syncTimer.Start();
+        }
+
+        public void StartScan(Scan scan)
+        {
+            currentScan = scan;
+            SyncDataAsync();
+            LoadCurrentScanItems();
             syncTimer.Start();
         }
 
@@ -426,7 +436,39 @@ namespace InventoryScanner
 
             newScan.ID = scanId.ToString();
 
+            AddScanInfoTable(newScan);
+
             return newScan;
+        }
+
+        private void AddScanInfoTable(Scan scan)
+        {
+            using (var scanTable = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectScanById(scan.ID)))
+            {
+                scanTable.TableName = ScansTable.TableName;
+                SqliteFunctions.AddTableToDB(scanTable, ScansTable.Id, scan.ID);
+            }
+        }
+
+        public List<Scan> GetPreviousScansList()
+        {
+            var scanList = new List<Scan>();
+            var scanFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), "*.db").ToList();
+
+            foreach (var scan in scanFiles)
+            {
+                var file = new FileInfo(scan);
+                var scanIdString = file.Name.Substring(5, 4);
+                var scanId = Convert.ToInt32(scanIdString);
+
+                using (var scanDetail = DBFactory.GetSqliteDatabase(scanId.ToString()).DataTableFromQueryString("SELECT * FROM " + ScansTable.TableName))
+                {
+                    var row = scanDetail.Rows[0];
+                    scanList.Add(new Scan(row[ScansTable.Id].ToString(), (DateTime)row[ScansTable.Datestamp], row[ScansTable.User].ToString(), new Location(row[ScansTable.Location].ToString())));
+                }
+            }
+
+            return scanList;
         }
     }
 }

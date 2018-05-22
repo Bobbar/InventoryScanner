@@ -22,7 +22,7 @@ namespace InventoryScanner.Data.Classes
         [DataColumnName(ScansTable.Location)]
         public string ScanLocation { get; private set; }
 
-        public Location MunisLocation { get; private set; }
+        public Location MunisLocation { get; set; }
 
         [DataColumnName(ScansTable.Id)]
         public override string Guid
@@ -45,6 +45,14 @@ namespace InventoryScanner.Data.Classes
         public Scan(DateTime datestamp, string employee, Location location)
         {
             ID = null;
+            Datestamp = datestamp;
+            User = employee;
+            MunisLocation = location;
+            ScanLocation = location.AssetCode;
+        }
+        public Scan(string id, DateTime datestamp, string employee, Location location)
+        {
+            ID = id;
             Datestamp = datestamp;
             User = employee;
             MunisLocation = location;

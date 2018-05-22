@@ -7,7 +7,7 @@ namespace InventoryScanner.Data.Functions
 {
     public static class SqliteFunctions
     {
-        public static void AddTableToDB(DataTable table, string primaryKeyColumn, string scanId, DbTransaction trans)
+        public static void AddTableToDB(DataTable table, string primaryKeyColumn, string scanId, DbTransaction trans = null)
         {
             var createStatement = BuildCreateStatement(table, primaryKeyColumn);
 
