@@ -2,13 +2,13 @@
 using InventoryScanner.Data.Tables;
 using InventoryScanner.Helpers;
 using InventoryScanner.Helpers.DataGridHelpers;
+using InventoryScanner.PDFProcessing;
 using InventoryScanner.UIManagement;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using InventoryScanner.PDFProcessing;
 
 namespace InventoryScanner.UI
 {
@@ -39,6 +39,7 @@ namespace InventoryScanner.UI
             ScanItemsGrid.DoubleBuffered(true);
             PopulateLocationsCombo();
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
+            AttachFilterMenuEvents();
             // this.Show();
         }
 
@@ -50,6 +51,17 @@ namespace InventoryScanner.UI
         private void ScanningUI_Load(object sender, EventArgs e)
         {
             //controller.GetPreviousScansList();
+        }
+
+        private void AttachFilterMenuEvents()
+        {
+            FilterAllMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            FilterAdminMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            FilterFRSMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            FilterPROMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            FilterOCMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            FilterACMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            FilterDUMenuItem.CheckedChanged += FilterItem_CheckedChanged;
         }
 
         private void PopulateLocationsCombo()
@@ -189,7 +201,6 @@ namespace InventoryScanner.UI
                     var selectColor = row.DefaultCellStyle.SelectionBackColor;
                     var selectForeColor = row.DefaultCellStyle.SelectionForeColor;
 
-                    
                     if (statusCell.Value.ToString() == ScanStatus.OK.ToString())
                     {
                         backColor = Color.DarkGreen;
@@ -291,6 +302,34 @@ namespace InventoryScanner.UI
             throw new NotImplementedException();
         }
 
+        private List<string> GetFilters()
+        {
+            var filterList = new List<string>();
+
+            foreach (ToolStripMenuItem filter in filtersToolStripMenuItem.DropDownItems)
+            {
+                if (filter.Tag.ToString() == "All" && filter.Checked) return null;
+
+                if (filter.Tag.ToString() != "All" && filter.Checked)
+                {
+                    filterList.Add(filter.Tag.ToString());
+                }
+            }
+
+            return filterList;
+        }
+
+        private void SetAllFilterMenuItems(bool checkedValue)
+        {
+            foreach (ToolStripMenuItem filter in filtersToolStripMenuItem.DropDownItems)
+            {
+                if (filter.Tag.ToString() != "All")
+                {
+                    filter.Checked = checkedValue;
+                }
+            }
+        }
+
         private void ScanLocationCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ScanLocationCombo.SelectedIndex > -1 && controller != null)
@@ -345,6 +384,28 @@ namespace InventoryScanner.UI
                 }
             }
             SetupContextMenu();
+        }
+
+        private void FilterItem_CheckedChanged(object sender, EventArgs e)
+        {
+            var senderMenuItem = (ToolStripMenuItem)sender;
+
+            if (senderMenuItem.Tag.ToString() == "All")
+            {
+                if (senderMenuItem.Checked)
+                {
+                    SetAllFilterMenuItems(true);
+                }
+            }
+            else
+            {
+                if (!senderMenuItem.Checked)
+                {
+                    FilterAllMenuItem.Checked = false;
+                }
+            }
+
+            controller.RefreshCurrentItems(GetFilters());
         }
 
         private void SelectPreviousScanButton_Click(object sender, EventArgs e)

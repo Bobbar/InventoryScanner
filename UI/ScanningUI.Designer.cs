@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanningUI));
             this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -83,6 +83,14 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processWorksheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterAdminMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterFRSMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterPROMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterOCMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterACMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.FilterDUMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
@@ -136,14 +144,14 @@
             this.ScanItemsGrid.ColumnHeadersHeight = 30;
             this.ScanItemsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.ScanItemsGrid.ContextMenuStrip = this.RightClickMenu;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.WhiteSmoke;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ScanItemsGrid.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.WhiteSmoke;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.ScanItemsGrid.DefaultCellStyle = dataGridViewCellStyle1;
             this.ScanItemsGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ScanItemsGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.ScanItemsGrid.Location = new System.Drawing.Point(3, 22);
@@ -632,7 +640,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.filtersToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1250, 24);
@@ -653,6 +662,79 @@
             this.processWorksheetToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
             this.processWorksheetToolStripMenuItem.Text = "Process Worksheet";
             this.processWorksheetToolStripMenuItem.Click += new System.EventHandler(this.processWorksheetToolStripMenuItem_Click);
+            // 
+            // filtersToolStripMenuItem
+            // 
+            this.filtersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.FilterAllMenuItem,
+            this.FilterAdminMenuItem,
+            this.FilterFRSMenuItem,
+            this.FilterPROMenuItem,
+            this.FilterOCMenuItem,
+            this.FilterACMenuItem,
+            this.FilterDUMenuItem});
+            this.filtersToolStripMenuItem.Name = "filtersToolStripMenuItem";
+            this.filtersToolStripMenuItem.Size = new System.Drawing.Size(99, 20);
+            this.filtersToolStripMenuItem.Text = "Location Filters";
+            // 
+            // FilterAllMenuItem
+            // 
+            this.FilterAllMenuItem.Checked = true;
+            this.FilterAllMenuItem.CheckOnClick = true;
+            this.FilterAllMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.FilterAllMenuItem.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.FilterAllMenuItem.Name = "FilterAllMenuItem";
+            this.FilterAllMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterAllMenuItem.Tag = "All";
+            this.FilterAllMenuItem.Text = "All";
+            // 
+            // FilterAdminMenuItem
+            // 
+            this.FilterAdminMenuItem.CheckOnClick = true;
+            this.FilterAdminMenuItem.Name = "FilterAdminMenuItem";
+            this.FilterAdminMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterAdminMenuItem.Tag = "750";
+            this.FilterAdminMenuItem.Text = "Admin";
+            // 
+            // FilterFRSMenuItem
+            // 
+            this.FilterFRSMenuItem.CheckOnClick = true;
+            this.FilterFRSMenuItem.Name = "FilterFRSMenuItem";
+            this.FilterFRSMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterFRSMenuItem.Tag = "753";
+            this.FilterFRSMenuItem.Text = "Forest Rose School";
+            // 
+            // FilterPROMenuItem
+            // 
+            this.FilterPROMenuItem.CheckOnClick = true;
+            this.FilterPROMenuItem.Name = "FilterPROMenuItem";
+            this.FilterPROMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterPROMenuItem.Tag = "758";
+            this.FilterPROMenuItem.Text = "Pickerington Regional Office";
+            // 
+            // FilterOCMenuItem
+            // 
+            this.FilterOCMenuItem.CheckOnClick = true;
+            this.FilterOCMenuItem.Name = "FilterOCMenuItem";
+            this.FilterOCMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterOCMenuItem.Tag = "754";
+            this.FilterOCMenuItem.Text = "Opportunity Center";
+            // 
+            // FilterACMenuItem
+            // 
+            this.FilterACMenuItem.CheckOnClick = true;
+            this.FilterACMenuItem.Name = "FilterACMenuItem";
+            this.FilterACMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterACMenuItem.Tag = "757";
+            this.FilterACMenuItem.Text = "Art && Clay";
+            // 
+            // FilterDUMenuItem
+            // 
+            this.FilterDUMenuItem.CheckOnClick = true;
+            this.FilterDUMenuItem.Name = "FilterDUMenuItem";
+            this.FilterDUMenuItem.Size = new System.Drawing.Size(225, 22);
+            this.FilterDUMenuItem.Tag = "759";
+            this.FilterDUMenuItem.Text = "Discover U";
             // 
             // ScanningUI
             // 
@@ -748,6 +830,14 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem processWorksheetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem filtersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterAllMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterAdminMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterFRSMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterPROMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterOCMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterACMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem FilterDUMenuItem;
     }
 }
 

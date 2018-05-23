@@ -63,6 +63,11 @@ namespace InventoryScanner
             syncTimer.Start();
         }
 
+        public void RefreshCurrentItems(List<string> filterList = null)
+        {
+            LoadCurrentScanItems(filterList);
+        }
+
         public void StartScan(Scan scan)
         {
             currentScan = scan;
@@ -81,9 +86,20 @@ namespace InventoryScanner
             syncTimer.Start();
         }
 
-        private void LoadCurrentScanItems()
+        private void LoadCurrentScanItems(List<string> filterList = null)
         {
-            using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
+            var query = "";
+
+            if (filterList != null)
+            {
+                query = Queries.Sqlite.SelectAllAssetDetailsWithLocationFilter(filterList);
+            }
+            else
+            {
+                query = Queries.Sqlite.SelectAllAssetDetails();
+            }
+
+            using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(query))
             {
                 view.LoadScanItems(detailResults);
             }

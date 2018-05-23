@@ -1,5 +1,6 @@
 ﻿using InventoryScanner.Data.Tables;
 using InventoryScanner.Data.Classes;
+using System.Collections.Generic;
 
 namespace InventoryScanner.Data
 {
@@ -140,6 +141,24 @@ namespace InventoryScanner.Data
             public static string SelectAllAssetDetails()
             {
                 var query = "SELECT * FROM " + ItemDetailTable.TableName;
+
+                return query;
+            }
+
+            public static string SelectAllAssetDetailsWithLocationFilter(List<string> locationFilters)
+            {
+                string locations = "(";
+
+                foreach (var filter in locationFilters)
+                {
+                    locations += filter;
+
+                    if (locationFilters.IndexOf(filter) != (locationFilters.Count - 1)) locations += ", ";
+                }
+
+                locations += ")";
+
+                var query = "SELECT * FROM " + ItemDetailTable.TableName + " WHERE " + MunisFixedAssetTable.Location + " IN " + locations;
 
                 return query;
             }
