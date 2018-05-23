@@ -10,6 +10,7 @@ namespace InventoryScanner.Data.Classes
     {
         OK,
         Error,
-        Duplicate
+        Duplicate,
+        LocationMismatch
     }
 }

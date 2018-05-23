@@ -184,30 +184,40 @@ namespace InventoryScanner.UI
 
                 if (statusCell.Value != null)
                 {
-                    var backColor = new Color();
-                    var selectColor = new Color();
-                    var foreColor = new Color();
+                    var backColor = row.DefaultCellStyle.BackColor;
+                    var foreColor = row.DefaultCellStyle.ForeColor;
+                    var selectColor = row.DefaultCellStyle.SelectionBackColor;
+                    var selectForeColor = row.DefaultCellStyle.SelectionForeColor;
 
+                    
                     if (statusCell.Value.ToString() == ScanStatus.OK.ToString())
                     {
                         backColor = Color.DarkGreen;
                         selectColor = Color.LightGreen;
-                        foreColor = Color.Black;
+                        selectForeColor = Color.Black;
                     }
                     else if (statusCell.Value.ToString() == ScanStatus.Duplicate.ToString())
                     {
                         backColor = Color.DarkOrange;
                         selectColor = Color.Orange;
-                        foreColor = Color.Black;
+                        selectForeColor = Color.Black;
                     }
                     else if (statusCell.Value.ToString() == ScanStatus.Error.ToString())
                     {
                         backColor = Color.DarkRed;
                     }
+                    else if (statusCell.Value.ToString() == ScanStatus.LocationMismatch.ToString())
+                    {
+                        backColor = Color.Gold;
+                        foreColor = Color.Black;
+                        selectColor = Color.Yellow;
+                        selectForeColor = Color.Black;
+                    }
 
                     row.DefaultCellStyle.BackColor = backColor;
+                    row.DefaultCellStyle.ForeColor = foreColor;
                     row.DefaultCellStyle.SelectionBackColor = selectColor;
-                    row.DefaultCellStyle.SelectionForeColor = foreColor;
+                    row.DefaultCellStyle.SelectionForeColor = selectForeColor;
                 }
             }
         }
@@ -310,9 +320,17 @@ namespace InventoryScanner.UI
 
             if (!string.IsNullOrEmpty(selectedAssetTag))
             {
-                OtherFunctions.StartTimer();
-                controller.SubmitNewScanItem(selectedAssetTag, ScanType.Scanned);
-                OtherFunctions.StopTimer();
+                try
+                {
+                    controller.SubmitNewScanItem(selectedAssetTag, ScanType.Scanned);
+                }
+                catch (LocationMismatchException lme)
+                {
+                    var prompt = "Asset Tag: " + lme.ItemAssetTag +
+                        " was scanned at an unexpected location. \n \n Expected location: " +
+                        lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
+                }
             }
         }
 

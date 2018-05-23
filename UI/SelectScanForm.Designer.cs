@@ -28,10 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectScanForm));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ScansCombo = new System.Windows.Forms.ComboBox();
-            this.label14 = new System.Windows.Forms.Label();
             this.AcceptScanButton = new System.Windows.Forms.Button();
+            this.label14 = new System.Windows.Forms.Label();
+            this.ScansCombo = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,25 +52,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Choose A Scan";
             // 
-            // ScansCombo
-            // 
-            this.ScansCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ScansCombo.FormattingEnabled = true;
-            this.ScansCombo.Location = new System.Drawing.Point(32, 72);
-            this.ScansCombo.Name = "ScansCombo";
-            this.ScansCombo.Size = new System.Drawing.Size(552, 27);
-            this.ScansCombo.TabIndex = 4;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(28, 50);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(135, 19);
-            this.label14.TabIndex = 5;
-            this.label14.Text = "Previous Scans";
-            // 
             // AcceptScanButton
             // 
             this.AcceptScanButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
@@ -83,6 +65,25 @@
             this.AcceptScanButton.UseVisualStyleBackColor = false;
             this.AcceptScanButton.Click += new System.EventHandler(this.AcceptScanButton_Click);
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(28, 50);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(135, 19);
+            this.label14.TabIndex = 5;
+            this.label14.Text = "Previous Scans";
+            // 
+            // ScansCombo
+            // 
+            this.ScansCombo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ScansCombo.FormattingEnabled = true;
+            this.ScansCombo.Location = new System.Drawing.Point(32, 72);
+            this.ScansCombo.Name = "ScansCombo";
+            this.ScansCombo.Size = new System.Drawing.Size(552, 27);
+            this.ScansCombo.TabIndex = 4;
+            // 
             // SelectScanForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
@@ -91,7 +92,8 @@
             this.ClientSize = new System.Drawing.Size(641, 240);
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(657, 279);
             this.Name = "SelectScanForm";

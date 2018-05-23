@@ -80,7 +80,7 @@ namespace InventoryScanner
         {
             syncTimer.Start();
         }
-        
+
         private void LoadCurrentScanItems()
         {
             using (var detailResults = DBFactory.GetSqliteDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAllAssetDetails()))
@@ -259,17 +259,40 @@ namespace InventoryScanner
             {
                 var itemRow = itemDetail.Rows[0];
 
+                bool locationMismatch = false;
+                
+                // Check if the scan location matches the location in inventory.
+                // Set the scan status and throw exception if there's a mismatch.
+                if (itemRow[MunisFixedAssetTable.Location].ToString() != currentScan.MunisLocation.MunisCode)
+                {
+                    locationMismatch = true;
+                    itemRow[ScanItemsTable.ScanStatus] = ScanStatus.LocationMismatch.ToString();
+                }
+                else
+                {
+                    locationMismatch = false;
+                    itemRow[ScanItemsTable.ScanStatus] = ScanStatus.OK.ToString();
+                }
+
                 itemRow[ScanItemsTable.Locaton] = currentScan.MunisLocation.MunisCode;
                 itemRow[ScanItemsTable.ScanType] = scanType.ToString();
                 itemRow[ScanItemsTable.ScanUser] = currentScan.User;
                 itemRow[ScanItemsTable.Datestamp] = DateTime.Now.ToString(DataConsistency.DBDateTimeFormat);
                 itemRow[ScanItemsTable.ScanYear] = DateTime.Now.Year.ToString();
-                itemRow[ScanItemsTable.ScanStatus] = ScanStatus.OK.ToString();
                 itemRow[ScanItemsTable.ScanId] = currentScan.ID;
 
                 var updatedRows = DBFactory.GetSqliteDatabase(currentScan.ID).UpdateTable(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag), itemDetail);
 
                 LoadCurrentScanItems();
+
+                // Throw mismatch exception after adding the scan to the DB.
+                if (locationMismatch)
+                {
+                    var expectedLocation = AttributeInstances.MunisAttributes.Locations[itemRow[MunisFixedAssetTable.Location].ToString()];
+                    var scanLocation = AttributeInstances.MunisAttributes.Locations[currentScan.MunisLocation.MunisCode];
+
+                    throw new LocationMismatchException(expectedLocation.DisplayValue, scanLocation.DisplayValue, assetTag);
+                }
             }
         }
 
