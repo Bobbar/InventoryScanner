@@ -1,7 +1,6 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
@@ -14,7 +13,7 @@ namespace InventoryScanner.PDFProcessing
         {
         }
 
-        public void LoadWorksheet(List<string> tagList)
+        public string FillWorksheet(List<string> tagList)
         {
             using (var fileDialog = new OpenFileDialog())
             {
@@ -27,8 +26,9 @@ namespace InventoryScanner.PDFProcessing
 
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    ProcessWorksheetFile(fileDialog.FileName, tagList);
+                    return ProcessWorksheetFile(fileDialog.FileName, tagList);
                 }
+                return null;
             }
         }
 
@@ -38,12 +38,12 @@ namespace InventoryScanner.PDFProcessing
         /// <param name="file"></param>
         /// <param name="tagList"></param>
         /// <remarks>
-        /// Credits and HUGE thanks to: 
+        /// Credits and HUGE thanks to:
         /// https://stackoverflow.com/questions/23909893/getting-coordinates-of-string-using-itextextractionstrategy-and-locationtextextr
         /// and
         /// https://stackoverflow.com/questions/3992617/itextsharp-insert-text-to-an-existing-pdf
         /// </remarks>
-        private void ProcessWorksheetFile(string file, List<string> tagList)
+        private string ProcessWorksheetFile(string file, List<string> tagList)
         {
             // Create a modfied filename and path for the new PDF file.
             var fileInfo = new FileInfo(file);
@@ -69,7 +69,7 @@ namespace InventoryScanner.PDFProcessing
                 for (int page = 1; page <= pdfReader.NumberOfPages; page++)
                 {
                     // Set font for current page.
-                    var bFont = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    var bFont = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
                     content.SetColorFill(BaseColor.BLACK);
                     content.SetFontAndSize(bFont, 10);
 
@@ -83,14 +83,16 @@ namespace InventoryScanner.PDFProcessing
                         // of each instance of the asset tag.
                         PdfTextExtractor.GetTextFromPage(pdfReader, page, strategy);
 
-                        // Iterate through the coordinates collected by the strategy.
-                        foreach (var p in strategy.myPoints)
+                        // Check for results and select the first one. (The sheets have columns with duplicate tag strings at the same Y coordinate)
+                        if (strategy.TextLocations.Count > 0)
                         {
-                            //Console.WriteLine(p.Text + " found at: " + p.Rect.Left + "x" + p.Rect.Bottom);
+                            var location = strategy.TextLocations[0];
 
                             // Add an "X" alined with the 'Verified' column on the worksheet.
+                            int verifyColumnXOffset = 60;
+                            int verifyColumnYOffset = 9;
                             content.BeginText();
-                            content.ShowTextAligned(1, "X", size.Right - 60, p.Rect.Top - 10, 0);
+                            content.ShowTextAligned(1, "X", size.Right - verifyColumnXOffset, location.Rect.Top - verifyColumnYOffset, 0);
                             content.EndText();
                         }
                     }
@@ -108,6 +110,8 @@ namespace InventoryScanner.PDFProcessing
                 fStream.Close();
                 writer.Close();
                 pdfReader.Close();
+
+                return newFullFilename;
             }
         }
     }

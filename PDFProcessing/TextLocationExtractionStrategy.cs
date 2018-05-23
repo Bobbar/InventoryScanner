@@ -8,7 +8,7 @@ namespace InventoryScanner.PDFProcessing
 {
     public class MyLocationTextExtractionStrategy : LocationTextExtractionStrategy
     {
-        public List<RectAndText> myPoints = new List<RectAndText>();
+        public List<RectAndText> TextLocations = new List<RectAndText>();
 
         public string SearchText { get; set; }
 
@@ -38,7 +38,7 @@ namespace InventoryScanner.PDFProcessing
 
             var rect = new Rectangle(bottomLeft[Vector.I1], bottomLeft[Vector.I2], topRight[Vector.I1], topRight[Vector.I2]);
 
-            myPoints.Add(new RectAndText(rect, this.SearchText));
+            TextLocations.Add(new RectAndText(rect, this.SearchText));
 
             //oh boy....
         }

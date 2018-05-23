@@ -257,10 +257,14 @@ namespace InventoryScanner.UI
         private void ProcessWorksheet()
         {
             controller.PauseSync();
+
             var processor = new WorksheetProcessor();
             var tagList = controller.GetListOfScannedTags();
-            processor.LoadWorksheet(tagList);
+            var workSheetPath = processor.FillWorksheet(tagList);
+
             controller.ResumeSync();
+
+            System.Diagnostics.Process.Start(workSheetPath);
         }
 
         public void UpdateScanItem(string serial, ScanType scanType)
