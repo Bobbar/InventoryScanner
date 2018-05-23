@@ -43,30 +43,30 @@ namespace InventoryScanner
 
         public async void StartScan(Location location, DateTime datestamp, string scanEmployee)
         {
-           
+
             currentScan = InsertNewScan(location, datestamp, scanEmployee);
 
             //var scanItemsQuery = Queries.Munis.SelectScanItemsByDepartment(location.DepartmentCode);
             //var scanItemsQuery = Queries.Munis.SelectScanItemsByLocation(location.MunisCode);
             var scanItemsQuery = Queries.Munis.SelectAllScanItems();
 
-           
+
             using (var munisResults = await MunisDatabase.ReturnSqlTableAsync(scanItemsQuery))
             using (var assetResults = GetAssetManagerResults(munisResults))
             {
                 munisResults.TableName = MunisFixedAssetTable.TableName;
-               
+
                 CleanMunisFields(munisResults);
-             
+
 
                 CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, currentScan.ID);
-                
+
                 SyncDataAsync();
 
                 LoadCurrentScanItems();
             }
             syncTimer.Start();
-            
+
 
         }
 
@@ -259,23 +259,34 @@ namespace InventoryScanner
 
         private DataTable GetAssetManagerResults(DataTable munisResults)
         {
-       
-            var assetTable = new DataTable(DeviceTable.TableName);
+            var assetTable = new DataTable();
+            var deviceCache = new Dictionary<string, DataRow>();
 
-            foreach (DataRow row in munisResults.Rows)
+            // Cache result rows into a dictionary.
+            using (var allAssets = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectAllDevices()))
             {
-                using (var assetResult = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectDeviceBySerial(row[MunisFixedAssetTable.Serial].ToString())))
-                {
-                    if (assetResult.Rows.Count > 1) throw new Exception("Duplicate Asset Device records found.");
+                // Clone the table stucture.
+                assetTable = allAssets.Clone();
 
-                    if (assetResult.Rows.Count == 1)
+                foreach (DataRow row in allAssets.Rows)
+                {
+                    if (!deviceCache.ContainsKey(row[DeviceTable.Serial].ToString()))
                     {
-                        assetTable.Merge(assetResult);
-                        // assetTable.Rows.Add(assetResult.Rows[0]);
+                        deviceCache.Add(row[DeviceTable.Serial].ToString(), row);
                     }
                 }
             }
-           
+
+            // Iterate the munis rows and add the matches from the dictionary cache.
+            foreach (DataRow row in munisResults.Rows)
+            {
+                if (deviceCache.ContainsKey(row[MunisFixedAssetTable.Serial].ToString().Trim()))
+                {
+                    assetTable.Rows.Add(deviceCache[row[MunisFixedAssetTable.Serial].ToString().Trim()].ItemArray);
+                }
+            }
+
+            assetTable.TableName = DeviceTable.TableName;
             return assetTable;
         }
 

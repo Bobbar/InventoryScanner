@@ -65,6 +65,11 @@ namespace InventoryScanner.Data
                 var query = "SELECT * FROM " + MunisDepartmentsTable.TableName + " INNER JOIN " + DeviceCodesTable.TableName + " ON " + DeviceCodesTable.Type + " = 'LOCATION' AND " + MunisDepartmentsTable.AssetLocation + " = " + DeviceCodesTable.DBvalue;
                 return query;
             }
+
+            public static string SelectAllDevices()
+            {
+                return "SELECT * FROM " + DeviceTable.TableName + " ORDER BY " + DeviceTable.Serial;
+            }
         }
 
         public static class Munis
