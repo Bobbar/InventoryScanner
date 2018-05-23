@@ -22,6 +22,7 @@ namespace InventoryScanner.Data.Functions
 
                 PopulateMunisAttributes();
                 PopulateSubnetLocationAttributes();
+                PopulateMunisToAssetAttributes();
                 // PopulateDepartments();
             });
             BuildIdxs.Wait();
@@ -54,8 +55,24 @@ namespace InventoryScanner.Data.Functions
                 }
             }
 
-            AttributeInstances.MunisAttributes.Locations = tmpAttribs;
+            AttributeInstances.MunisAttributes.MunisLocations = tmpAttribs;
         }
+
+        private static void PopulateMunisToAssetAttributes()
+        {
+            var tmpAttribs = new DbAttributes();
+
+            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectMunisAndAssetLocationCodes()))
+            {
+                foreach (DataRow row in results.Rows)
+                {
+                    tmpAttribs.Add(row[DeviceCodesTable.HumanValue].ToString(), row[MunisDepartmentsTable.MunisLocation].ToString(), Convert.ToInt32(row[MunisDepartmentsTable.Id]));
+                }
+            }
+
+            AttributeInstances.MunisAttributes.MunisToAssetLocations = tmpAttribs;
+        }
+
 
         private static DbAttributes BuildIndex(string attribTable, string attribName)
         {

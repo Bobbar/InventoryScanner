@@ -18,7 +18,7 @@ namespace InventoryScanner.Data.Classes
         [DataColumnName(ScanItemsTable.AssetTag)]
         public string AssetTag { get; set; }
 
-        [DataColumnName(ScanItemsTable.Locaton)]
+        [DataColumnName(ScanItemsTable.Location)]
         public string ScanLocation { get; set; }
 
         [DataColumnName(ScanItemsTable.ScanType)]

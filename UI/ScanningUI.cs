@@ -18,6 +18,14 @@ namespace InventoryScanner.UI
         private Location location;
         private DBControlParser controlParser;
 
+        public List<string> LocationFilters
+        {
+            get
+            {
+                return GetFilters();
+            }
+        }
+
         public Location ScanLocation
         {
             get
@@ -62,6 +70,13 @@ namespace InventoryScanner.UI
             FilterOCMenuItem.CheckedChanged += FilterItem_CheckedChanged;
             FilterACMenuItem.CheckedChanged += FilterItem_CheckedChanged;
             FilterDUMenuItem.CheckedChanged += FilterItem_CheckedChanged;
+            filtersToolStripMenuItem.DropDown.AutoClose = false;
+            filtersToolStripMenuItem.DropDown.MouseLeave += DropDown_MouseLeave;
+        }
+
+        private void DropDown_MouseLeave(object sender, EventArgs e)
+        {
+            filtersToolStripMenuItem.DropDown.Close();
         }
 
         private void PopulateLocationsCombo()
@@ -116,7 +131,7 @@ namespace InventoryScanner.UI
             var columnList = new List<GridColumnAttrib>();
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Asset, "Asset #"));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Serial, "Serial"));
-            columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Location, "Munis Location", AttributeInstances.MunisAttributes.Locations, ColumnFormatType.AttributeDisplayMemberOnly));
+            columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Location, "Munis Location", AttributeInstances.MunisAttributes.MunisToAssetLocations, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Department, "Munis Department"));
             columnList.Add(new GridColumnAttrib(MunisFixedAssetTable.Description, "Munis Description"));
             //   columnList.Add(new GridColumnAttrib(DeviceTable.Description, "Asset Description"));
@@ -124,7 +139,7 @@ namespace InventoryScanner.UI
             columnList.Add(new GridColumnAttrib(DeviceTable.DeviceType, "Device Type", AttributeInstances.DeviceAttributes.EquipType, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(DeviceTable.CurrentUser, "Current User"));
             //      columnList.Add(new GridColumnAttrib(DeviceTable.Status, "Status", AttributeInstances.DeviceAttributes.StatusType, ColumnFormatType.AttributeDisplayMemberOnly));
-            columnList.Add(new GridColumnAttrib(ScanItemsTable.Locaton, "Scan Location"));
+            columnList.Add(new GridColumnAttrib(ScanItemsTable.Location, "Scan Location", AttributeInstances.MunisAttributes.MunisToAssetLocations, ColumnFormatType.AttributeDisplayMemberOnly));
             columnList.Add(new GridColumnAttrib(ScanItemsTable.Datestamp, "Scan Datestamp"));
             columnList.Add(new GridColumnAttrib(ScanItemsTable.ScanUser, "Scan User"));
             columnList.Add(new GridColumnAttrib(ScanItemsTable.ScanType, "Scan Type"));
@@ -394,12 +409,12 @@ namespace InventoryScanner.UI
             {
                 if (senderMenuItem.Checked)
                 {
-                    SetAllFilterMenuItems(true);
+                    SetAllFilterMenuItems(false);
                 }
             }
             else
             {
-                if (!senderMenuItem.Checked)
+                if (senderMenuItem.Checked)
                 {
                     FilterAllMenuItem.Checked = false;
                 }
@@ -417,5 +432,7 @@ namespace InventoryScanner.UI
         {
             ProcessWorksheet();
         }
+
+
     }
 }

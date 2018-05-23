@@ -65,7 +65,7 @@
 
         public const string AssetTag = "asset_tag";
         public const string Serial = "serial";
-        public const string Locaton = "scan_location";
+        public const string Location = "scan_location";
         public const string ScanType = "scan_type";
         public const string ScanUser = "scan_user";
         public const string Datestamp = "scan_date";
@@ -91,19 +91,18 @@
        
     }
 
+    
+    public static class DeviceCodesTable
+    {
+        public const string TableName = "dev_codes";
+        public const string Type = "type_name";
+        public const string HumanValue = "human_value";
+        public const string DBvalue = "db_value";
+        public const string Color = "hex_color";
+        public const string ID = "id";
+    }
 
-
-    //public static class DeviceCodesTable
-    //{
-    //    public const string TableName = "dev_codes";
-    //    public const string Type = "type_name";
-    //    public const string HumanValue = "human_value";
-    //    public const string DBvalue = "db_value";
-    //    public const string Color = "hex_color";
-    //    public const string ID = "id";
-    //}
-
-    //  public static class
+    
 
     public class ComboCodesBaseCols
     {

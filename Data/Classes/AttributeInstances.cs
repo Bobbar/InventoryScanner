@@ -20,7 +20,9 @@ namespace InventoryScanner.Data.Classes
 
         public static class MunisAttributes
         {
-            public static DbAttributes Locations;
+            public static DbAttributes MunisLocations;
+            public static DbAttributes MunisToAssetLocations;
+
         }
     }
 }

@@ -20,5 +20,7 @@ namespace InventoryScanner
 
         void SetScanInfo(Scan scan);
 
+        List<string> LocationFilters { get; }
+
     }
 }
