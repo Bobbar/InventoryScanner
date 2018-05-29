@@ -375,6 +375,7 @@ namespace InventoryScanner
                 {
                     foreach (DataRow localRow in localResults.Rows)
                     {
+                        // Try to find a row on the remote results which cooresponds with tht current local row.
                         var remoteRow = remoteResults.AsEnumerable().Where(r => r[ScanItemsTable.AssetTag].ToString() == localRow[MunisFixedAssetTable.Asset].ToString()).SingleOrDefault();
 
                         // If a matching entry on remote exists.
@@ -385,12 +386,8 @@ namespace InventoryScanner
                             {
                                 // Update local with remote.
                                 hasChanged = true;
-                                localRow[ScanItemsTable.Location] = remoteRow[ScanItemsTable.Location];
-                                localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
-                                localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
-                                localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
-                                localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
-                                localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
+
+                                UpdateLocalFromRemote(localRow, remoteRow);
                             }
                             else
                             {
@@ -402,12 +399,8 @@ namespace InventoryScanner
                                     {
                                         // Update local with remote.
                                         hasChanged = true;
-                                        localRow[ScanItemsTable.Location] = remoteRow[ScanItemsTable.Location];
-                                        localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
-                                        localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
-                                        localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
-                                        localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
-                                        localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
+
+                                        UpdateLocalFromRemote(localRow, remoteRow);
                                     }
                                 }
                                 else
@@ -426,12 +419,8 @@ namespace InventoryScanner
                                     {
                                         // Update local with remote.
                                         hasChanged = true;
-                                        localRow[ScanItemsTable.Location] = remoteRow[ScanItemsTable.Location];
-                                        localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
-                                        localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
-                                        localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
-                                        localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
-                                        localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
+
+                                        UpdateLocalFromRemote(localRow, remoteRow);
                                     }
                                 }
                             }
@@ -471,6 +460,16 @@ namespace InventoryScanner
                     return false;
                 }
             }
+        }
+
+        private void UpdateLocalFromRemote(DataRow localRow, DataRow remoteRow)
+        {
+            localRow[ScanItemsTable.Location] = remoteRow[ScanItemsTable.Location];
+            localRow[ScanItemsTable.ScanType] = remoteRow[ScanItemsTable.ScanType];
+            localRow[ScanItemsTable.ScanUser] = remoteRow[ScanItemsTable.ScanUser];
+            localRow[ScanItemsTable.Datestamp] = remoteRow[ScanItemsTable.Datestamp];
+            localRow[ScanItemsTable.ScanId] = remoteRow[ScanItemsTable.ScanId];
+            localRow[ScanItemsTable.ScanStatus] = remoteRow[ScanItemsTable.ScanStatus];
         }
 
         private void AddDuplicateScanEntries(DataRow localRow, DataRow remoteRow, DbTransaction remoteTrans)
@@ -554,18 +553,19 @@ namespace InventoryScanner
             return scanList;
         }
 
-        public List<string> GetListOfScannedTags()
+        public List<ScanItem> GetListOfScannedItems()
         {
-            var tagList = new List<string>();
+            var itemList = new List<ScanItem>();
 
             using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectCompletedScansByYear(currentScan.Datestamp.Year.ToString())))
             {
                 foreach (DataRow row in results.Rows)
                 {
-                    tagList.Add(row[ScanItemsTable.AssetTag].ToString());
+                    itemList.Add(new ScanItem(row));
                 }
             }
-            return tagList;
+            
+            return itemList;
         }
     }
 }

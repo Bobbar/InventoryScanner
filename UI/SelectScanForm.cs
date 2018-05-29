@@ -23,9 +23,20 @@ namespace InventoryScanner.UI
                 selectionDict.Add(scan, scan.ID + " - " + scan.User + " - " + scan.ScanLocation + " - " + scan.Datestamp);
             }
 
-            ScansCombo.DataSource = new BindingSource(selectionDict, null);
-            ScansCombo.DisplayMember = "Value";
-            ScansCombo.ValueMember = "Key";
+            if (selectionDict.Count > 0)
+            {
+                ScansCombo.DataSource = new BindingSource(selectionDict, null);
+                ScansCombo.DisplayMember = "Value";
+                ScansCombo.ValueMember = "Key";
+            }
+            else
+            {
+                ScansCombo.Items.Add("No scans found.");
+                ScansCombo.SelectedIndex = 0;
+                ScansCombo.Enabled = false;
+                AcceptScanButton.Enabled = false;
+            }
+
         }
 
         private void AcceptScanButton_Click(object sender, EventArgs e)

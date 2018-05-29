@@ -125,6 +125,10 @@ namespace InventoryScanner.Data.ClassMapping
                         {
                             prop.SetValue(obj, Convert.ToInt32(row[columnName]));
                         }
+                        else if (prop.PropertyType.BaseType == typeof(Enum))
+                        {
+                            prop.SetValue(obj, (Enum)Enum.Parse(prop.PropertyType, row[columnName].ToString()));
+                        }
                         else
                         {
                             // Throw an error if type is unexpected.
@@ -141,7 +145,8 @@ namespace InventoryScanner.Data.ClassMapping
                     {
                         // Recurse with nested DataMapping properties.
                         var nestObject = prop.GetValue(obj, null);
-                        MapProperty(nestObject, row);
+                        if (nestObject != null)
+                            MapProperty(nestObject, row);
                         // MapProperty(prop.GetValue(obj, null), row);
                     }
                 }

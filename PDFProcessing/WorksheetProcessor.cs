@@ -4,6 +4,7 @@ using iTextSharp.text.pdf.parser;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using InventoryScanner.Data.Classes;
 
 namespace InventoryScanner.PDFProcessing
 {
@@ -13,7 +14,7 @@ namespace InventoryScanner.PDFProcessing
         {
         }
 
-        public string FillWorksheet(List<string> tagList)
+        public string FillWorksheet(List<ScanItem> itemList)
         {
             using (var fileDialog = new OpenFileDialog())
             {
@@ -26,7 +27,7 @@ namespace InventoryScanner.PDFProcessing
 
                 if (fileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    return ProcessWorksheetFile(fileDialog.FileName, tagList);
+                    return ProcessWorksheetFile(fileDialog.FileName, itemList);
                 }
                 return null;
             }
@@ -36,14 +37,14 @@ namespace InventoryScanner.PDFProcessing
         /// Processes the specified worksheet file. Populates the 'verified' fields with the specified tag list.
         /// </summary>
         /// <param name="file"></param>
-        /// <param name="tagList"></param>
+        /// <param name="itemList"></param>
         /// <remarks>
         /// Credits and HUGE thanks to:
         /// https://stackoverflow.com/questions/23909893/getting-coordinates-of-string-using-itextextractionstrategy-and-locationtextextr
         /// and
         /// https://stackoverflow.com/questions/3992617/itextsharp-insert-text-to-an-existing-pdf
         /// </remarks>
-        private string ProcessWorksheetFile(string file, List<string> tagList)
+        private string ProcessWorksheetFile(string file, List<ScanItem> itemList)
         {
             // Create a modfied filename and path for the new PDF file.
             var fileInfo = new FileInfo(file);
@@ -69,15 +70,18 @@ namespace InventoryScanner.PDFProcessing
                 for (int page = 1; page <= pdfReader.NumberOfPages; page++)
                 {
                     // Set font for current page.
-                    var bFont = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    //var markFont = BaseFont.CreateFont(BaseFont.SYMBOL, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+                    var markFont = BaseFont.CreateFont(@"C:\Windows\Fonts\wingding.ttf", BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
+
+                    var infoFont = BaseFont.CreateFont(BaseFont.HELVETICA_OBLIQUE, BaseFont.CP1252, BaseFont.NOT_EMBEDDED);
                     content.SetColorFill(BaseColor.BLACK);
-                    content.SetFontAndSize(bFont, 10);
+                    content.SetFontAndSize(markFont, 10);
 
                     // Iterate through each tag in the tag list.
-                    foreach (var assetTag in tagList)
+                    foreach (var item in itemList)
                     {
                         // Create a new custom text location strategy instance for the current tag.
-                        var strategy = new MyLocationTextExtractionStrategy(assetTag);
+                        var strategy = new MyLocationTextExtractionStrategy(item.AssetTag);
 
                         // Search the page using the strategy. This will collect the coordinates
                         // of each instance of the asset tag.
@@ -88,11 +92,22 @@ namespace InventoryScanner.PDFProcessing
                         {
                             var location = strategy.TextLocations[0];
 
-                            // Add an "X" alined with the 'Verified' column on the worksheet.
-                            int verifyColumnXOffset = 60;
+                            // Add a bullet point and scan info aligned with the "Verified" column.
+                            int verifyColumnXOffset = 85;
                             int verifyColumnYOffset = 9;
+
                             content.BeginText();
-                            content.ShowTextAligned(1, "X", size.Right - verifyColumnXOffset, location.Rect.Top - verifyColumnYOffset, 0);
+
+                            // Bullet point.
+                            content.SetFontAndSize(markFont, 10);
+                            // content.ShowTextAligned(1, "·", size.Right - verifyColumnXOffset, location.Rect.Top - verifyColumnYOffset, 0);
+                            content.ShowTextAligned(1, "ü", size.Right - verifyColumnXOffset, location.Rect.Top - verifyColumnYOffset, 0);
+
+                            // Scan user and datestamp.
+                            content.SetFontAndSize(infoFont, 6);
+                            content.ShowTextAligned(0, item.ScanUser, size.Right - verifyColumnXOffset + 8, location.Rect.Top - 3, 0);
+                            content.ShowTextAligned(0, item.Datestamp.ToString(@"MM/dd/yy HH:mm tt"), size.Right - verifyColumnXOffset + 8, location.Rect.Top - 9, 0);
+
                             content.EndText();
                         }
                     }

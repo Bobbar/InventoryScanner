@@ -182,23 +182,27 @@ namespace InventoryScanner.UI
                 var savedScrollRow = ScanItemsGrid.FirstDisplayedScrollingRowIndex;
                 var savedHScrollPos = ScanItemsGrid.HorizontalScrollingOffset;
                 var savedSelectRow = (ScanItemsGrid.SelectedRows.Count > 0 ? ScanItemsGrid.SelectedRows[0].Index : -1);
+                var savedRowCount = ScanItemsGrid.Rows.Count;
 
                 ScanItemsGrid.Populate(data, ScanItemsGridColumns());
                 ScanItemsGrid.FastAutoSizeColumns();
                 SetRowColors();
 
-                if (savedSelectRow > 0)
+                // If the row count is unchanged, re-set the selected cells and scroll positions.
+                if (ScanItemsGrid.Rows.Count == savedRowCount)
                 {
-                    ScanItemsGrid.ClearSelection();
-                    ScanItemsGrid.CurrentCell = ScanItemsGrid.Rows[savedSelectRow].Cells[0];
-                    DisplayDetailsOfSelected();
+                    if (savedSelectRow > 0)
+                    {
+                        ScanItemsGrid.ClearSelection();
+                        ScanItemsGrid.CurrentCell = ScanItemsGrid.Rows[savedSelectRow].Cells[0];
+                        DisplayDetailsOfSelected();
+                    }
+
+                    ScanItemsGrid.HorizontalScrollingOffset = savedHScrollPos;
+
+                    if (savedScrollRow > 0)
+                        ScanItemsGrid.FirstDisplayedScrollingRowIndex = savedScrollRow;
                 }
-
-                ScanItemsGrid.HorizontalScrollingOffset = savedHScrollPos;
-
-                if (savedScrollRow > 0)
-                    ScanItemsGrid.FirstDisplayedScrollingRowIndex = savedScrollRow;
-
                 ScanItemsGrid.ResumeLayout();
             }
         }
@@ -295,8 +299,8 @@ namespace InventoryScanner.UI
             controller.PauseSync();
 
             var processor = new WorksheetProcessor();
-            var tagList = controller.GetListOfScannedTags();
-            var workSheetPath = processor.FillWorksheet(tagList);
+            var itemList = controller.GetListOfScannedItems();
+            var workSheetPath = processor.FillWorksheet(itemList);
 
             controller.ResumeSync();
 

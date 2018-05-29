@@ -59,6 +59,11 @@ namespace InventoryScanner.Data.Classes
 
         }
 
+        public ScanItem(DataRow data) : base(data)
+        {
+
+        }
+
 
     }
 }
