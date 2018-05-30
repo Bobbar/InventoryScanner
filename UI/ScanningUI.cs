@@ -109,15 +109,10 @@ namespace InventoryScanner.UI
 
             if (!string.IsNullOrEmpty(selectedAssetTag))
             {
-                DisplayDetails(selectedAssetTag);
-            }
-        }
-
-        private void DisplayDetails(string serial)
-        {
-            using (var detailData = controller.DetailOfAsset(serial))
-            {
-                PopulateControls(detailData);
+                using (var detailData = controller.DetailOfAsset(selectedAssetTag))
+                {
+                    PopulateControls(detailData);
+                }
             }
         }
 
@@ -190,6 +185,8 @@ namespace InventoryScanner.UI
                 SetRowColors();
 
                 ScanItemsGrid.ResumeLayout();
+
+                DisplayDetailsOfSelected();
             }
         }
 

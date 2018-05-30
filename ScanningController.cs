@@ -57,8 +57,7 @@ namespace InventoryScanner
                 munisResults.TableName = MunisFixedAssetTable.TableName;
 
                 CleanMunisFields(munisResults);
-
-
+                
                 CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, currentScan.ID);
 
                 SyncDataAsync();
