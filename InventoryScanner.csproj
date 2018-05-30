@@ -74,6 +74,7 @@
     <Compile Include="Helpers\DataGridHelpers\DataGridViewExtensions.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
+    <Compile Include="Helpers\DataGridHelpers\GridState.cs" />
     <Compile Include="LocationMismatchException.cs" />
     <Compile Include="PDFProcessing\RectAndText.cs" />
     <Compile Include="PDFProcessing\TextLocationExtractionStrategy.cs" />
