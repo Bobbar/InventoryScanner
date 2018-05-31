@@ -7,18 +7,7 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
+        
 
         #region Windows Form Designer generated code
 
@@ -166,9 +155,11 @@
             this.ScanItemsGrid.Size = new System.Drawing.Size(1238, 412);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
+            this.ScanItemsGrid.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScanItemsGrid_CellMouseClick);
             this.ScanItemsGrid.CellMouseDown += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScanItemsGrid_CellMouseDown);
             this.ScanItemsGrid.SelectionChanged += new System.EventHandler(this.ScanItemsGrid_SelectionChanged);
             this.ScanItemsGrid.Sorted += new System.EventHandler(this.ScanItemsGrid_Sorted);
+            this.ScanItemsGrid.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ScanItemsGrid_KeyUp);
             // 
             // RightClickMenu
             // 

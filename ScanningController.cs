@@ -12,21 +12,32 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
+using InventoryScanner.BarcodeScanning;
 
 namespace InventoryScanner
 {
-    public class ScanningController
+    public class ScanningController : IDisposable
     {
         private IScanning view;
         private Scan currentScan;
         private Timer syncTimer;
         private bool syncRunning = false;
+        private SerialPortReader portReader;
 
         public ScanningController(IScanning view)
         {
             this.view = view;
             view.SetController(this);
             InitSyncTimer();
+
+            portReader = new SerialPortReader("COM2");
+            portReader.NewScanReceived += PortReader_NewScanReceived;
+        }
+
+        private void PortReader_NewScanReceived(object sender, string e)
+        {
+            // TODO: Validate data
+            view.PopulateNewScan(e);
         }
 
         private void InitSyncTimer()
@@ -57,7 +68,7 @@ namespace InventoryScanner
                 munisResults.TableName = MunisFixedAssetTable.TableName;
 
                 CleanMunisFields(munisResults);
-                
+
                 CacheScanDetails(munisResults, MunisFixedAssetTable.Asset, assetResults, DeviceTable.Id, currentScan.ID);
 
                 SyncDataAsync();
@@ -293,6 +304,12 @@ namespace InventoryScanner
         {
             using (var itemDetail = DetailOfAsset(assetTag))
             {
+
+                if (itemDetail.Rows.Count < 1)
+                {
+                    throw new ItemNotFoundException(assetTag);
+                }
+
                 var itemRow = itemDetail.Rows[0];
 
                 // Return silently if the item has already been scanned.
@@ -563,8 +580,17 @@ namespace InventoryScanner
                     itemList.Add(new ScanItem(row));
                 }
             }
-            
+
             return itemList;
         }
+
+        public void Dispose()
+        {
+            syncTimer.Stop();
+            syncTimer.Dispose();
+            portReader.Dispose();
+
+        }
+
     }
 }

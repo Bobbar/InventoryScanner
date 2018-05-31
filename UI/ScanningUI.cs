@@ -103,6 +103,38 @@ namespace InventoryScanner.UI
             AssetTagTextBox.SetDBInfo(MunisFixedAssetTable.Asset);
         }
 
+        private void SelectGridItem(string assetTag)
+        {
+            int itemRowIndex = -1;
+
+            foreach (DataGridViewRow row in ScanItemsGrid.Rows)
+            {
+                var rowValue = row.Cells[MunisFixedAssetTable.Asset].Value;
+
+                if (rowValue != null && rowValue.ToString() == assetTag)
+                {
+                    itemRowIndex = row.Index;
+                }
+            }
+
+            if (itemRowIndex > 0)
+            {
+                ScanItemsGrid.ClearSelection();
+                ScanItemsGrid.Rows[itemRowIndex].Selected = true;
+
+                var scrollIndex = itemRowIndex - (int)(ScanItemsGrid.DisplayedRowCount(true) / 2);
+
+                if (scrollIndex > -1)
+                {
+                    ScanItemsGrid.FirstDisplayedScrollingRowIndex = scrollIndex;
+                }
+                else
+                {
+                    ScanItemsGrid.FirstDisplayedScrollingRowIndex = 0;
+                }
+            }
+        }
+
         private void DisplayDetailsOfSelected()
         {
             var selectedAssetTag = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Asset);
@@ -112,6 +144,25 @@ namespace InventoryScanner.UI
                 using (var detailData = controller.DetailOfAsset(selectedAssetTag))
                 {
                     PopulateControls(detailData);
+                }
+            }
+        }
+
+        private void DisplayDetailsOfAsset(string assetTag)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => DisplayDetailsOfAsset(assetTag));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(assetTag))
+                {
+                    using (var detailData = controller.DetailOfAsset(assetTag))
+                    {
+                        PopulateControls(detailData);
+                    }
                 }
             }
         }
@@ -332,6 +383,44 @@ namespace InventoryScanner.UI
             }
         }
 
+        public void SubmitNewScan(string scannedAsset, ScanType scanType = ScanType.Scanned)
+        {
+            if (!string.IsNullOrEmpty(scannedAsset))
+            {
+                try
+                {
+                    controller.SubmitNewScanItem(scannedAsset, scanType);
+                }
+                catch (LocationMismatchException lme)
+                {
+                    var prompt = "Asset Tag: " + lme.ItemAssetTag +
+                        " was scanned at an unexpected location. \n \n Expected location: " +
+                        lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
+                }
+                catch (ItemNotFoundException infe)
+                {
+                    var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Asset Tag Not Found", this);
+                }
+            }
+        }
+
+        public void PopulateNewScan(string data)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => PopulateNewScan(data));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                DisplayDetailsOfAsset(data);
+                SelectGridItem(data);
+                SubmitNewScan(data, ScanType.Scanned);
+            }
+        }
+
         private void ScanLocationCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ScanLocationCombo.SelectedIndex > -1 && controller != null)
@@ -347,12 +436,13 @@ namespace InventoryScanner.UI
 
         private void ScanItemsGrid_SelectionChanged(object sender, EventArgs e)
         {
-            DisplayDetailsOfSelected();
+            // DisplayDetailsOfSelected();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            controller.SyncDataAsync();
+            // var portReader =
+            //  portReader.Test();
         }
 
         private void SubmitScanButton_Click(object sender, EventArgs e)
@@ -361,17 +451,7 @@ namespace InventoryScanner.UI
 
             if (!string.IsNullOrEmpty(selectedAssetTag))
             {
-                try
-                {
-                    controller.SubmitNewScanItem(selectedAssetTag, ScanType.Scanned);
-                }
-                catch (LocationMismatchException lme)
-                {
-                    var prompt = "Asset Tag: " + lme.ItemAssetTag +
-                        " was scanned at an unexpected location. \n \n Expected location: " +
-                        lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
-                }
+                SubmitNewScan(selectedAssetTag, ScanType.Hand);
             }
         }
 
@@ -423,6 +503,30 @@ namespace InventoryScanner.UI
         private void ScanItemsGrid_Sorted(object sender, EventArgs e)
         {
             SetRowColors();
+        }
+
+        private void ScanItemsGrid_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            DisplayDetailsOfSelected();
+        }
+
+        private void ScanItemsGrid_KeyUp(object sender, KeyEventArgs e)
+        {
+            DisplayDetailsOfSelected();
+        }
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+                controller.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
