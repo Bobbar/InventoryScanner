@@ -8,7 +8,7 @@ namespace InventoryScanner.Data.Classes
 {
     public enum ScanType
     {
-        Hand,
+        Manual,
         Scanned
     }
 }

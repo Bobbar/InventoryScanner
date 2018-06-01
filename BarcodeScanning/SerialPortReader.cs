@@ -7,7 +7,7 @@ using System.IO.Ports;
 
 namespace InventoryScanner.BarcodeScanning
 {
-    public class SerialPortReader : IDisposable
+    public class SerialPortReader : IDisposable, IScannerInput
     {
         private SerialPort port;
 

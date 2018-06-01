@@ -8,7 +8,7 @@ using InventoryScanner.Data.Classes;
 
 namespace InventoryScanner
 {
-    public interface IScanning
+    public interface IScanningUI
     {
         void SetController(ScanningController controller);
 
@@ -22,6 +22,6 @@ namespace InventoryScanner
 
         List<string> LocationFilters { get; }
 
-        void PopulateNewScan(string data);
+        void PopulateNewScan(string assetTag, DataTable itemDetail);
     }
 }

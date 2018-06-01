@@ -18,26 +18,34 @@ namespace InventoryScanner
 {
     public class ScanningController : IDisposable
     {
-        private IScanning view;
+        private IScanningUI view;
         private Scan currentScan;
         private Timer syncTimer;
         private bool syncRunning = false;
-        private SerialPortReader portReader;
+        private IScannerInput scannerInput;
+        public event EventHandler<Exception> ExceptionOccured;
 
-        public ScanningController(IScanning view)
+        public ScanningController(IScanningUI view)
         {
             this.view = view;
             view.SetController(this);
             InitSyncTimer();
 
-            portReader = new SerialPortReader("COM2");
-            portReader.NewScanReceived += PortReader_NewScanReceived;
+            scannerInput = new SerialPortReader("COM2");
+            scannerInput.NewScanReceived += ScannerInput_NewScanReceived;
         }
 
-        private void PortReader_NewScanReceived(object sender, string e)
+        private void OnExceptionOccured(Exception ex)
+        {
+            ExceptionOccured.Invoke(this, ex);
+        }
+
+        private void ScannerInput_NewScanReceived(object sender, string e)
         {
             // TODO: Validate data
-            view.PopulateNewScan(e);
+            // view.PopulateNewScan(e);
+
+            SubmitNewScanItem(e, ScanType.Scanned);
         }
 
         private void InitSyncTimer()
@@ -307,7 +315,8 @@ namespace InventoryScanner
 
                 if (itemDetail.Rows.Count < 1)
                 {
-                    throw new ItemNotFoundException(assetTag);
+                    OnExceptionOccured(new ItemNotFoundException(assetTag));
+                    return;
                 }
 
                 var itemRow = itemDetail.Rows[0];
@@ -340,6 +349,7 @@ namespace InventoryScanner
                 var updatedRows = DBFactory.GetSqliteDatabase(currentScan.ID).UpdateTable(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag), itemDetail);
 
                 LoadCurrentScanItems(view.LocationFilters);
+                view.PopulateNewScan(assetTag, itemDetail);
 
                 // Throw mismatch exception after adding the scan to the DB.
                 if (locationMismatch)
@@ -347,7 +357,7 @@ namespace InventoryScanner
                     var expectedLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[itemRow[MunisFixedAssetTable.Location].ToString()];
                     var scanLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[currentScan.MunisLocation.MunisCode];
 
-                    throw new LocationMismatchException(expectedLocation.DisplayValue, scanLocation.DisplayValue, assetTag);
+                    OnExceptionOccured(new LocationMismatchException(expectedLocation.DisplayValue, scanLocation.DisplayValue, assetTag));
                 }
             }
         }
@@ -588,7 +598,7 @@ namespace InventoryScanner
         {
             syncTimer.Stop();
             syncTimer.Dispose();
-            portReader.Dispose();
+            scannerInput.Dispose();
 
         }
 

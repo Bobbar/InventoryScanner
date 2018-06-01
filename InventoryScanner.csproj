@@ -76,6 +76,7 @@
     <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridState.cs" />
+    <Compile Include="IScannerInput.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="LocationMismatchException.cs" />
     <Compile Include="PDFProcessing\RectAndText.cs" />

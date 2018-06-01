@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace InventoryScanner.UI
 {
-    public partial class ScanningUI : Form, IScanning
+    public partial class ScanningUI : Form, IScanningUI
     {
         private ScanningController controller;
         private Location location;
@@ -54,6 +54,35 @@ namespace InventoryScanner.UI
         public void SetController(ScanningController controller)
         {
             this.controller = controller;
+            this.controller.ExceptionOccured += Controller_ExceptionOccured;
+        }
+
+        private void Controller_ExceptionOccured(object sender, Exception e)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => Controller_ExceptionOccured(sender, e));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                if (e is LocationMismatchException)
+                {
+                    var lme = (LocationMismatchException)e;
+
+                    var prompt = "Asset Tag: " + lme.ItemAssetTag +
+                        " was scanned at an unexpected location. \n \n Expected location: " +
+                        lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
+                }
+                else if (e is ItemNotFoundException)
+                {
+                    var infe = (ItemNotFoundException)e;
+
+                    var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Asset Tag Not Found", this);
+                }
+            }
         }
 
         private void ScanningUI_Load(object sender, EventArgs e)
@@ -150,19 +179,11 @@ namespace InventoryScanner.UI
 
         private void DisplayDetailsOfAsset(string assetTag)
         {
-            if (this.InvokeRequired)
+            if (!string.IsNullOrEmpty(assetTag))
             {
-                var del = new Action(() => DisplayDetailsOfAsset(assetTag));
-                this.BeginInvoke(del);
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(assetTag))
+                using (var detailData = controller.DetailOfAsset(assetTag))
                 {
-                    using (var detailData = controller.DetailOfAsset(assetTag))
-                    {
-                        PopulateControls(detailData);
-                    }
+                    PopulateControls(detailData);
                 }
             }
         }
@@ -383,41 +404,32 @@ namespace InventoryScanner.UI
             }
         }
 
-        public void SubmitNewScan(string scannedAsset, ScanType scanType = ScanType.Scanned)
+        public void SubmitManualScan()
         {
-            if (!string.IsNullOrEmpty(scannedAsset))
+            var enteredAssetTag = AssetTagTextBox.Text.Trim();
+
+            if (!string.IsNullOrEmpty(enteredAssetTag))
             {
-                try
+                var prompt = OtherFunctions.Message("Submit new manual scan for Tag # " + enteredAssetTag + "?", MessageBoxButtons.YesNo, MessageBoxIcon.Question, "Manual Scan", this);
+
+                if (prompt == DialogResult.Yes)
                 {
-                    controller.SubmitNewScanItem(scannedAsset, scanType);
-                }
-                catch (LocationMismatchException lme)
-                {
-                    var prompt = "Asset Tag: " + lme.ItemAssetTag +
-                        " was scanned at an unexpected location. \n \n Expected location: " +
-                        lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
-                }
-                catch (ItemNotFoundException infe)
-                {
-                    var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Asset Tag Not Found", this);
+                    controller.SubmitNewScanItem(enteredAssetTag, ScanType.Manual);
                 }
             }
         }
 
-        public void PopulateNewScan(string data)
+        public void PopulateNewScan(string assetTag, DataTable itemDetail)
         {
             if (this.InvokeRequired)
             {
-                var del = new Action(() => PopulateNewScan(data));
+                var del = new Action(() => PopulateNewScan(assetTag, itemDetail));
                 this.BeginInvoke(del);
             }
             else
             {
-                DisplayDetailsOfAsset(data);
-                SelectGridItem(data);
-                SubmitNewScan(data, ScanType.Scanned);
+                PopulateControls(itemDetail);
+                SelectGridItem(assetTag);
             }
         }
 
@@ -447,12 +459,7 @@ namespace InventoryScanner.UI
 
         private void SubmitScanButton_Click(object sender, EventArgs e)
         {
-            var selectedAssetTag = ScanItemsGrid.CurrentRowStringValue(MunisFixedAssetTable.Asset);
-
-            if (!string.IsNullOrEmpty(selectedAssetTag))
-            {
-                SubmitNewScan(selectedAssetTag, ScanType.Hand);
-            }
+            SubmitManualScan();
         }
 
         private void ScanItemsGrid_CellMouseDown(object sender, DataGridViewCellMouseEventArgs e)
