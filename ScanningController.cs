@@ -1,9 +1,9 @@
-﻿using InventoryScanner.Data;
+﻿using InventoryScanner.BarcodeScanning;
+using InventoryScanner.Data;
 using InventoryScanner.Data.Classes;
 using InventoryScanner.Data.Functions;
 using InventoryScanner.Data.Munis;
 using InventoryScanner.Data.Tables;
-using InventoryScanner.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
-using InventoryScanner.BarcodeScanning;
 
 namespace InventoryScanner
 {
@@ -23,6 +22,7 @@ namespace InventoryScanner
         private Timer syncTimer;
         private bool syncRunning = false;
         private IScannerInput scannerInput;
+
         public event EventHandler<Exception> ExceptionOccured;
 
         public ScanningController(IScanningUI view)
@@ -43,7 +43,6 @@ namespace InventoryScanner
         private void ScannerInput_NewScanReceived(object sender, string e)
         {
             // TODO: Validate data
-            // view.PopulateNewScan(e);
 
             SubmitNewScanItem(e, ScanType.Scanned);
         }
@@ -62,13 +61,11 @@ namespace InventoryScanner
 
         public async void StartScan(Location location, DateTime datestamp, string scanEmployee)
         {
-
             currentScan = InsertNewScan(location, datestamp, scanEmployee);
 
             //var scanItemsQuery = Queries.Munis.SelectScanItemsByDepartment(location.DepartmentCode);
             //var scanItemsQuery = Queries.Munis.SelectScanItemsByLocation(location.MunisCode);
             var scanItemsQuery = Queries.Munis.SelectAllScanItems();
-
 
             using (var munisResults = await MunisDatabase.ReturnSqlTableAsync(scanItemsQuery))
             using (var assetResults = GetAssetManagerResults(munisResults))
@@ -83,9 +80,8 @@ namespace InventoryScanner
 
                 LoadCurrentScanItems();
             }
+
             syncTimer.Start();
-
-
         }
 
         public void StartScan(Scan scan)
@@ -206,75 +202,6 @@ namespace InventoryScanner
             }
         }
 
-        private DataTable JoinResults(DataTable munisResults, DataTable assetResults)
-        {
-            var joinedResults = new DataTable();
-
-            foreach (DataColumn column in munisResults.Columns)
-            {
-                joinedResults.Columns.Add(column.ColumnName, column.DataType);
-            }
-
-            foreach (DataColumn column in assetResults.Columns)
-            {
-                joinedResults.Columns.Add(column.ColumnName, column.DataType);
-            }
-
-            //// Works but doesn't include missing munis rows.
-            //var joinQuery = from munis in munisResults.AsEnumerable()
-            //                join asset in assetResults.AsEnumerable() on munis.Field<string>(MunisFixedAssetTable.Serial)?.ToString().Trim() equals asset.Field<string>(DeviceTable.Serial)
-            //                where !string.IsNullOrEmpty(munis.Field<string>(MunisFixedAssetTable.Serial))
-            //                select joinedResults.LoadDataRow(BuildDataRowObject(munis, asset, joinedResults), false);
-
-            //FINALLY!!!
-            var joinQuery = from munis in munisResults.AsEnumerable()
-                            join asset in assetResults.AsEnumerable() on munis.Field<string>(MunisFixedAssetTable.Serial)?.ToString().Trim() equals asset.Field<string>(DeviceTable.Serial)
-                            into joined
-                            from jt in joined.DefaultIfEmpty()
-                            select joinedResults.LoadDataRow(BuildDataRowObject(munis, jt, joinedResults), false);
-
-            joinedResults = joinQuery.CopyToDataTable();
-
-            return joinedResults;
-        }
-
-        private object[] BuildDataRowObject(DataRow munisRow, DataRow assetRow, DataTable targetTable)
-        {
-            var columnCount = targetTable.Columns.Count;//munisRow.Table.Columns.Count + assetRow.Table.Columns.Count;
-            var tmpObject = new object[columnCount];
-            //int columnSeq = 0;
-
-            for (int i = 0; i < targetTable.Columns.Count; i++)
-            {
-                DataColumn column = targetTable.Columns[i];
-
-                if (munisRow != null)
-                {
-                    if (munisRow.Table.Columns.Contains(column.ColumnName))
-                    {
-                        if (munisRow[column.ColumnName] is string)
-                        {
-                            tmpObject[i] = munisRow[column.ColumnName].ToString().Trim();
-                        }
-                        else
-                        {
-                            tmpObject[i] = munisRow[column.ColumnName];
-                        }
-                    }
-                }
-
-                if (assetRow != null)
-                {
-                    if (assetRow.Table.Columns.Contains(column.ColumnName))
-                    {
-                        tmpObject[i] = assetRow[column.ColumnName];
-                    }
-                }
-            }
-
-            return tmpObject;
-        }
-
         private DataTable GetAssetManagerResults(DataTable munisResults)
         {
             var assetTable = new DataTable();
@@ -312,7 +239,6 @@ namespace InventoryScanner
         {
             using (var itemDetail = DetailOfAsset(assetTag))
             {
-
                 if (itemDetail.Rows.Count < 1)
                 {
                     OnExceptionOccured(new ItemNotFoundException(assetTag));
@@ -382,7 +308,6 @@ namespace InventoryScanner
             {
                 syncRunning = false;
             }
-
         }
 
         private bool TrySyncData()
@@ -599,8 +524,6 @@ namespace InventoryScanner
             syncTimer.Stop();
             syncTimer.Dispose();
             scannerInput.Dispose();
-
         }
-
     }
 }
