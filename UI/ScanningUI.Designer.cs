@@ -19,7 +19,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanningUI));
             this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -27,7 +26,6 @@
             this.RightClickMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ResolveDupMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.SelectPreviousScanButton = new System.Windows.Forms.Button();
             this.StartScanButton = new System.Windows.Forms.Button();
             this.ScanEmployeeTextBox = new System.Windows.Forms.TextBox();
             this.ScanDateTimeTextBox = new System.Windows.Forms.TextBox();
@@ -71,6 +69,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectPreviousScanToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.processWorksheetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filtersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FilterAllMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -96,8 +95,8 @@
             // 
             // MainLayoutPanel
             // 
-            this.MainLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.MainLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MainLayoutPanel.ColumnCount = 1;
             this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -107,9 +106,9 @@
             this.MainLayoutPanel.Location = new System.Drawing.Point(0, 27);
             this.MainLayoutPanel.Name = "MainLayoutPanel";
             this.MainLayoutPanel.RowCount = 3;
-            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
+            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 95F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 350F));
+            this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 332F));
             this.MainLayoutPanel.Size = new System.Drawing.Size(1292, 925);
             this.MainLayoutPanel.TabIndex = 1;
             // 
@@ -120,9 +119,9 @@
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox1.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox1.Location = new System.Drawing.Point(3, 113);
+            this.groupBox1.Location = new System.Drawing.Point(3, 98);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1286, 459);
+            this.groupBox1.Size = new System.Drawing.Size(1286, 492);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items To Scan";
@@ -146,15 +145,14 @@
             this.ScanItemsGrid.Location = new System.Drawing.Point(3, 22);
             this.ScanItemsGrid.MultiSelect = false;
             this.ScanItemsGrid.Name = "ScanItemsGrid";
+            this.ScanItemsGrid.ReadOnly = true;
             this.ScanItemsGrid.RowHeadersVisible = false;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ScanItemsGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.ScanItemsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ScanItemsGrid.ShowCellErrors = false;
             this.ScanItemsGrid.ShowCellToolTips = false;
             this.ScanItemsGrid.ShowEditingIcon = false;
             this.ScanItemsGrid.ShowRowErrors = false;
-            this.ScanItemsGrid.Size = new System.Drawing.Size(1280, 434);
+            this.ScanItemsGrid.Size = new System.Drawing.Size(1280, 467);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
             this.ScanItemsGrid.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScanItemsGrid_CellMouseClick);
@@ -178,7 +176,6 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.SelectPreviousScanButton);
             this.groupBox2.Controls.Add(this.StartScanButton);
             this.groupBox2.Controls.Add(this.ScanEmployeeTextBox);
             this.groupBox2.Controls.Add(this.ScanDateTimeTextBox);
@@ -190,30 +187,18 @@
             this.groupBox2.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1286, 104);
+            this.groupBox2.Size = new System.Drawing.Size(1286, 89);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Scan Info";
-            // 
-            // SelectPreviousScanButton
-            // 
-            this.SelectPreviousScanButton.BackColor = System.Drawing.Color.DimGray;
-            this.SelectPreviousScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SelectPreviousScanButton.Location = new System.Drawing.Point(838, 23);
-            this.SelectPreviousScanButton.Name = "SelectPreviousScanButton";
-            this.SelectPreviousScanButton.Size = new System.Drawing.Size(230, 28);
-            this.SelectPreviousScanButton.TabIndex = 9;
-            this.SelectPreviousScanButton.Text = "Select Previous Scan";
-            this.SelectPreviousScanButton.UseVisualStyleBackColor = false;
-            this.SelectPreviousScanButton.Click += new System.EventHandler(this.SelectPreviousScanButton_Click);
             // 
             // StartScanButton
             // 
             this.StartScanButton.BackColor = System.Drawing.Color.DimGray;
             this.StartScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.StartScanButton.Location = new System.Drawing.Point(838, 57);
+            this.StartScanButton.Location = new System.Drawing.Point(835, 43);
             this.StartScanButton.Name = "StartScanButton";
-            this.StartScanButton.Size = new System.Drawing.Size(230, 28);
+            this.StartScanButton.Size = new System.Drawing.Size(186, 28);
             this.StartScanButton.TabIndex = 8;
             this.StartScanButton.Text = "Start New Scan";
             this.StartScanButton.UseVisualStyleBackColor = false;
@@ -221,14 +206,14 @@
             // 
             // ScanEmployeeTextBox
             // 
-            this.ScanEmployeeTextBox.Location = new System.Drawing.Point(600, 51);
+            this.ScanEmployeeTextBox.Location = new System.Drawing.Point(583, 45);
             this.ScanEmployeeTextBox.Name = "ScanEmployeeTextBox";
             this.ScanEmployeeTextBox.Size = new System.Drawing.Size(225, 26);
             this.ScanEmployeeTextBox.TabIndex = 7;
             // 
             // ScanDateTimeTextBox
             // 
-            this.ScanDateTimeTextBox.Location = new System.Drawing.Point(358, 51);
+            this.ScanDateTimeTextBox.Location = new System.Drawing.Point(341, 45);
             this.ScanDateTimeTextBox.Name = "ScanDateTimeTextBox";
             this.ScanDateTimeTextBox.Size = new System.Drawing.Size(225, 26);
             this.ScanDateTimeTextBox.TabIndex = 6;
@@ -236,7 +221,7 @@
             // ScanLocationCombo
             // 
             this.ScanLocationCombo.FormattingEnabled = true;
-            this.ScanLocationCombo.Location = new System.Drawing.Point(31, 51);
+            this.ScanLocationCombo.Location = new System.Drawing.Point(14, 45);
             this.ScanLocationCombo.Name = "ScanLocationCombo";
             this.ScanLocationCombo.Size = new System.Drawing.Size(310, 27);
             this.ScanLocationCombo.TabIndex = 3;
@@ -245,7 +230,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(596, 29);
+            this.label16.Location = new System.Drawing.Point(579, 23);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(81, 19);
             this.label16.TabIndex = 2;
@@ -254,7 +239,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(354, 28);
+            this.label15.Location = new System.Drawing.Point(337, 22);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(90, 19);
             this.label15.TabIndex = 1;
@@ -263,7 +248,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(27, 29);
+            this.label14.Location = new System.Drawing.Point(10, 23);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(81, 19);
             this.label14.TabIndex = 0;
@@ -277,11 +262,11 @@
             this.ScanLayoutTable.Controls.Add(this.groupBox3, 0, 0);
             this.ScanLayoutTable.Controls.Add(this.groupBox6, 1, 0);
             this.ScanLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 578);
+            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 596);
             this.ScanLayoutTable.Name = "ScanLayoutTable";
             this.ScanLayoutTable.RowCount = 1;
             this.ScanLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ScanLayoutTable.Size = new System.Drawing.Size(1286, 344);
+            this.ScanLayoutTable.Size = new System.Drawing.Size(1286, 326);
             this.ScanLayoutTable.TabIndex = 2;
             // 
             // groupBox3
@@ -294,7 +279,7 @@
             this.groupBox3.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(454, 338);
+            this.groupBox3.Size = new System.Drawing.Size(454, 320);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scanning";
@@ -303,7 +288,7 @@
             // 
             this.ClearButton.BackColor = System.Drawing.Color.DimGray;
             this.ClearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.ClearButton.Location = new System.Drawing.Point(44, 271);
+            this.ClearButton.Location = new System.Drawing.Point(44, 253);
             this.ClearButton.Name = "ClearButton";
             this.ClearButton.Size = new System.Drawing.Size(349, 37);
             this.ClearButton.TabIndex = 3;
@@ -349,7 +334,7 @@
             this.groupBox6.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox6.Location = new System.Drawing.Point(463, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(820, 338);
+            this.groupBox6.Size = new System.Drawing.Size(820, 320);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Current Item Info";
@@ -366,7 +351,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(814, 313);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(814, 295);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox4
@@ -386,14 +371,14 @@
             this.groupBox4.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(371, 307);
+            this.groupBox4.Size = new System.Drawing.Size(371, 289);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Munis";
             // 
             // MunisPurchaseDtTextBox
             // 
-            this.MunisPurchaseDtTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.MunisPurchaseDtTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MunisPurchaseDtTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisPurchaseDtTextBox.Location = new System.Drawing.Point(18, 250);
@@ -404,7 +389,7 @@
             // 
             // MunisDepartmentTextBox
             // 
-            this.MunisDepartmentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.MunisDepartmentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MunisDepartmentTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisDepartmentTextBox.Location = new System.Drawing.Point(19, 199);
@@ -415,7 +400,7 @@
             // 
             // MunisLocationTextBox
             // 
-            this.MunisLocationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.MunisLocationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MunisLocationTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisLocationTextBox.Location = new System.Drawing.Point(19, 148);
@@ -426,7 +411,7 @@
             // 
             // MunisSerialTextBox
             // 
-            this.MunisSerialTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.MunisSerialTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MunisSerialTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisSerialTextBox.Location = new System.Drawing.Point(19, 97);
@@ -437,7 +422,7 @@
             // 
             // MunisDescriptionTextBox
             // 
-            this.MunisDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.MunisDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MunisDescriptionTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisDescriptionTextBox.Location = new System.Drawing.Point(18, 46);
@@ -512,14 +497,14 @@
             this.groupBox5.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox5.Location = new System.Drawing.Point(380, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(431, 307);
+            this.groupBox5.Size = new System.Drawing.Size(431, 289);
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Asset Manager";
             // 
             // AssetStatusTextBox
             // 
-            this.AssetStatusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AssetStatusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AssetStatusTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetStatusTextBox.Location = new System.Drawing.Point(217, 250);
@@ -530,7 +515,7 @@
             // 
             // AssetCurUserTextBox
             // 
-            this.AssetCurUserTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AssetCurUserTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AssetCurUserTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetCurUserTextBox.Location = new System.Drawing.Point(217, 199);
@@ -559,7 +544,7 @@
             // 
             // AssetLocationTextBox
             // 
-            this.AssetLocationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AssetLocationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AssetLocationTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetLocationTextBox.Location = new System.Drawing.Point(19, 148);
@@ -570,7 +555,7 @@
             // 
             // AssetSerialTextBox
             // 
-            this.AssetSerialTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AssetSerialTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AssetSerialTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetSerialTextBox.Location = new System.Drawing.Point(19, 97);
@@ -581,7 +566,7 @@
             // 
             // AssetDescriptionTextBox
             // 
-            this.AssetDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.AssetDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AssetDescriptionTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetDescriptionTextBox.Location = new System.Drawing.Point(19, 46);
@@ -667,16 +652,24 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectPreviousScanToolStripMenuItem,
             this.processWorksheetToolStripMenuItem});
             this.fileToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // selectPreviousScanToolStripMenuItem
+            // 
+            this.selectPreviousScanToolStripMenuItem.Name = "selectPreviousScanToolStripMenuItem";
+            this.selectPreviousScanToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.selectPreviousScanToolStripMenuItem.Text = "Select Previous Scan";
+            this.selectPreviousScanToolStripMenuItem.Click += new System.EventHandler(this.selectPreviousScanToolStripMenuItem_Click);
+            // 
             // processWorksheetToolStripMenuItem
             // 
             this.processWorksheetToolStripMenuItem.Name = "processWorksheetToolStripMenuItem";
-            this.processWorksheetToolStripMenuItem.Size = new System.Drawing.Size(173, 22);
+            this.processWorksheetToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
             this.processWorksheetToolStripMenuItem.Text = "Process Worksheet";
             this.processWorksheetToolStripMenuItem.Click += new System.EventHandler(this.processWorksheetToolStripMenuItem_Click);
             // 
@@ -845,7 +838,6 @@
         private System.Windows.Forms.Button StartScanButton;
         private System.Windows.Forms.ContextMenuStrip RightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem ResolveDupMenuItem;
-        private System.Windows.Forms.Button SelectPreviousScanButton;
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem processWorksheetToolStripMenuItem;
@@ -857,6 +849,7 @@
         private System.Windows.Forms.ToolStripMenuItem FilterOCMenuItem;
         private System.Windows.Forms.ToolStripMenuItem FilterACMenuItem;
         private System.Windows.Forms.ToolStripMenuItem FilterDUMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectPreviousScanToolStripMenuItem;
     }
 }
 

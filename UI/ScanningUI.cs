@@ -196,7 +196,6 @@ namespace InventoryScanner.UI
                     PopulateControls(detailData);
                 }
             }
-
         }
 
         private void PopulateControls(DataTable data)
@@ -238,7 +237,6 @@ namespace InventoryScanner.UI
             ScanDateTimeTextBox.Enabled = false;
             ScanEmployeeTextBox.Enabled = false;
             StartScanButton.Enabled = false;
-            SelectPreviousScanButton.Enabled = false;
         }
 
         public void StartScan()
@@ -261,6 +259,14 @@ namespace InventoryScanner.UI
                 var gridState = new GridState(ScanItemsGrid);
 
                 ScanItemsGrid.Populate(data, ScanItemsGridColumns());
+
+                // Bold tag and serial columns.
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Asset].DefaultCellStyle.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Asset].HeaderCell.Style.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Serial].DefaultCellStyle.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Serial].HeaderCell.Style.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+
                 ScanItemsGrid.FastAutoSizeColumns();
 
                 gridState.RestoreState();
@@ -552,5 +558,9 @@ namespace InventoryScanner.UI
             controlParser.ClearFields();
         }
 
+        private void selectPreviousScanToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectPreviousScan();
+        }
     }
 }

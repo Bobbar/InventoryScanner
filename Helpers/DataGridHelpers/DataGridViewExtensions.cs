@@ -35,7 +35,7 @@ namespace InventoryScanner.Helpers.DataGridHelpers
             grid.ClipboardCopyMode = originalCopyMode;
         }
 
-       
+
         /// <summary>
         /// Returns the object value of the cell in the current row at the specified column.
         /// </summary>
@@ -156,8 +156,19 @@ namespace InventoryScanner.Helpers.DataGridHelpers
                     // Make sure the Linq query returned results.
                     if (rowStringCollection.Length > 0)
                     {
+                        // Determine active row font style.
+                        Font rowFont;
+                        if (targetGrid.Columns[c].DefaultCellStyle.Font == null)
+                        {
+                            rowFont = targetGrid.Columns[c].InheritedStyle.Font;
+                        }
+                        else
+                        {
+                            rowFont = targetGrid.Columns[c].DefaultCellStyle.Font;
+                        }
+
                         // Measure all the strings in the column.
-                        var rowStringSizes = MeasureStrings(rowStringCollection, gfx, targetGrid.DefaultCellStyle.Font);
+                        var rowStringSizes = MeasureStrings(rowStringCollection, gfx, rowFont);
 
                         // Sort the array by string widths.
                         rowStringSizes = rowStringSizes.OrderBy((x) => x.Width).ToArray();
@@ -165,9 +176,20 @@ namespace InventoryScanner.Helpers.DataGridHelpers
                         // Get the last and longest string in the array.
                         var longestStringSize = rowStringSizes.Last();
 
-                        // Measure the width of the header text.
-                        var headerSize = gfx.MeasureString(targetGrid.Columns[c].HeaderText, targetGrid.ColumnHeadersDefaultCellStyle.Font);
+                        // Determine active header font style.
+                        Font headerFont;
+                        if (targetGrid.Columns[c].HeaderCell.Style.Font == null)
+                        {
+                            headerFont = targetGrid.Columns[c].HeaderCell.InheritedStyle.Font;
+                        }
+                        else
+                        {
+                            headerFont = targetGrid.Columns[c].HeaderCell.Style.Font;
+                        }
 
+                        // Measure the width of the header text.
+                        var headerSize = gfx.MeasureString(targetGrid.Columns[c].HeaderText, headerFont);
+                        
                         // If the longest string width is larger than the header width, set to the new column width.
                         if (longestStringSize.Width > (int)headerSize.Width)
                         {
