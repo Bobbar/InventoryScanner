@@ -151,15 +151,25 @@ namespace InventoryScanner.UI
                 ScanItemsGrid.ClearSelection();
                 ScanItemsGrid.Rows[itemRowIndex].Selected = true;
 
-                var scrollIndex = itemRowIndex - (int)(ScanItemsGrid.DisplayedRowCount(true) / 2);
+                // If the item row index is outside the currenly displayed rows,
+                // scroll the grid so that the selected row is in the middle of the window.
 
-                if (scrollIndex > -1)
+                var topRow = ScanItemsGrid.FirstDisplayedScrollingRowIndex;
+                var displayedRows = ScanItemsGrid.DisplayedRowCount(true);
+                var bottomRow = topRow + displayedRows;
+
+                if (itemRowIndex > bottomRow || itemRowIndex < topRow)
                 {
-                    ScanItemsGrid.FirstDisplayedScrollingRowIndex = scrollIndex;
-                }
-                else
-                {
-                    ScanItemsGrid.FirstDisplayedScrollingRowIndex = 0;
+                    var scrollIndex = itemRowIndex - (int)(ScanItemsGrid.DisplayedRowCount(true) / 2);
+
+                    if (scrollIndex > -1)
+                    {
+                        ScanItemsGrid.FirstDisplayedScrollingRowIndex = scrollIndex;
+                    }
+                    else
+                    {
+                        ScanItemsGrid.FirstDisplayedScrollingRowIndex = 0;
+                    }
                 }
             }
         }
