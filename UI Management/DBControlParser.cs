@@ -223,6 +223,19 @@ namespace InventoryScanner.UIManagement
             return fieldsValid;
         }
 
+        public void ClearFields()
+        {
+            foreach (var ctl in GetDBControls(parentForm))
+            {
+                ctl.ResetText();
+
+                if (ctl is ComboBox)
+                {
+                    ((ComboBox)ctl).SelectedIndex = -1;
+                }
+            }
+        }
+
         public void SetError(Control control, bool isValid)
         {
             if (!isValid)

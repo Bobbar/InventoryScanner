@@ -7,7 +7,7 @@
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        
+
 
         #region Windows Form Designer generated code
 
@@ -19,6 +19,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ScanningUI));
             this.MainLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -36,8 +37,7 @@
             this.label14 = new System.Windows.Forms.Label();
             this.ScanLayoutTable = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
+            this.ClearButton = new System.Windows.Forms.Button();
             this.SubmitScanButton = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.AssetTagTextBox = new System.Windows.Forms.TextBox();
@@ -96,8 +96,8 @@
             // 
             // MainLayoutPanel
             // 
-            this.MainLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.MainLayoutPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.MainLayoutPanel.ColumnCount = 1;
             this.MainLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -110,7 +110,7 @@
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 110F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 350F));
-            this.MainLayoutPanel.Size = new System.Drawing.Size(1250, 903);
+            this.MainLayoutPanel.Size = new System.Drawing.Size(1292, 925);
             this.MainLayoutPanel.TabIndex = 1;
             // 
             // groupBox1
@@ -122,7 +122,7 @@
             this.groupBox1.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox1.Location = new System.Drawing.Point(3, 113);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1244, 437);
+            this.groupBox1.Size = new System.Drawing.Size(1286, 459);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items To Scan";
@@ -147,12 +147,14 @@
             this.ScanItemsGrid.MultiSelect = false;
             this.ScanItemsGrid.Name = "ScanItemsGrid";
             this.ScanItemsGrid.RowHeadersVisible = false;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ScanItemsGrid.RowsDefaultCellStyle = dataGridViewCellStyle2;
             this.ScanItemsGrid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.ScanItemsGrid.ShowCellErrors = false;
             this.ScanItemsGrid.ShowCellToolTips = false;
             this.ScanItemsGrid.ShowEditingIcon = false;
             this.ScanItemsGrid.ShowRowErrors = false;
-            this.ScanItemsGrid.Size = new System.Drawing.Size(1238, 412);
+            this.ScanItemsGrid.Size = new System.Drawing.Size(1280, 434);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
             this.ScanItemsGrid.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScanItemsGrid_CellMouseClick);
@@ -188,7 +190,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1244, 104);
+            this.groupBox2.Size = new System.Drawing.Size(1286, 104);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Scan Info";
@@ -270,23 +272,21 @@
             // ScanLayoutTable
             // 
             this.ScanLayoutTable.ColumnCount = 2;
+            this.ScanLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 460F));
             this.ScanLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ScanLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 777F));
-            this.ScanLayoutTable.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.ScanLayoutTable.Controls.Add(this.groupBox3, 0, 0);
             this.ScanLayoutTable.Controls.Add(this.groupBox6, 1, 0);
             this.ScanLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 556);
+            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 578);
             this.ScanLayoutTable.Name = "ScanLayoutTable";
             this.ScanLayoutTable.RowCount = 1;
             this.ScanLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ScanLayoutTable.Size = new System.Drawing.Size(1244, 344);
+            this.ScanLayoutTable.Size = new System.Drawing.Size(1286, 344);
             this.ScanLayoutTable.TabIndex = 2;
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.button3);
-            this.groupBox3.Controls.Add(this.button2);
+            this.groupBox3.Controls.Add(this.ClearButton);
             this.groupBox3.Controls.Add(this.SubmitScanButton);
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Controls.Add(this.AssetTagTextBox);
@@ -294,39 +294,30 @@
             this.groupBox3.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox3.Location = new System.Drawing.Point(3, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(461, 338);
+            this.groupBox3.Size = new System.Drawing.Size(454, 338);
             this.groupBox3.TabIndex = 2;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Scanning";
             // 
-            // button3
+            // ClearButton
             // 
-            this.button3.Location = new System.Drawing.Point(6, 301);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(128, 31);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button2
-            // 
-            this.button2.BackColor = System.Drawing.Color.DimGray;
-            this.button2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button2.Location = new System.Drawing.Point(28, 187);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(231, 37);
-            this.button2.TabIndex = 3;
-            this.button2.Text = "Clear";
-            this.button2.UseVisualStyleBackColor = false;
+            this.ClearButton.BackColor = System.Drawing.Color.DimGray;
+            this.ClearButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.ClearButton.Location = new System.Drawing.Point(44, 271);
+            this.ClearButton.Name = "ClearButton";
+            this.ClearButton.Size = new System.Drawing.Size(349, 37);
+            this.ClearButton.TabIndex = 3;
+            this.ClearButton.Text = "Clear";
+            this.ClearButton.UseVisualStyleBackColor = false;
+            this.ClearButton.Click += new System.EventHandler(this.ClearButton_Click);
             // 
             // SubmitScanButton
             // 
             this.SubmitScanButton.BackColor = System.Drawing.Color.DimGray;
             this.SubmitScanButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.SubmitScanButton.Location = new System.Drawing.Point(29, 118);
+            this.SubmitScanButton.Location = new System.Drawing.Point(44, 134);
             this.SubmitScanButton.Name = "SubmitScanButton";
-            this.SubmitScanButton.Size = new System.Drawing.Size(230, 52);
+            this.SubmitScanButton.Size = new System.Drawing.Size(349, 52);
             this.SubmitScanButton.TabIndex = 2;
             this.SubmitScanButton.Text = "Submit";
             this.SubmitScanButton.UseVisualStyleBackColor = false;
@@ -335,7 +326,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(24, 42);
+            this.label1.Location = new System.Drawing.Point(40, 41);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(99, 19);
             this.label1.TabIndex = 1;
@@ -343,12 +334,12 @@
             // 
             // AssetTagTextBox
             // 
-            this.AssetTagTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(117)))), ((int)(((byte)(160)))), ((int)(((byte)(1)))));
+            this.AssetTagTextBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(119)))), ((int)(((byte)(230)))), ((int)(((byte)(119)))));
             this.AssetTagTextBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.AssetTagTextBox.Font = new System.Drawing.Font("Consolas", 24F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AssetTagTextBox.Location = new System.Drawing.Point(28, 64);
+            this.AssetTagTextBox.Font = new System.Drawing.Font("Consolas", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AssetTagTextBox.Location = new System.Drawing.Point(44, 63);
             this.AssetTagTextBox.Name = "AssetTagTextBox";
-            this.AssetTagTextBox.Size = new System.Drawing.Size(232, 45);
+            this.AssetTagTextBox.Size = new System.Drawing.Size(349, 51);
             this.AssetTagTextBox.TabIndex = 0;
             // 
             // groupBox6
@@ -356,9 +347,9 @@
             this.groupBox6.Controls.Add(this.tableLayoutPanel1);
             this.groupBox6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox6.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox6.Location = new System.Drawing.Point(470, 3);
+            this.groupBox6.Location = new System.Drawing.Point(463, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(771, 338);
+            this.groupBox6.Size = new System.Drawing.Size(820, 338);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Current Item Info";
@@ -366,8 +357,8 @@
             // tableLayoutPanel1
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 46.40523F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 53.59477F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 46.32576F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 53.67424F));
             this.tableLayoutPanel1.Controls.Add(this.groupBox4, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.groupBox5, 1, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -375,12 +366,12 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 319F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(765, 313);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(814, 313);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox4
             // 
+            this.groupBox4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(54)))), ((int)(((byte)(107)))));
             this.groupBox4.Controls.Add(this.MunisPurchaseDtTextBox);
             this.groupBox4.Controls.Add(this.MunisDepartmentTextBox);
             this.groupBox4.Controls.Add(this.MunisLocationTextBox);
@@ -395,49 +386,64 @@
             this.groupBox4.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(349, 307);
+            this.groupBox4.Size = new System.Drawing.Size(371, 307);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Munis";
             // 
             // MunisPurchaseDtTextBox
             // 
+            this.MunisPurchaseDtTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MunisPurchaseDtTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisPurchaseDtTextBox.Location = new System.Drawing.Point(18, 250);
             this.MunisPurchaseDtTextBox.Name = "MunisPurchaseDtTextBox";
             this.MunisPurchaseDtTextBox.ReadOnly = true;
-            this.MunisPurchaseDtTextBox.Size = new System.Drawing.Size(310, 26);
+            this.MunisPurchaseDtTextBox.Size = new System.Drawing.Size(332, 26);
             this.MunisPurchaseDtTextBox.TabIndex = 9;
             // 
             // MunisDepartmentTextBox
             // 
+            this.MunisDepartmentTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MunisDepartmentTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisDepartmentTextBox.Location = new System.Drawing.Point(19, 199);
             this.MunisDepartmentTextBox.Name = "MunisDepartmentTextBox";
             this.MunisDepartmentTextBox.ReadOnly = true;
-            this.MunisDepartmentTextBox.Size = new System.Drawing.Size(309, 26);
+            this.MunisDepartmentTextBox.Size = new System.Drawing.Size(331, 26);
             this.MunisDepartmentTextBox.TabIndex = 8;
             // 
             // MunisLocationTextBox
             // 
+            this.MunisLocationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MunisLocationTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisLocationTextBox.Location = new System.Drawing.Point(19, 148);
             this.MunisLocationTextBox.Name = "MunisLocationTextBox";
             this.MunisLocationTextBox.ReadOnly = true;
-            this.MunisLocationTextBox.Size = new System.Drawing.Size(309, 26);
+            this.MunisLocationTextBox.Size = new System.Drawing.Size(331, 26);
             this.MunisLocationTextBox.TabIndex = 7;
             // 
             // MunisSerialTextBox
             // 
+            this.MunisSerialTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MunisSerialTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisSerialTextBox.Location = new System.Drawing.Point(19, 97);
             this.MunisSerialTextBox.Name = "MunisSerialTextBox";
             this.MunisSerialTextBox.ReadOnly = true;
-            this.MunisSerialTextBox.Size = new System.Drawing.Size(309, 26);
+            this.MunisSerialTextBox.Size = new System.Drawing.Size(331, 26);
             this.MunisSerialTextBox.TabIndex = 6;
             // 
             // MunisDescriptionTextBox
             // 
+            this.MunisDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MunisDescriptionTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.MunisDescriptionTextBox.Location = new System.Drawing.Point(18, 46);
             this.MunisDescriptionTextBox.Name = "MunisDescriptionTextBox";
             this.MunisDescriptionTextBox.ReadOnly = true;
-            this.MunisDescriptionTextBox.Size = new System.Drawing.Size(310, 26);
+            this.MunisDescriptionTextBox.Size = new System.Drawing.Size(332, 26);
             this.MunisDescriptionTextBox.TabIndex = 5;
             // 
             // label6
@@ -487,6 +493,7 @@
             // 
             // groupBox5
             // 
+            this.groupBox5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(167)))), ((int)(((byte)(91)))), ((int)(((byte)(40)))));
             this.groupBox5.Controls.Add(this.AssetStatusTextBox);
             this.groupBox5.Controls.Add(this.AssetCurUserTextBox);
             this.groupBox5.Controls.Add(this.AssetLastLocationTextBox);
@@ -503,73 +510,90 @@
             this.groupBox5.Controls.Add(this.label11);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox5.Location = new System.Drawing.Point(358, 3);
+            this.groupBox5.Location = new System.Drawing.Point(380, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(404, 307);
+            this.groupBox5.Size = new System.Drawing.Size(431, 307);
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Asset Manager";
             // 
             // AssetStatusTextBox
             // 
-            this.AssetStatusTextBox.Location = new System.Drawing.Point(219, 148);
+            this.AssetStatusTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssetStatusTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AssetStatusTextBox.Location = new System.Drawing.Point(217, 250);
             this.AssetStatusTextBox.Name = "AssetStatusTextBox";
             this.AssetStatusTextBox.ReadOnly = true;
-            this.AssetStatusTextBox.Size = new System.Drawing.Size(167, 26);
+            this.AssetStatusTextBox.Size = new System.Drawing.Size(190, 26);
             this.AssetStatusTextBox.TabIndex = 18;
             // 
             // AssetCurUserTextBox
             // 
-            this.AssetCurUserTextBox.Location = new System.Drawing.Point(219, 97);
+            this.AssetCurUserTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssetCurUserTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AssetCurUserTextBox.Location = new System.Drawing.Point(217, 199);
             this.AssetCurUserTextBox.Name = "AssetCurUserTextBox";
             this.AssetCurUserTextBox.ReadOnly = true;
-            this.AssetCurUserTextBox.Size = new System.Drawing.Size(167, 26);
+            this.AssetCurUserTextBox.Size = new System.Drawing.Size(190, 26);
             this.AssetCurUserTextBox.TabIndex = 17;
             // 
             // AssetLastLocationTextBox
             // 
+            this.AssetLastLocationTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetLastLocationTextBox.Location = new System.Drawing.Point(19, 250);
             this.AssetLastLocationTextBox.Name = "AssetLastLocationTextBox";
             this.AssetLastLocationTextBox.ReadOnly = true;
-            this.AssetLastLocationTextBox.Size = new System.Drawing.Size(310, 26);
+            this.AssetLastLocationTextBox.Size = new System.Drawing.Size(165, 26);
             this.AssetLastLocationTextBox.TabIndex = 16;
             // 
             // AssetTypeTextBox
             // 
+            this.AssetTypeTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetTypeTextBox.Location = new System.Drawing.Point(19, 199);
             this.AssetTypeTextBox.Name = "AssetTypeTextBox";
             this.AssetTypeTextBox.ReadOnly = true;
-            this.AssetTypeTextBox.Size = new System.Drawing.Size(167, 26);
+            this.AssetTypeTextBox.Size = new System.Drawing.Size(165, 26);
             this.AssetTypeTextBox.TabIndex = 15;
             // 
             // AssetLocationTextBox
             // 
+            this.AssetLocationTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssetLocationTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetLocationTextBox.Location = new System.Drawing.Point(19, 148);
             this.AssetLocationTextBox.Name = "AssetLocationTextBox";
             this.AssetLocationTextBox.ReadOnly = true;
-            this.AssetLocationTextBox.Size = new System.Drawing.Size(167, 26);
+            this.AssetLocationTextBox.Size = new System.Drawing.Size(388, 26);
             this.AssetLocationTextBox.TabIndex = 14;
             // 
             // AssetSerialTextBox
             // 
+            this.AssetSerialTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssetSerialTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetSerialTextBox.Location = new System.Drawing.Point(19, 97);
             this.AssetSerialTextBox.Name = "AssetSerialTextBox";
             this.AssetSerialTextBox.ReadOnly = true;
-            this.AssetSerialTextBox.Size = new System.Drawing.Size(167, 26);
+            this.AssetSerialTextBox.Size = new System.Drawing.Size(388, 26);
             this.AssetSerialTextBox.TabIndex = 13;
             // 
             // AssetDescriptionTextBox
             // 
+            this.AssetDescriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.AssetDescriptionTextBox.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.AssetDescriptionTextBox.Location = new System.Drawing.Point(19, 46);
             this.AssetDescriptionTextBox.Name = "AssetDescriptionTextBox";
             this.AssetDescriptionTextBox.ReadOnly = true;
-            this.AssetDescriptionTextBox.Size = new System.Drawing.Size(367, 26);
+            this.AssetDescriptionTextBox.Size = new System.Drawing.Size(388, 26);
             this.AssetDescriptionTextBox.TabIndex = 12;
             // 
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(215, 126);
+            this.label13.Location = new System.Drawing.Point(215, 228);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(63, 19);
             this.label13.TabIndex = 11;
@@ -578,7 +602,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(215, 75);
+            this.label12.Location = new System.Drawing.Point(215, 177);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(117, 19);
             this.label12.TabIndex = 10;
@@ -636,7 +660,7 @@
             this.filtersToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1250, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1292, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -736,7 +760,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.ClientSize = new System.Drawing.Size(1250, 930);
+            this.ClientSize = new System.Drawing.Size(1292, 952);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.MainLayoutPanel);
             this.DoubleBuffered = true;
@@ -745,6 +769,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
+            this.MinimumSize = new System.Drawing.Size(1149, 635);
             this.Name = "ScanningUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Inventory Scanner";
@@ -782,7 +807,7 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox AssetTagTextBox;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button ClearButton;
         private System.Windows.Forms.Button SubmitScanButton;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
@@ -818,7 +843,6 @@
         private System.Windows.Forms.TextBox ScanEmployeeTextBox;
         private System.Windows.Forms.TextBox ScanDateTimeTextBox;
         private System.Windows.Forms.Button StartScanButton;
-        private System.Windows.Forms.Button button3;
         private System.Windows.Forms.ContextMenuStrip RightClickMenu;
         private System.Windows.Forms.ToolStripMenuItem ResolveDupMenuItem;
         private System.Windows.Forms.Button SelectPreviousScanButton;

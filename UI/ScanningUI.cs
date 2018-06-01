@@ -117,7 +117,7 @@ namespace InventoryScanner.UI
         {
             MunisDescriptionTextBox.SetDBInfo(MunisFixedAssetTable.Description);
             MunisSerialTextBox.SetDBInfo(MunisFixedAssetTable.Serial);
-            MunisLocationTextBox.SetDBInfo(MunisFixedAssetTable.Location);
+            MunisLocationTextBox.SetDBInfo(MunisFixedAssetTable.Location, AttributeInstances.MunisAttributes.MunisLocations);
             MunisDepartmentTextBox.SetDBInfo(MunisFixedAssetTable.Department);
             MunisPurchaseDtTextBox.SetDBInfo(MunisFixedAssetTable.PurchaseDate);
 
@@ -196,6 +196,7 @@ namespace InventoryScanner.UI
                     PopulateControls(detailData);
                 }
             }
+
         }
 
         private void PopulateControls(DataTable data)
@@ -545,5 +546,11 @@ namespace InventoryScanner.UI
             }
             base.Dispose(disposing);
         }
+
+        private void ClearButton_Click(object sender, EventArgs e)
+        {
+            controlParser.ClearFields();
+        }
+
     }
 }
