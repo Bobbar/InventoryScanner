@@ -68,12 +68,12 @@ namespace InventoryScanner.UI
             {
                 if (e is LocationMismatchException)
                 {
-                    var lme = (LocationMismatchException)e;
+                    //var lme = (LocationMismatchException)e;
 
-                    var prompt = "Asset Tag: " + lme.ItemAssetTag +
-                        " was scanned at an unexpected location. \n \n Expected location: " +
-                        lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
+                    //var prompt = "Asset Tag: " + lme.ItemAssetTag +
+                    //    " was scanned at an unexpected location. \n \n Expected location: " +
+                    //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
+                    //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
                 }
                 else if (e is ItemNotFoundException)
                 {

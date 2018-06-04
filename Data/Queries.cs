@@ -44,7 +44,7 @@ namespace InventoryScanner.Data
 
             public static string SelectScanItemsByScanYear(string year)
             {
-                var query = "SELECT * FROM " + ScanItemsTable.TableName + " WHERE " + ScanItemsTable.ScanYear + " = '" + year + "'";
+                var query = "SELECT * FROM " + ScanItemsTable.TableName + " WHERE " + ScanItemsTable.ScanYear + " = '" + year + "' LOCK IN SHARE MODE";
                 return query;
             }
 
