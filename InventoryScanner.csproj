@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BarcodeScanning\HighSpeedSerialPortReader.cs" />
+    <Compile Include="BarcodeScanning\SerialPortReader.cs" />
     <Compile Include="Data\Classes\ScanItem.cs" />
     <Compile Include="Data\Classes\ScanStatus.cs" />
     <Compile Include="Data\Classes\ScanType.cs" />
@@ -115,6 +117,12 @@
     <Compile Include="UI\SelectScanForm.Designer.cs">
       <DependentUpon>SelectScanForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\SelectScanner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="UI\SelectScanner.Designer.cs">
+      <DependentUpon>SelectScanner.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="UI\CustomControls\LabeledTextBox.resx">
       <DependentUpon>LabeledTextBox.cs</DependentUpon>
     </EmbeddedResource>
@@ -132,6 +140,9 @@
     </Compile>
     <EmbeddedResource Include="UI\SelectScanForm.resx">
       <DependentUpon>SelectScanForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UI\SelectScanner.resx">
+      <DependentUpon>SelectScanner.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

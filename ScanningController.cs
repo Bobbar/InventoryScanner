@@ -30,9 +30,24 @@ namespace InventoryScanner
             this.view = view;
             view.SetController(this);
             InitSyncTimer();
+            InitScanner();
+        }
 
-            scannerInput = new HighSpeedSerialPortReader("COM4");
-            scannerInput.NewScanReceived += ScannerInput_NewScanReceived;
+        private void InitScanner()
+        {
+            var portName = view.GetScannerPort();
+
+            if (string.IsNullOrEmpty(portName)) return;
+            try
+            {
+                scannerInput = new SerialPortReader(portName);
+                scannerInput.NewScanReceived += ScannerInput_NewScanReceived;
+                scannerInput.StartScanner();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         private void OnExceptionOccured(Exception ex)
@@ -523,7 +538,7 @@ namespace InventoryScanner
         {
             syncTimer.Stop();
             syncTimer.Dispose();
-            scannerInput.Dispose();
+            scannerInput?.Dispose();
         }
     }
 }

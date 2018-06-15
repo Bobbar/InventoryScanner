@@ -48,13 +48,23 @@ namespace InventoryScanner.UI
             PopulateLocationsCombo();
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
             AttachFilterMenuEvents();
-            // this.Show();
+            this.Show();
         }
 
         public void SetController(ScanningController controller)
         {
             this.controller = controller;
             this.controller.ExceptionOccured += Controller_ExceptionOccured;
+        }
+
+        public string GetScannerPort()
+        {
+            var selectPort = new SelectScanner();
+            if (selectPort.ShowDialog() == DialogResult.OK)
+            {
+                return selectPort.SelectedPortName;
+            }
+            return string.Empty;
         }
 
         private void Controller_ExceptionOccured(object sender, Exception e)

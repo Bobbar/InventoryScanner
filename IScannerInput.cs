@@ -8,6 +8,8 @@ namespace InventoryScanner
 {
     public interface IScannerInput
     {
+        void StartScanner();
+
         event EventHandler<string> NewScanReceived;
 
         void Dispose();

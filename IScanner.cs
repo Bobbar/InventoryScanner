@@ -23,5 +23,7 @@ namespace InventoryScanner
         List<string> LocationFilters { get; }
 
         void PopulateNewScan(string assetTag, DataTable itemDetail);
+
+        string GetScannerPort();
     }
 }
