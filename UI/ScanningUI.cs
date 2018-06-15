@@ -49,22 +49,25 @@ namespace InventoryScanner.UI
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
             AttachFilterMenuEvents();
             this.Show();
+            
         }
 
         public void SetController(ScanningController controller)
         {
             this.controller = controller;
             this.controller.ExceptionOccured += Controller_ExceptionOccured;
+
+            SelectScannerPort();
         }
 
-        public string GetScannerPort()
+        public void SelectScannerPort()
         {
             var selectPort = new SelectScanner();
             if (selectPort.ShowDialog() == DialogResult.OK)
             {
-                return selectPort.SelectedPortName;
+                controller.InitScanner(selectPort.SelectedPortName);
             }
-            return string.Empty;
+           
         }
 
         private void Controller_ExceptionOccured(object sender, Exception e)
@@ -91,6 +94,12 @@ namespace InventoryScanner.UI
 
                     var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
                     OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Asset Tag Not Found", this);
+                }
+                else if (e is BarcodeScanning.ScannerLostException)
+                {
+                    var prompt = "An error has occured with the scanner, it may have been disconnected. \n \n Please check the connection and select the scanner again.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scanner Error", this);
+                    SelectScannerPort();
                 }
             }
         }

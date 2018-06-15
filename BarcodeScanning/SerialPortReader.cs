@@ -11,12 +11,17 @@ namespace InventoryScanner.BarcodeScanning
         private List<byte> byteBuffer = new List<byte>();
         private System.Threading.CancellationTokenSource readCancelTokenSource;
 
-
         public event EventHandler<string> NewScanReceived;
+        public event EventHandler<Exception> ExceptionOccured;
 
         private void OnNewScanReceived(string data)
         {
             NewScanReceived?.Invoke(this, data);
+        }
+
+        private void OnExceptionOccured(Exception ex)
+        {
+            ExceptionOccured?.Invoke(this, ex);
         }
 
         public SerialPortReader(string portName)
@@ -31,6 +36,8 @@ namespace InventoryScanner.BarcodeScanning
             {
                 port.Open();
                 port.DtrEnable = true;
+                port.PinChanged += Port_PinChanged;
+                port.ErrorReceived += Port_ErrorReceived;
             }
             catch (Exception ex)
             {
@@ -42,6 +49,16 @@ namespace InventoryScanner.BarcodeScanning
             ReadBytesAsync(readCancelTokenSource.Token);
         }
 
+        private void Port_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
+        {
+            Console.WriteLine("Error: " + e.EventType.ToString());
+        }
+
+        private void Port_PinChanged(object sender, SerialPinChangedEventArgs e)
+        {
+            Console.WriteLine("Pin Event: " + e.EventType.ToString());
+        }
+
         private void ParseReadsTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             ParseData();
@@ -49,20 +66,33 @@ namespace InventoryScanner.BarcodeScanning
 
         private async void ReadBytesAsync(System.Threading.CancellationToken cancelToken)
         {
-            while (!cancelToken.IsCancellationRequested && port.IsOpen)
+            try
             {
-                port.BaseStream.ReadTimeout = 0;
-                var bytesToRead = 64;
-                var receiveBuffer = new byte[bytesToRead];
-                var numBytesRead = await port.BaseStream.ReadAsync(receiveBuffer, 0, bytesToRead, cancelToken);
-                var bytesReceived = new byte[numBytesRead];
+                while (!cancelToken.IsCancellationRequested && port.IsOpen)
+                {
+                    port.BaseStream.ReadTimeout = 0;
+                    var bytesToRead = 64;
+                    var receiveBuffer = new byte[bytesToRead];
+                    var numBytesRead = await port.BaseStream.ReadAsync(receiveBuffer, 0, bytesToRead, cancelToken);
+                    var bytesReceived = new byte[numBytesRead];
 
-                Array.Copy(receiveBuffer, bytesReceived, numBytesRead);
+                    Array.Copy(receiveBuffer, bytesReceived, numBytesRead);
 
-                // Add the data to a buffer to be parsed when possible.
-                byteBuffer.AddRange(bytesReceived);
+                    // Add the data to a buffer to be parsed when possible.
+                    byteBuffer.AddRange(bytesReceived);
 
-                ParseData();
+                    ParseData();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+
+                if (ex is System.IO.IOException)
+                {
+                    if (!disposedValue)
+                        OnExceptionOccured(new ScannerLostException());
+                }
             }
         }
 
@@ -114,13 +144,37 @@ namespace InventoryScanner.BarcodeScanning
             return -1;
         }
 
-        public void Dispose()
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
         {
-            readCancelTokenSource.Cancel();
-            port.Close();
-            port.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    readCancelTokenSource.Cancel();
+                    port.DiscardInBuffer();
+                    port.DiscardOutBuffer();
+                    port.Close();
+                    port.Dispose();
+                }
+
+                disposedValue = true;
+            }
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion IDisposable Support
 
+        //public void Dispose()
+        //{
+        //    readCancelTokenSource.Cancel();
+        //    port.Close();
+        //    port.Dispose();
+        //}
     }
 }

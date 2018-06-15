@@ -18,6 +18,7 @@ namespace InventoryScanner.BarcodeScanning
         private int parseInterval = 100; // How fast the data buffer will be parsed to the new scan event.
 
         public event EventHandler<string> NewScanReceived;
+        public event EventHandler<Exception> ExceptionOccured;
 
         private void OnNewScanReceived(string data)
         {

@@ -12,6 +12,8 @@ namespace InventoryScanner
 
         event EventHandler<string> NewScanReceived;
 
+        event EventHandler<Exception> ExceptionOccured;
+
         void Dispose();
     }
 }

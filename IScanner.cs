@@ -24,6 +24,5 @@ namespace InventoryScanner
 
         void PopulateNewScan(string assetTag, DataTable itemDetail);
 
-        string GetScannerPort();
     }
 }

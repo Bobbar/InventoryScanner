@@ -30,24 +30,32 @@ namespace InventoryScanner
             this.view = view;
             view.SetController(this);
             InitSyncTimer();
-            InitScanner();
         }
 
-        private void InitScanner()
+        public void InitScanner(string portName)
         {
-            var portName = view.GetScannerPort();
-
             if (string.IsNullOrEmpty(portName)) return;
             try
             {
+                if (scannerInput != null)
+                {
+                    scannerInput.Dispose();
+                }
+
                 scannerInput = new SerialPortReader(portName);
                 scannerInput.NewScanReceived += ScannerInput_NewScanReceived;
+                scannerInput.ExceptionOccured += ScannerInput_ExceptionOccured;
                 scannerInput.StartScanner();
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
+        }
+
+        private void ScannerInput_ExceptionOccured(object sender, Exception e)
+        {
+            OnExceptionOccured(e);
         }
 
         private void OnExceptionOccured(Exception ex)

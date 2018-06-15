@@ -57,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BarcodeScanning\HighSpeedSerialPortReader.cs" />
+    <Compile Include="BarcodeScanning\ScannerLostException.cs" />
     <Compile Include="BarcodeScanning\SerialPortReader.cs" />
     <Compile Include="Data\Classes\ScanItem.cs" />
     <Compile Include="Data\Classes\ScanStatus.cs" />

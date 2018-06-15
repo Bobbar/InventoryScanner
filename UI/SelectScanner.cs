@@ -26,6 +26,9 @@ namespace InventoryScanner.UI
             // that contain the port name/ID. We then grab the descriptive
             // name and add it to a container struct collection.
 
+            ComPortListBox.DataSource = null;
+            ComPortListBox.Items.Clear();
+
             // Get list of port names.
             var serialPorts = SerialPort.GetPortNames();
 
@@ -76,6 +79,11 @@ namespace InventoryScanner.UI
             SelectCurrentPort();
         }
 
+        private void RefreshButton_Click(object sender, EventArgs e)
+        {
+            ListPorts();
+        }
+
         private struct CommPortInfo
         {
             public string ID { get; private set; }
@@ -87,5 +95,6 @@ namespace InventoryScanner.UI
                 this.Description = description;
             }
         }
+
     }
 }
