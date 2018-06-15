@@ -55,7 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BarcodeScanning\SerialPortReader.cs" />
+    <Compile Include="BarcodeScanning\HighSpeedSerialPortReader.cs" />
     <Compile Include="Data\Classes\ScanItem.cs" />
     <Compile Include="Data\Classes\ScanStatus.cs" />
     <Compile Include="Data\Classes\ScanType.cs" />

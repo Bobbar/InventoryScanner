@@ -1,45 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Timers;
-using System.Threading.Tasks;
 using System.IO.Ports;
+using System.Timers;
 
 namespace InventoryScanner.BarcodeScanning
 {
-    public sealed class SerialPortReader : IDisposable, IScannerInput
+    /// <summary>
+    /// Provides serial port reading and parsing for high speed scanners.
+    /// New serial data is buffered so that it can be parsed at a slower rate.
+    /// </summary>
+    public sealed class HighSpeedSerialPortReader : IDisposable, IScannerInput
     {
         private SerialPort port;
+        private List<byte> byteBuffer = new List<byte>();
+        private System.Threading.CancellationTokenSource readCancelTokenSource;
+        private Timer parseReadsTimer = new Timer();
+        private int parseInterval = 100; // How fast the data buffer will be parsed to the new scan event.
 
         public event EventHandler<string> NewScanReceived;
-
-        private List<byte> byteBuffer = new List<byte>();
-
-        // private Queue<string> receiveData = new Queue<string>();
-
-        private System.Threading.CancellationTokenSource readCancelTokenSource;
-
-        private Timer parseReadsTimer = new Timer();
 
         private void OnNewScanReceived(string data)
         {
             NewScanReceived?.Invoke(this, data);
         }
 
-        public SerialPortReader(string portName)
+        public HighSpeedSerialPortReader(string portName)
         {
             port = new SerialPort(portName);
-            //  port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);
             port.Open();
             port.DtrEnable = true;
 
+            // Start the parser timer.
             parseReadsTimer.Interval = 100;
             parseReadsTimer.Elapsed += ParseReadsTimer_Elapsed;
             parseReadsTimer.Start();
 
             readCancelTokenSource = new System.Threading.CancellationTokenSource();
 
+            // Start the async reader.
             ReadBytesAsync(readCancelTokenSource.Token);
         }
 
@@ -53,92 +51,64 @@ namespace InventoryScanner.BarcodeScanning
             while (!cancelToken.IsCancellationRequested && port.IsOpen)
             {
                 port.BaseStream.ReadTimeout = 0;
-                var bytesToRead = 16;
+                var bytesToRead = 64;
                 var receiveBuffer = new byte[bytesToRead];
                 var numBytesRead = await port.BaseStream.ReadAsync(receiveBuffer, 0, bytesToRead, cancelToken);
-
                 var bytesReceived = new byte[numBytesRead];
+
                 Array.Copy(receiveBuffer, bytesReceived, numBytesRead);
 
+                // Add the data to a buffer to be parsed when possible.
                 byteBuffer.AddRange(bytesReceived);
-
-                //receiveData.Enqueue(Encoding.Default.GetString(receiveBuffer));
-               // ParseData();
-
             }
-
-
-        }
-
-        private void EnqueueData(byte[] data)
-        {
-            byteBuffer.AddRange(data);
         }
 
         private void ParseData()
         {
-            // var dataArray = data.Split(Convert.ToChar("|"));
-
-            // int currentPos = 0;
-
-            // bool completePacket = false;
-
-
-
             int packetLength = GetNextPacketLength();
 
+            // Make sure we have a complete packet.
             if (packetLength > 0)
             {
                 string packet = "";
 
+                // Build the packet string from the byte data, removing the bytes from the buffer as we go.
                 for (int i = 0; i < packetLength; i++)
                 {
                     packet += Convert.ToChar(byteBuffer[0]).ToString();
                     byteBuffer.RemoveAt(0);
-
                 }
+                // Remove the next byte after the packet. This should contain the delimiter character.
                 byteBuffer.RemoveAt(0);
 
-                Console.WriteLine("Buffer Len: " + byteBuffer.Count);
-
+               // Console.WriteLine(packet);
                 OnNewScanReceived(packet);
             }
-
-
-
-
-
-
         }
 
+        /// <summary>
+        /// Counts each byte in the buffer until a delimiter character is found and then returns the length.
+        /// </summary>
+        /// <returns></returns>
         private int GetNextPacketLength()
         {
             int packetLength = 0;
 
+            // Iterate the buffer and count until we reach a delimiter.
             foreach (var chunk in byteBuffer)
             {
-                //  var byteString = Convert.ToString(chunk);
-
-                if (chunk != 124)// if (byteString != "|")
+                if (chunk != 13)
                 {
                     packetLength++;
                 }
                 else
                 {
+                    // If a delimiter is found, return the length.
                     return packetLength;
-
                 }
             }
+            // If no delimiter found, then there is no complete packet in the buffer.
             return -1;
-        }
-
-
-
-        private void Port_DataReceived(object sender, SerialDataReceivedEventArgs e)
-        {
-            var data = port.ReadExisting();
-            Console.WriteLine(data);
-            OnNewScanReceived(data);
         }
 
         public void Dispose()
@@ -148,8 +118,6 @@ namespace InventoryScanner.BarcodeScanning
             parseReadsTimer.Dispose();
             port.Close();
             port.Dispose();
-           
-
         }
     }
 }

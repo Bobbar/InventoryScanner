@@ -31,7 +31,7 @@ namespace InventoryScanner
             view.SetController(this);
             InitSyncTimer();
 
-            scannerInput = new SerialPortReader("COM2");
+            scannerInput = new HighSpeedSerialPortReader("COM4");
             scannerInput.NewScanReceived += ScannerInput_NewScanReceived;
         }
 
