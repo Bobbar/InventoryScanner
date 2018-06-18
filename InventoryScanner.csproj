@@ -56,7 +56,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BarcodeScanning\HighSpeedSerialPortReader.cs" />
     <Compile Include="BarcodeScanning\ScannerLostException.cs" />
     <Compile Include="BarcodeScanning\SerialPortReader.cs" />
     <Compile Include="Data\Classes\ScanItem.cs" />
@@ -75,6 +74,7 @@
     <Compile Include="Data\Functions\AttributeFunctions.cs" />
     <Compile Include="Data\Tables\MunisTables.cs" />
     <Compile Include="Data\Queries.cs" />
+    <Compile Include="DuplicateScanException.cs" />
     <Compile Include="Helpers\DataGridHelpers\DataGridViewExtensions.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
@@ -85,13 +85,15 @@
     <Compile Include="PDFProcessing\RectAndText.cs" />
     <Compile Include="PDFProcessing\TextLocationExtractionStrategy.cs" />
     <Compile Include="PDFProcessing\WorksheetProcessor.cs" />
+    <Compile Include="ScanController\ScannerStatusEvent.cs" />
+    <Compile Include="ScanNotStartedException.cs" />
     <Compile Include="UI Management\ComboBoxExtensions.cs" />
     <Compile Include="Helpers\MiscExtensions.cs" />
     <Compile Include="Helpers\OtherFunctions.cs" />
-    <Compile Include="IScanner.cs" />
+    <Compile Include="IScanningUI.cs" />
     <Compile Include="Data\Classes\Location.cs" />
     <Compile Include="Data\Classes\Scan.cs" />
-    <Compile Include="ScanningController.cs" />
+    <Compile Include="ScanController\ScanningController.cs" />
     <Compile Include="Data\Classes\DBAttributes.cs" />
     <Compile Include="UI\CustomControls\LabeledTextBox.cs">
       <SubType>UserControl</SubType>
@@ -99,6 +101,12 @@
     <Compile Include="UI\CustomControls\LabeledTextBox.Designer.cs">
       <DependentUpon>LabeledTextBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UI\CustomControls\SliderLabel\MessageEventArgs.cs" />
+    <Compile Include="UI\CustomControls\SliderLabel\MessageParameters.cs" />
+    <Compile Include="UI\CustomControls\SliderLabel\SliderLabel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UI\CustomControls\SliderLabel\SliderLabel.Designer.cs" />
     <Compile Include="UI\ScanningUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -127,6 +135,7 @@
     <EmbeddedResource Include="UI\CustomControls\LabeledTextBox.resx">
       <DependentUpon>LabeledTextBox.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UI\CustomControls\SliderLabel\SliderLabel.resx" />
     <EmbeddedResource Include="UI\ScanningUI.resx">
       <DependentUpon>ScanningUI.cs</DependentUpon>
     </EmbeddedResource>

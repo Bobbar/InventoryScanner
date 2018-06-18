@@ -20,6 +20,14 @@ namespace InventoryScanner.BarcodeScanning
         public event EventHandler<string> NewScanReceived;
         public event EventHandler<Exception> ExceptionOccured;
 
+        public bool SupportsFeedback
+        {
+            get
+            {
+                return false;
+            }
+        }
+
         private void OnNewScanReceived(string data)
         {
             NewScanReceived?.Invoke(this, data);
@@ -121,7 +129,17 @@ namespace InventoryScanner.BarcodeScanning
             port.Dispose();
         }
 
-        public void StartScanner()
+        public bool StartScanner()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void GoodScan()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BadScan()
         {
             throw new NotImplementedException();
         }

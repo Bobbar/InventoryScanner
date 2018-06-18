@@ -8,11 +8,21 @@ namespace InventoryScanner
 {
     public interface IScannerInput
     {
-        void StartScanner();
+        /// <summary>
+        /// Connect/open scanner.
+        /// </summary>
+        /// <returns>Returns true if successful./</returns>
+        bool StartScanner();
+
+        bool SupportsFeedback { get; }
 
         event EventHandler<string> NewScanReceived;
 
         event EventHandler<Exception> ExceptionOccured;
+
+        void GoodScan();
+
+        void BadScan();
 
         void Dispose();
     }

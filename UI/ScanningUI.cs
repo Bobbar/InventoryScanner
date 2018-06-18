@@ -3,6 +3,8 @@ using InventoryScanner.Data.Tables;
 using InventoryScanner.Helpers;
 using InventoryScanner.Helpers.DataGridHelpers;
 using InventoryScanner.PDFProcessing;
+using InventoryScanner.ScanController;
+using InventoryScanner.UI.CustomControls;
 using InventoryScanner.UIManagement;
 using System;
 using System.Collections.Generic;
@@ -17,6 +19,7 @@ namespace InventoryScanner.UI
         private ScanningController controller;
         private Location location;
         private DBControlParser controlParser;
+        private SliderLabel statusLabel = new SliderLabel();
 
         public List<string> LocationFilters
         {
@@ -48,15 +51,19 @@ namespace InventoryScanner.UI
             PopulateLocationsCombo();
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
             AttachFilterMenuEvents();
+
+            statusLabel.FlashStripOnNewMessage = true;
+            statusLabel.AutoSize = true;
+            statusStrip1.Items.Insert(0, statusLabel.ToToolStripControl(statusStrip1));
+
             this.Show();
-            
         }
 
         public void SetController(ScanningController controller)
         {
             this.controller = controller;
             this.controller.ExceptionOccured += Controller_ExceptionOccured;
-
+            this.controller.ScannerStatusChanged += Controller_ScannerStatusChanged;
             SelectScannerPort();
         }
 
@@ -67,7 +74,35 @@ namespace InventoryScanner.UI
             {
                 controller.InitScanner(selectPort.SelectedPortName);
             }
-           
+        }
+
+        private void Controller_ScannerStatusChanged(object sender, ScannerStatusEvent e)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => Controller_ScannerStatusChanged(sender, e));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                switch (e)
+                {
+                    case ScannerStatusEvent.Connected:
+                        ScannerStatusLabel.Text = "Scanner: Connected";
+                        ScannerStatusLabel.ForeColor = Color.DarkGreen;
+                        break;
+
+                    case ScannerStatusEvent.LostConnection:
+                        ScannerStatusLabel.Text = "Scanner: Disconnected";
+                        ScannerStatusLabel.ForeColor = Color.DarkRed;
+                        break;
+
+                    case ScannerStatusEvent.Error:
+                        ScannerStatusLabel.Text = "Scanner: Error!";
+                        ScannerStatusLabel.ForeColor = Color.DarkRed;
+                        break;
+                }
+            }
         }
 
         private void Controller_ExceptionOccured(object sender, Exception e)
@@ -87,9 +122,11 @@ namespace InventoryScanner.UI
                     //    " was scanned at an unexpected location. \n \n Expected location: " +
                     //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
                     //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
+                    StatusMessage("Location Mismatch!", Color.DarkRed);
                 }
                 else if (e is ItemNotFoundException)
                 {
+                    StatusMessage("Asset not found!", Color.Red);
                     var infe = (ItemNotFoundException)e;
 
                     var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
@@ -101,7 +138,21 @@ namespace InventoryScanner.UI
                     OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scanner Error", this);
                     SelectScannerPort();
                 }
+                else if (e is DuplicateScanException)
+                {
+                    StatusMessage("Duplicate scan!", Color.DarkRed);
+                }
+                else if (e is ScanNotStartedException)
+                {
+                    var prompt = "Please start a new scan or select a previous one before scanning.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scan Not Started", this);
+                }
             }
+        }
+
+        private void StatusMessage(string text, Color color)
+        {
+            statusLabel.QueueMessage(text, color, 10);
         }
 
         private void ScanningUI_Load(object sender, EventArgs e)
@@ -487,12 +538,6 @@ namespace InventoryScanner.UI
             // DisplayDetailsOfSelected();
         }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            // var portReader =
-            //  portReader.Test();
-        }
-
         private void SubmitScanButton_Click(object sender, EventArgs e)
         {
             SubmitManualScan();
@@ -581,5 +626,6 @@ namespace InventoryScanner.UI
         {
             SelectPreviousScan();
         }
+
     }
 }

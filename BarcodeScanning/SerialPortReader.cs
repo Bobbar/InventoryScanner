@@ -14,9 +14,19 @@ namespace InventoryScanner.BarcodeScanning
         public event EventHandler<string> NewScanReceived;
         public event EventHandler<Exception> ExceptionOccured;
 
+        public bool SupportsFeedback
+        {
+            get
+            {
+                return true;
+            }
+        }
+
         private void OnNewScanReceived(string data)
         {
             NewScanReceived?.Invoke(this, data);
+
+            Console.WriteLine("Scan: " + data);
         }
 
         private void OnExceptionOccured(Exception ex)
@@ -29,7 +39,7 @@ namespace InventoryScanner.BarcodeScanning
             port = new SerialPort(portName);
         }
 
-        public void StartScanner()
+        public bool StartScanner()
         {
             // Try to open the port.
             try
@@ -47,8 +57,34 @@ namespace InventoryScanner.BarcodeScanning
             // Start the async reader.
             readCancelTokenSource = new System.Threading.CancellationTokenSource();
             ReadBytesAsync(readCancelTokenSource.Token);
+
+            return true;
         }
 
+        public void GoodScan()
+        {
+            if (!SupportsFeedback) return;
+
+            // Send ACK character.
+            var ack = new char[1];
+            ack[0] = System.Convert.ToChar(0x06);
+            port.Write(ack, 0, 1);
+
+            Console.WriteLine("Good Scan.");
+        }
+
+        public void BadScan()
+        {
+            if (!SupportsFeedback) return;
+
+            // Send NAK character.
+            var ack = new char[1];
+            ack[0] = System.Convert.ToChar(0x15);
+            port.Write(ack, 0, 1);
+
+            Console.WriteLine("Bad Scan.");
+
+        }
         private void Port_ErrorReceived(object sender, SerialErrorReceivedEventArgs e)
         {
             Console.WriteLine("Error: " + e.EventType.ToString());

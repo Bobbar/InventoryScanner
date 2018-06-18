@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace InventoryScanner
+namespace InventoryScanner.ScanController
 {
     public class ScanningController : IDisposable
     {
@@ -25,6 +25,18 @@ namespace InventoryScanner
 
         public event EventHandler<Exception> ExceptionOccured;
 
+        private void OnExceptionOccured(Exception ex)
+        {
+            ExceptionOccured?.Invoke(this, ex);
+        }
+
+        public event EventHandler<ScannerStatusEvent> ScannerStatusChanged;
+
+        private void OnScannerStatusChanged(ScannerStatusEvent type)
+        {
+            ScannerStatusChanged?.Invoke(this, type);
+        }
+
         public ScanningController(IScanningUI view)
         {
             this.view = view;
@@ -35,6 +47,7 @@ namespace InventoryScanner
         public void InitScanner(string portName)
         {
             if (string.IsNullOrEmpty(portName)) return;
+
             try
             {
                 if (scannerInput != null)
@@ -45,23 +58,26 @@ namespace InventoryScanner
                 scannerInput = new SerialPortReader(portName);
                 scannerInput.NewScanReceived += ScannerInput_NewScanReceived;
                 scannerInput.ExceptionOccured += ScannerInput_ExceptionOccured;
-                scannerInput.StartScanner();
+
+                if (scannerInput.StartScanner())
+                    OnScannerStatusChanged(ScannerStatusEvent.Connected);
+
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                OnExceptionOccured(ex);
+                OnScannerStatusChanged(ScannerStatusEvent.Error);
             }
         }
 
         private void ScannerInput_ExceptionOccured(object sender, Exception e)
         {
             OnExceptionOccured(e);
+            OnScannerStatusChanged(ScannerStatusEvent.LostConnection);
         }
 
-        private void OnExceptionOccured(Exception ex)
-        {
-            ExceptionOccured.Invoke(this, ex);
-        }
+
 
         private void ScannerInput_NewScanReceived(object sender, string e)
         {
@@ -260,10 +276,18 @@ namespace InventoryScanner
 
         public void SubmitNewScanItem(string assetTag, ScanType scanType)
         {
+            if (currentScan == null)
+            {
+                scannerInput.BadScan();
+                OnExceptionOccured(new ScanNotStartedException());
+                return;
+            }
+
             using (var itemDetail = DetailOfAsset(assetTag))
             {
                 if (itemDetail.Rows.Count < 1)
                 {
+                    scannerInput.BadScan();
                     OnExceptionOccured(new ItemNotFoundException(assetTag));
                     return;
                 }
@@ -271,7 +295,12 @@ namespace InventoryScanner
                 var itemRow = itemDetail.Rows[0];
 
                 // Return silently if the item has already been scanned.
-                if (!string.IsNullOrEmpty(itemRow[ScanItemsTable.ScanStatus].ToString())) return;
+                if (!string.IsNullOrEmpty(itemRow[ScanItemsTable.ScanStatus].ToString()))
+                {
+                    scannerInput.BadScan();
+                    OnExceptionOccured(new DuplicateScanException());
+                    return;
+                }
 
                 bool locationMismatch = false;
 
@@ -306,8 +335,12 @@ namespace InventoryScanner
                     var expectedLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[itemRow[MunisFixedAssetTable.Location].ToString()];
                     var scanLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[currentScan.MunisLocation.MunisCode];
 
+                    scannerInput.BadScan();
                     OnExceptionOccured(new LocationMismatchException(expectedLocation.DisplayValue, scanLocation.DisplayValue, assetTag));
+                    return;
                 }
+
+                scannerInput.GoodScan();
             }
         }
 

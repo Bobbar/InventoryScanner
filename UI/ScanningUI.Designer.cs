@@ -79,6 +79,9 @@
             this.FilterOCMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FilterACMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FilterDUMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ScannerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
@@ -91,6 +94,7 @@
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.menuStrip1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // MainLayoutPanel
@@ -109,7 +113,7 @@
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 95F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.MainLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 332F));
-            this.MainLayoutPanel.Size = new System.Drawing.Size(1292, 925);
+            this.MainLayoutPanel.Size = new System.Drawing.Size(1269, 853);
             this.MainLayoutPanel.TabIndex = 1;
             // 
             // groupBox1
@@ -121,7 +125,7 @@
             this.groupBox1.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox1.Location = new System.Drawing.Point(3, 98);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1286, 492);
+            this.groupBox1.Size = new System.Drawing.Size(1263, 420);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Items To Scan";
@@ -152,7 +156,7 @@
             this.ScanItemsGrid.ShowCellToolTips = false;
             this.ScanItemsGrid.ShowEditingIcon = false;
             this.ScanItemsGrid.ShowRowErrors = false;
-            this.ScanItemsGrid.Size = new System.Drawing.Size(1280, 467);
+            this.ScanItemsGrid.Size = new System.Drawing.Size(1257, 395);
             this.ScanItemsGrid.TabIndex = 0;
             this.ScanItemsGrid.VirtualMode = true;
             this.ScanItemsGrid.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.ScanItemsGrid_CellMouseClick);
@@ -187,7 +191,7 @@
             this.groupBox2.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1286, 89);
+            this.groupBox2.Size = new System.Drawing.Size(1263, 89);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Scan Info";
@@ -262,11 +266,11 @@
             this.ScanLayoutTable.Controls.Add(this.groupBox3, 0, 0);
             this.ScanLayoutTable.Controls.Add(this.groupBox6, 1, 0);
             this.ScanLayoutTable.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 596);
+            this.ScanLayoutTable.Location = new System.Drawing.Point(3, 524);
             this.ScanLayoutTable.Name = "ScanLayoutTable";
             this.ScanLayoutTable.RowCount = 1;
             this.ScanLayoutTable.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.ScanLayoutTable.Size = new System.Drawing.Size(1286, 326);
+            this.ScanLayoutTable.Size = new System.Drawing.Size(1263, 326);
             this.ScanLayoutTable.TabIndex = 2;
             // 
             // groupBox3
@@ -304,7 +308,7 @@
             this.SubmitScanButton.Name = "SubmitScanButton";
             this.SubmitScanButton.Size = new System.Drawing.Size(349, 52);
             this.SubmitScanButton.TabIndex = 2;
-            this.SubmitScanButton.Text = "Submit";
+            this.SubmitScanButton.Text = "Submit Manual Scan";
             this.SubmitScanButton.UseVisualStyleBackColor = false;
             this.SubmitScanButton.Click += new System.EventHandler(this.SubmitScanButton_Click);
             // 
@@ -334,7 +338,7 @@
             this.groupBox6.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox6.Location = new System.Drawing.Point(463, 3);
             this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(820, 320);
+            this.groupBox6.Size = new System.Drawing.Size(797, 320);
             this.groupBox6.TabIndex = 3;
             this.groupBox6.TabStop = false;
             this.groupBox6.Text = "Current Item Info";
@@ -351,7 +355,7 @@
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(814, 295);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(791, 295);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // groupBox4
@@ -371,7 +375,7 @@
             this.groupBox4.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.groupBox4.Location = new System.Drawing.Point(3, 3);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(371, 289);
+            this.groupBox4.Size = new System.Drawing.Size(360, 289);
             this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Munis";
@@ -384,7 +388,7 @@
             this.MunisPurchaseDtTextBox.Location = new System.Drawing.Point(18, 250);
             this.MunisPurchaseDtTextBox.Name = "MunisPurchaseDtTextBox";
             this.MunisPurchaseDtTextBox.ReadOnly = true;
-            this.MunisPurchaseDtTextBox.Size = new System.Drawing.Size(332, 26);
+            this.MunisPurchaseDtTextBox.Size = new System.Drawing.Size(321, 26);
             this.MunisPurchaseDtTextBox.TabIndex = 9;
             // 
             // MunisDepartmentTextBox
@@ -395,7 +399,7 @@
             this.MunisDepartmentTextBox.Location = new System.Drawing.Point(19, 199);
             this.MunisDepartmentTextBox.Name = "MunisDepartmentTextBox";
             this.MunisDepartmentTextBox.ReadOnly = true;
-            this.MunisDepartmentTextBox.Size = new System.Drawing.Size(331, 26);
+            this.MunisDepartmentTextBox.Size = new System.Drawing.Size(320, 26);
             this.MunisDepartmentTextBox.TabIndex = 8;
             // 
             // MunisLocationTextBox
@@ -406,7 +410,7 @@
             this.MunisLocationTextBox.Location = new System.Drawing.Point(19, 148);
             this.MunisLocationTextBox.Name = "MunisLocationTextBox";
             this.MunisLocationTextBox.ReadOnly = true;
-            this.MunisLocationTextBox.Size = new System.Drawing.Size(331, 26);
+            this.MunisLocationTextBox.Size = new System.Drawing.Size(320, 26);
             this.MunisLocationTextBox.TabIndex = 7;
             // 
             // MunisSerialTextBox
@@ -417,7 +421,7 @@
             this.MunisSerialTextBox.Location = new System.Drawing.Point(19, 97);
             this.MunisSerialTextBox.Name = "MunisSerialTextBox";
             this.MunisSerialTextBox.ReadOnly = true;
-            this.MunisSerialTextBox.Size = new System.Drawing.Size(331, 26);
+            this.MunisSerialTextBox.Size = new System.Drawing.Size(320, 26);
             this.MunisSerialTextBox.TabIndex = 6;
             // 
             // MunisDescriptionTextBox
@@ -428,7 +432,7 @@
             this.MunisDescriptionTextBox.Location = new System.Drawing.Point(18, 46);
             this.MunisDescriptionTextBox.Name = "MunisDescriptionTextBox";
             this.MunisDescriptionTextBox.ReadOnly = true;
-            this.MunisDescriptionTextBox.Size = new System.Drawing.Size(332, 26);
+            this.MunisDescriptionTextBox.Size = new System.Drawing.Size(321, 26);
             this.MunisDescriptionTextBox.TabIndex = 5;
             // 
             // label6
@@ -495,9 +499,9 @@
             this.groupBox5.Controls.Add(this.label11);
             this.groupBox5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox5.ForeColor = System.Drawing.Color.WhiteSmoke;
-            this.groupBox5.Location = new System.Drawing.Point(380, 3);
+            this.groupBox5.Location = new System.Drawing.Point(369, 3);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(431, 289);
+            this.groupBox5.Size = new System.Drawing.Size(419, 289);
             this.groupBox5.TabIndex = 4;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Asset Manager";
@@ -510,7 +514,7 @@
             this.AssetStatusTextBox.Location = new System.Drawing.Point(217, 250);
             this.AssetStatusTextBox.Name = "AssetStatusTextBox";
             this.AssetStatusTextBox.ReadOnly = true;
-            this.AssetStatusTextBox.Size = new System.Drawing.Size(190, 26);
+            this.AssetStatusTextBox.Size = new System.Drawing.Size(178, 26);
             this.AssetStatusTextBox.TabIndex = 18;
             // 
             // AssetCurUserTextBox
@@ -521,7 +525,7 @@
             this.AssetCurUserTextBox.Location = new System.Drawing.Point(217, 199);
             this.AssetCurUserTextBox.Name = "AssetCurUserTextBox";
             this.AssetCurUserTextBox.ReadOnly = true;
-            this.AssetCurUserTextBox.Size = new System.Drawing.Size(190, 26);
+            this.AssetCurUserTextBox.Size = new System.Drawing.Size(178, 26);
             this.AssetCurUserTextBox.TabIndex = 17;
             // 
             // AssetLastLocationTextBox
@@ -550,7 +554,7 @@
             this.AssetLocationTextBox.Location = new System.Drawing.Point(19, 148);
             this.AssetLocationTextBox.Name = "AssetLocationTextBox";
             this.AssetLocationTextBox.ReadOnly = true;
-            this.AssetLocationTextBox.Size = new System.Drawing.Size(388, 26);
+            this.AssetLocationTextBox.Size = new System.Drawing.Size(376, 26);
             this.AssetLocationTextBox.TabIndex = 14;
             // 
             // AssetSerialTextBox
@@ -561,7 +565,7 @@
             this.AssetSerialTextBox.Location = new System.Drawing.Point(19, 97);
             this.AssetSerialTextBox.Name = "AssetSerialTextBox";
             this.AssetSerialTextBox.ReadOnly = true;
-            this.AssetSerialTextBox.Size = new System.Drawing.Size(388, 26);
+            this.AssetSerialTextBox.Size = new System.Drawing.Size(376, 26);
             this.AssetSerialTextBox.TabIndex = 13;
             // 
             // AssetDescriptionTextBox
@@ -572,7 +576,7 @@
             this.AssetDescriptionTextBox.Location = new System.Drawing.Point(19, 46);
             this.AssetDescriptionTextBox.Name = "AssetDescriptionTextBox";
             this.AssetDescriptionTextBox.ReadOnly = true;
-            this.AssetDescriptionTextBox.Size = new System.Drawing.Size(388, 26);
+            this.AssetDescriptionTextBox.Size = new System.Drawing.Size(376, 26);
             this.AssetDescriptionTextBox.TabIndex = 12;
             // 
             // label13
@@ -645,7 +649,7 @@
             this.filtersToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1292, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1269, 24);
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -748,12 +752,41 @@
             this.FilterDUMenuItem.Tag = "759";
             this.FilterDUMenuItem.Text = "Discover U";
             // 
+            // statusStrip1
+            // 
+            this.statusStrip1.AutoSize = false;
+            this.statusStrip1.BackColor = System.Drawing.SystemColors.Control;
+            this.statusStrip1.Font = new System.Drawing.Font("Segoe UI Semibold", 11.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1,
+            this.ScannerStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 883);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(1269, 32);
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(1078, 27);
+            this.toolStripStatusLabel1.Spring = true;
+            // 
+            // ScannerStatusLabel
+            // 
+            this.ScannerStatusLabel.ForeColor = System.Drawing.Color.Black;
+            this.ScannerStatusLabel.Name = "ScannerStatusLabel";
+            this.ScannerStatusLabel.Size = new System.Drawing.Size(176, 27);
+            this.ScannerStatusLabel.Text = "Scanner: Not Connected";
+            // 
             // ScanningUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(39)))), ((int)(((byte)(39)))), ((int)(((byte)(39)))));
-            this.ClientSize = new System.Drawing.Size(1292, 952);
+            this.ClientSize = new System.Drawing.Size(1269, 915);
+            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.MainLayoutPanel);
             this.DoubleBuffered = true;
@@ -784,6 +817,8 @@
             this.groupBox5.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -850,6 +885,9 @@
         private System.Windows.Forms.ToolStripMenuItem FilterACMenuItem;
         private System.Windows.Forms.ToolStripMenuItem FilterDUMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectPreviousScanToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel ScannerStatusLabel;
     }
 }
 
