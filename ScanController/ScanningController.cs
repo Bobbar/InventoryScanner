@@ -515,7 +515,7 @@ namespace InventoryScanner.ScanController
 
         public Location GetLocation(string locationCode)
         {
-            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Munis.SelectDepartmentByLocation(locationCode)))
+            using (var results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Munis.SelectDepartmentByLocation(locationCode)))
             {
                 return new Location(results);
             }

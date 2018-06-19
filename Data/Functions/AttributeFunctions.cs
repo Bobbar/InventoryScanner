@@ -35,7 +35,7 @@ namespace InventoryScanner.Data.Functions
         {
             var tmpAttribs = new DbAttributes();
 
-            using (var results = DBFactory.GetDatabase().DataTableFromQueryString(Queries.Assets.SelectSubnetLocations()))
+            using (var results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Assets.SelectSubnetLocations()))
             {
                 foreach (DataRow row in results.Rows)
                 {
@@ -50,7 +50,7 @@ namespace InventoryScanner.Data.Functions
         {
             var tmpAttribs = new DbAttributes();
 
-            using (var results = MunisDatabase.ReturnSqlTable(Queries.Munis.SelectLocations()))
+            using (var results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Munis.SelectLocations()))//MunisDatabase.ReturnSqlTable(Queries.Munis.SelectLocations()))
             {
                 foreach (DataRow row in results.Rows)
                 {
@@ -65,7 +65,7 @@ namespace InventoryScanner.Data.Functions
         {
             var tmpAttribs = new DbAttributes();
 
-            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectMunisAndAssetLocationCodes()))
+            using (var results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Assets.SelectMunisAndAssetLocationCodes()))
             {
                 foreach (DataRow row in results.Rows)
                 {
@@ -81,7 +81,7 @@ namespace InventoryScanner.Data.Functions
         {
             //try
             //{
-            using (DataTable results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectAttributeCodes(attribTable, attribName)))
+            using (DataTable results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Assets.SelectAttributeCodes(attribTable, attribName)))
             {
                 var tmpAttrib = new DbAttributes();
                 foreach (DataRow r in results.Rows)

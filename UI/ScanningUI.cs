@@ -6,6 +6,7 @@ using InventoryScanner.PDFProcessing;
 using InventoryScanner.ScanController;
 using InventoryScanner.UI.CustomControls;
 using InventoryScanner.UIManagement;
+using InventoryScanner.Data.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -631,6 +632,11 @@ namespace InventoryScanner.UI
         private void selectScannerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SelectScannerPort();
+        }
+
+        private void rebuildCacheToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CacheFunctions.CacheTables();
         }
     }
 }

@@ -1,20 +1,14 @@
-﻿using System;
+﻿using InventoryScanner.Data.Munis;
+using InventoryScanner.Data.Tables;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InventoryScanner.Data;
-using InventoryScanner.Data.Functions;
 using System.Data;
 using System.Data.Common;
-using InventoryScanner.Data.Munis;
-using InventoryScanner.Data.Tables;
 
 namespace InventoryScanner.Data.Functions
 {
     public static class CacheFunctions
     {
-        public static void CacheAssetTable(string tableName, string primaryKey, DbTransaction trans = null)
+        private static void CacheAssetTable(string tableName, string primaryKey, DbTransaction trans = null)
         {
             using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString("SELECT * FROM " + tableName))
             {
@@ -23,7 +17,7 @@ namespace InventoryScanner.Data.Functions
             }
         }
 
-        public static void CacheMunisTable(string tableName, string primaryKey, DbTransaction trans = null)
+        private static void CacheMunisTable(string tableName, string primaryKey, DbTransaction trans = null)
         {
             using (var results = MunisDatabase.ReturnSqlTable("SELECT * FROM " + tableName))
             {
@@ -40,7 +34,6 @@ namespace InventoryScanner.Data.Functions
                 SqliteFunctions.AddTableToCacheDB(results, MunisFixedAssetTable.Asset, trans);
             }
         }
-
 
         public static void CacheTables()
         {
@@ -63,7 +56,7 @@ namespace InventoryScanner.Data.Functions
                     }
 
                     CacheFATable(trans);
-                    
+
                     trans.Commit();
                 }
                 catch
@@ -97,7 +90,6 @@ namespace InventoryScanner.Data.Functions
             }
         }
 
-
         private static List<CacheTable> TablesToCache()
         {
             var tables = new List<CacheTable>();
@@ -106,9 +98,7 @@ namespace InventoryScanner.Data.Functions
             tables.Add(new CacheTable("munis_codes", "id", TableType.AssetManager));
             tables.Add(new CacheTable("munis_departments", "id", TableType.AssetManager));
 
-
             tables.Add(new CacheTable(MunisLocations.TableName, MunisLocations.Code, TableType.Munis));
-           // tables.Add(new CacheTable(MunisFixedAssetTable.TableName, MunisFixedAssetTable.Asset, TableType.Munis));
 
             return tables;
         }
@@ -125,7 +115,6 @@ namespace InventoryScanner.Data.Functions
                 this.PrimaryKey = primaryKey;
                 this.TableType = tableType;
             }
-
         }
 
         private enum TableType

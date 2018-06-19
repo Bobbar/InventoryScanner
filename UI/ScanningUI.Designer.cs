@@ -79,11 +79,13 @@
             this.FilterOCMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FilterACMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.FilterDUMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectScannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScannerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.scannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectScannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rebuildCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
@@ -649,7 +651,8 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.filtersToolStripMenuItem,
-            this.scannerToolStripMenuItem});
+            this.scannerToolStripMenuItem,
+            this.databaseToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1269, 24);
@@ -755,6 +758,22 @@
             this.FilterDUMenuItem.Tag = "759";
             this.FilterDUMenuItem.Text = "Discover U";
             // 
+            // scannerToolStripMenuItem
+            // 
+            this.scannerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectScannerToolStripMenuItem});
+            this.scannerToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
+            this.scannerToolStripMenuItem.Name = "scannerToolStripMenuItem";
+            this.scannerToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.scannerToolStripMenuItem.Text = "Scanner";
+            // 
+            // selectScannerToolStripMenuItem
+            // 
+            this.selectScannerToolStripMenuItem.Name = "selectScannerToolStripMenuItem";
+            this.selectScannerToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.selectScannerToolStripMenuItem.Text = "Connect Scanner";
+            this.selectScannerToolStripMenuItem.Click += new System.EventHandler(this.selectScannerToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.AutoSize = false;
@@ -783,21 +802,21 @@
             this.ScannerStatusLabel.Size = new System.Drawing.Size(176, 27);
             this.ScannerStatusLabel.Text = "Scanner: Not Connected";
             // 
-            // scannerToolStripMenuItem
+            // databaseToolStripMenuItem
             // 
-            this.scannerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.selectScannerToolStripMenuItem});
-            this.scannerToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
-            this.scannerToolStripMenuItem.Name = "scannerToolStripMenuItem";
-            this.scannerToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.scannerToolStripMenuItem.Text = "Scanner";
+            this.databaseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rebuildCacheToolStripMenuItem});
+            this.databaseToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
+            this.databaseToolStripMenuItem.Name = "databaseToolStripMenuItem";
+            this.databaseToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.databaseToolStripMenuItem.Text = "Database";
             // 
-            // selectScannerToolStripMenuItem
+            // rebuildCacheToolStripMenuItem
             // 
-            this.selectScannerToolStripMenuItem.Name = "selectScannerToolStripMenuItem";
-            this.selectScannerToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.selectScannerToolStripMenuItem.Text = "Select Scanner";
-            this.selectScannerToolStripMenuItem.Click += new System.EventHandler(this.selectScannerToolStripMenuItem_Click);
+            this.rebuildCacheToolStripMenuItem.Name = "rebuildCacheToolStripMenuItem";
+            this.rebuildCacheToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.rebuildCacheToolStripMenuItem.Text = "Rebuild Cache";
+            this.rebuildCacheToolStripMenuItem.Click += new System.EventHandler(this.rebuildCacheToolStripMenuItem_Click);
             // 
             // ScanningUI
             // 
@@ -909,6 +928,8 @@
         private System.Windows.Forms.ToolStripStatusLabel ScannerStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem scannerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem selectScannerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem databaseToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem rebuildCacheToolStripMenuItem;
     }
 }
 

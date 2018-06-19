@@ -27,26 +27,21 @@ namespace InventoryScanner
 
             try
             {
-                GlobalSwitches.ServerOnline = CanReachServer();
+                // GlobalSwitches.ServerOnline = CanReachServer();
 
                 Logging.Logger("Loading attributes...");
-
                 AttributeFunctions.PopulateAttributeIndexes();
 
-                Logging.Logger("Caching tables...");
-
-                if (GlobalSwitches.ServerOnline) CacheFunctions.CacheTables();
+                //Logging.Logger("Caching tables...");
+                // if (GlobalSwitches.ServerOnline) CacheFunctions.CacheTables();
 
                 Logging.Logger("Init Scanning UI...");
-
                 var scanUI = new ScanningUI();
 
                 Logging.Logger("Init Scanning Controller...");
-
                 var scanController = new ScanningController(scanUI);
 
                 Logging.Logger("Launch UI...");
-
                 Application.Run(scanUI);
             }
             catch (Exception ex)
