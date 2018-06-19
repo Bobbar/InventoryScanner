@@ -1,4 +1,5 @@
 ﻿using InventoryScanner.Data.Classes;
+using InventoryScanner.Data.Functions;
 using InventoryScanner.Data.Tables;
 using InventoryScanner.Helpers;
 using InventoryScanner.Helpers.DataGridHelpers;
@@ -6,7 +7,6 @@ using InventoryScanner.PDFProcessing;
 using InventoryScanner.ScanController;
 using InventoryScanner.UI.CustomControls;
 using InventoryScanner.UIManagement;
-using InventoryScanner.Data.Functions;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -65,7 +65,7 @@ namespace InventoryScanner.UI
             this.controller = controller;
             this.controller.ExceptionOccured += Controller_ExceptionOccured;
             this.controller.ScannerStatusChanged += Controller_ScannerStatusChanged;
-            this.controller.SuccessfulSync += Controller_SuccessfulSync;
+            this.controller.SyncEvent += Controller_SuccessfulSync;
             SelectScannerPort();
         }
 
@@ -78,9 +78,25 @@ namespace InventoryScanner.UI
             }
         }
 
-        private void Controller_SuccessfulSync(object sender, EventArgs e)
+        private void Controller_SuccessfulSync(object sender, bool e)
         {
-            SyncStatusLabel.Text = "Last Sync: " + DateTime.Now.ToLongTimeString();
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => Controller_SuccessfulSync(sender, e));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                if (e)
+                {
+                    SyncStatusLabel.ForeColor = Color.Black;
+                    SyncStatusLabel.Text = "Last Sync: " + DateTime.Now.ToLongTimeString();
+                }
+                else
+                {
+                    SyncStatusLabel.ForeColor = Color.DarkRed;
+                }
+            }
         }
 
         private void Controller_ScannerStatusChanged(object sender, ScannerStatusEvent e)

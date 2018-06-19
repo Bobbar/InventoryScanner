@@ -24,11 +24,11 @@ namespace InventoryScanner.ScanController
         private bool syncRunning = false;
         private IScannerInput scannerInput;
 
-        public event EventHandler SuccessfulSync;
+        public event EventHandler<bool> SyncEvent;
 
-        private void OnSuccessfulSync()
+        private void OnSyncEvent(bool success)
         {
-            SuccessfulSync?.Invoke(this, new EventArgs());
+            SyncEvent?.Invoke(this, success);
         }
 
         public event EventHandler<Exception> ExceptionOccured;
@@ -365,10 +365,12 @@ namespace InventoryScanner.ScanController
                 // Refresh view.
                 if (hasChanged) LoadCurrentScanItems(view.LocationFilters);
 
-                OnSuccessfulSync();
+                OnSyncEvent(true);
             }
             catch (Exception)
             {
+                OnSyncEvent(false);
+
                 // We want this to fail silently.
             }
             finally

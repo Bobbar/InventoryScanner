@@ -81,11 +81,11 @@
             this.FilterDUMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.scannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.selectScannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.rebuildCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScannerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rebuildCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -775,6 +775,22 @@
             this.selectScannerToolStripMenuItem.Text = "Connect Scanner";
             this.selectScannerToolStripMenuItem.Click += new System.EventHandler(this.selectScannerToolStripMenuItem_Click);
             // 
+            // databaseToolStripMenuItem
+            // 
+            this.databaseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.rebuildCacheToolStripMenuItem});
+            this.databaseToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
+            this.databaseToolStripMenuItem.Name = "databaseToolStripMenuItem";
+            this.databaseToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
+            this.databaseToolStripMenuItem.Text = "Database";
+            // 
+            // rebuildCacheToolStripMenuItem
+            // 
+            this.rebuildCacheToolStripMenuItem.Name = "rebuildCacheToolStripMenuItem";
+            this.rebuildCacheToolStripMenuItem.Size = new System.Drawing.Size(150, 22);
+            this.rebuildCacheToolStripMenuItem.Text = "Rebuild Cache";
+            this.rebuildCacheToolStripMenuItem.Click += new System.EventHandler(this.rebuildCacheToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.AutoSize = false;
@@ -794,7 +810,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(968, 27);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(926, 27);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // ScannerStatusLabel
@@ -804,28 +820,12 @@
             this.ScannerStatusLabel.Size = new System.Drawing.Size(176, 27);
             this.ScannerStatusLabel.Text = "Scanner: Not Connected";
             // 
-            // databaseToolStripMenuItem
-            // 
-            this.databaseToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.rebuildCacheToolStripMenuItem});
-            this.databaseToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
-            this.databaseToolStripMenuItem.Name = "databaseToolStripMenuItem";
-            this.databaseToolStripMenuItem.Size = new System.Drawing.Size(67, 20);
-            this.databaseToolStripMenuItem.Text = "Database";
-            // 
-            // rebuildCacheToolStripMenuItem
-            // 
-            this.rebuildCacheToolStripMenuItem.Name = "rebuildCacheToolStripMenuItem";
-            this.rebuildCacheToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.rebuildCacheToolStripMenuItem.Text = "Rebuild Cache";
-            this.rebuildCacheToolStripMenuItem.Click += new System.EventHandler(this.rebuildCacheToolStripMenuItem_Click);
-            // 
             // SyncStatusLabel
             // 
-            this.SyncStatusLabel.ForeColor = System.Drawing.Color.Black;
+            this.SyncStatusLabel.ForeColor = System.Drawing.Color.DarkRed;
             this.SyncStatusLabel.Name = "SyncStatusLabel";
-            this.SyncStatusLabel.Size = new System.Drawing.Size(79, 27);
-            this.SyncStatusLabel.Text = "Last Sync: ";
+            this.SyncStatusLabel.Size = new System.Drawing.Size(121, 27);
+            this.SyncStatusLabel.Text = "Last Sync: Never";
             // 
             // ScanningUI
             // 
