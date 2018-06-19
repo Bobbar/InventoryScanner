@@ -122,7 +122,7 @@ namespace InventoryScanner.UI
                     //    " was scanned at an unexpected location. \n \n Expected location: " +
                     //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
                     //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
-                    StatusMessage("Location Mismatch!", Color.DarkRed);
+                    StatusMessage("Location Mismatch!", Color.Goldenrod);
                 }
                 else if (e is ItemNotFoundException)
                 {
@@ -152,6 +152,7 @@ namespace InventoryScanner.UI
 
         private void StatusMessage(string text, Color color)
         {
+            statusLabel.Clear();
             statusLabel.QueueMessage(text, color, 10);
         }
 
@@ -627,5 +628,9 @@ namespace InventoryScanner.UI
             SelectPreviousScan();
         }
 
+        private void selectScannerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SelectScannerPort();
+        }
     }
 }

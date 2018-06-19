@@ -30,8 +30,8 @@ namespace InventoryScanner.Helpers.DataGridHelpers
             {
                 if (SelectedRowIndex > 0)
                 {
-                    stateGrid.ClearSelection();
-                    stateGrid.CurrentCell = stateGrid.Rows[SelectedRowIndex].Cells[0];
+                    //stateGrid.ClearSelection();
+                    //stateGrid.CurrentCell = stateGrid.Rows[SelectedRowIndex].Cells[0];
                 }
 
                 stateGrid.HorizontalScrollingOffset = HScrollOffset;

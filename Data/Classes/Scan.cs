@@ -50,6 +50,7 @@ namespace InventoryScanner.Data.Classes
             MunisLocation = location;
             ScanLocation = location.AssetCode;
         }
+
         public Scan(string id, DateTime datestamp, string employee, Location location)
         {
             ID = id;

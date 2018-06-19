@@ -14,6 +14,7 @@ namespace InventoryScanner.Data.Functions
         {
             var BuildIdxs = Task.Run(() =>
             {
+
                 AttributeInstances.DeviceAttributes.Locations = BuildIndex("dev_codes", AttributeTypes.Device.Location);
                 AttributeInstances.DeviceAttributes.ChangeType = BuildIndex("dev_codes", AttributeTypes.Device.ChangeType);
                 AttributeInstances.DeviceAttributes.EquipType = BuildIndex("dev_codes", AttributeTypes.Device.EquipType);
@@ -24,7 +25,9 @@ namespace InventoryScanner.Data.Functions
                 PopulateSubnetLocationAttributes();
                 PopulateMunisToAssetAttributes();
                 // PopulateDepartments();
+
             });
+
             BuildIdxs.Wait();
         }
 
@@ -32,7 +35,7 @@ namespace InventoryScanner.Data.Functions
         {
             var tmpAttribs = new DbAttributes();
 
-            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectSubnetLocations()))
+            using (var results = DBFactory.GetDatabase().DataTableFromQueryString(Queries.Assets.SelectSubnetLocations()))
             {
                 foreach (DataRow row in results.Rows)
                 {
@@ -43,7 +46,7 @@ namespace InventoryScanner.Data.Functions
             AttributeInstances.DeviceAttributes.SubnetLocation = tmpAttribs;
         }
 
-        private static void PopulateMunisAttributes()
+        private static void PopulateMunisAttributes() // How to pull this from cache?
         {
             var tmpAttribs = new DbAttributes();
 
@@ -76,46 +79,46 @@ namespace InventoryScanner.Data.Functions
 
         private static DbAttributes BuildIndex(string attribTable, string attribName)
         {
-            try
+            //try
+            //{
+            using (DataTable results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectAttributeCodes(attribTable, attribName)))
             {
-                using (DataTable results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectAttributeCodes(attribTable, attribName)))
+                var tmpAttrib = new DbAttributes();
+                foreach (DataRow r in results.Rows)
                 {
-                    var tmpAttrib = new DbAttributes();
-                    foreach (DataRow r in results.Rows)
+                    string displayValue = "";
+                    if (r.Table.Columns.Contains("munis_code"))
                     {
-                        string displayValue = "";
-                        if (r.Table.Columns.Contains("munis_code"))
+                        if (r["munis_code"] != DBNull.Value)
                         {
-                            if (r["munis_code"] != DBNull.Value)
-                            {
-                                displayValue = r[ComboCodesBaseCols.DisplayValue].ToString() + " - " + r["munis_code"].ToString();
-                            }
-                            else
-                            {
-                                displayValue = r[ComboCodesBaseCols.DisplayValue].ToString();
-                            }
+                            displayValue = r[ComboCodesBaseCols.DisplayValue].ToString() + " - " + r["munis_code"].ToString();
                         }
                         else
                         {
                             displayValue = r[ComboCodesBaseCols.DisplayValue].ToString();
                         }
-
-                        Color attribColor = Color.Empty;
-                        if (!string.IsNullOrEmpty(r[ComboCodesBaseCols.Color].ToString()))
-                        {
-                            attribColor = ColorTranslator.FromHtml(r[ComboCodesBaseCols.Color].ToString());
-                        }
-
-                        tmpAttrib.Add(displayValue, r[ComboCodesBaseCols.CodeValue].ToString(), Convert.ToInt32(r[ComboCodesBaseCols.Id]), attribColor);
                     }
-                    return tmpAttrib;
+                    else
+                    {
+                        displayValue = r[ComboCodesBaseCols.DisplayValue].ToString();
+                    }
+
+                    Color attribColor = Color.Empty;
+                    if (!string.IsNullOrEmpty(r[ComboCodesBaseCols.Color].ToString()))
+                    {
+                        attribColor = ColorTranslator.FromHtml(r[ComboCodesBaseCols.Color].ToString());
+                    }
+
+                    tmpAttrib.Add(displayValue, r[ComboCodesBaseCols.CodeValue].ToString(), Convert.ToInt32(r[ComboCodesBaseCols.Id]), attribColor);
                 }
+                return tmpAttrib;
             }
-            catch (Exception ex)
-            {
-                // ErrorHandling.ErrHandle(ex, System.Reflection.MethodBase.GetCurrentMethod());
-                return null;
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    // ErrorHandling.ErrHandle(ex, System.Reflection.MethodBase.GetCurrentMethod());
+            //    return null;
+            //}
         }
     }
 }

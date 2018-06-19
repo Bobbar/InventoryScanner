@@ -7,16 +7,35 @@ namespace InventoryScanner.Data.Functions
 {
     public static class SqliteFunctions
     {
-        public static void AddTableToDB(DataTable table, string primaryKeyColumn, string scanId, DbTransaction trans = null)
+        public static void AddTableToScanDB(DataTable table, string primaryKeyColumn, string scanId, DbTransaction trans = null)
         {
             var createStatement = BuildCreateStatement(table, primaryKeyColumn);
 
-            DBFactory.GetSqliteDatabase(scanId).ExecuteNonQuery(createStatement, trans);
+            DBFactory.GetSqliteScanDatabase(scanId).ExecuteNonQuery(createStatement, trans);
 
             // Update the DB with a copy of the original table. This is done so that the row states are set to
             // 'Added'. This ensures that the update command will insert the new rows.
-            DBFactory.GetSqliteDatabase(scanId).UpdateTable("SELECT * FROM " + table.TableName, CopyTable(table), trans);
+            DBFactory.GetSqliteScanDatabase(scanId).UpdateTable("SELECT * FROM " + table.TableName, CopyTable(table), trans);
         }
+
+        public static void AddTableToCacheDB(DataTable table, string primaryKeyColumn, DbTransaction trans = null)
+        {
+            var createStatement = BuildCreateStatement(table, primaryKeyColumn);
+
+            try
+            {
+
+                DBFactory.GetSqliteCacheDatabase().ExecuteNonQuery(createStatement, trans);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            DBFactory.GetSqliteCacheDatabase().UpdateTable("SELECT * FROM " + table.TableName, CopyTable(table), trans);
+        }
+
 
         /// <summary>
         /// Returns a copy of the specified table with all rows states set as added.
@@ -57,7 +76,7 @@ namespace InventoryScanner.Data.Functions
                 {
                     statement += "varchar(" + column.MaxLength + ")";
                 }
-                else if (type == typeof(int))
+                else if (type == typeof(int) || type == typeof(Int16))
                 {
                     statement += "int(" + column.MaxLength + ")";
                 }
@@ -68,6 +87,10 @@ namespace InventoryScanner.Data.Functions
                 else if (type == typeof(sbyte) || type == typeof(byte) || type == typeof(bool))
                 {
                     statement += "tinyint(1)";
+                }
+                else if (type == typeof(Decimal))
+                {
+                    statement += "float";
                 }
                 else
                 {
@@ -84,7 +107,7 @@ namespace InventoryScanner.Data.Functions
             // End of statement close parentheses.
             statement += ");";
 
-           // Console.WriteLine(statement);
+            // Console.WriteLine(statement);
 
             return statement;
         }

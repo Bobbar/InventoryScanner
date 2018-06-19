@@ -32,28 +32,41 @@ namespace InventoryScanner.UI
             // Get list of port names.
             var serialPorts = SerialPort.GetPortNames();
 
-            // Query WMI for PnP ports.
-            var mos = new ManagementObjectSearcher("Select * From Win32_PnpEntity WHERE PNPClass = 'Ports'");
-            ManagementObjectCollection mocList = mos.Get();
-
             // Collection for the container struct.
             var portList = new List<CommPortInfo>();
 
-            // Iterate the WMI results.
-            foreach (var mo in mocList)
+
+            try
             {
-                // Also iterate the serial port names/IDs.
-                foreach (var port in serialPorts)
+                // Query WMI for PnP ports.
+                var mos = new ManagementObjectSearcher("Select * From Win32_PnpEntity WHERE PNPClass = 'Ports'");
+                ManagementObjectCollection mocList = mos.Get();
+
+                // Iterate the WMI results.
+                foreach (var mo in mocList)
                 {
-                    // If the WMI result 'Name' value contains the port name/ID,
-                    // add the SerialPort name/ID and WMI descriptive Name to
-                    // the collection.
-                    if (mo["Name"].ToString().Contains(port))
+                    // Also iterate the serial port names/IDs.
+                    foreach (var port in serialPorts)
                     {
-                        portList.Add(new CommPortInfo(port, mo["Name"].ToString()));
+                        // If the WMI result 'Name' value contains the port name/ID,
+                        // add the SerialPort name/ID and WMI descriptive Name to
+                        // the collection.
+                        if (mo["Name"].ToString().Contains(port))
+                        {
+                            portList.Add(new CommPortInfo(port, mo["Name"].ToString()));
+                        }
                     }
                 }
             }
+            catch (System.Management.ManagementException ex)
+            {
+                // If an error occurs, just add the port IDs.
+                foreach (var port in serialPorts)
+                {
+                    portList.Add(new CommPortInfo(port, port));
+                }
+            }
+           
 
             // Set the value and display members to the container stuct properties
             // and set the datasource to the collection.

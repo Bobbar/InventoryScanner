@@ -82,6 +82,8 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.ScannerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.scannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectScannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
@@ -646,7 +648,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.filtersToolStripMenuItem});
+            this.filtersToolStripMenuItem,
+            this.scannerToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1269, 24);
@@ -780,6 +783,22 @@
             this.ScannerStatusLabel.Size = new System.Drawing.Size(176, 27);
             this.ScannerStatusLabel.Text = "Scanner: Not Connected";
             // 
+            // scannerToolStripMenuItem
+            // 
+            this.scannerToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.selectScannerToolStripMenuItem});
+            this.scannerToolStripMenuItem.ForeColor = System.Drawing.Color.Black;
+            this.scannerToolStripMenuItem.Name = "scannerToolStripMenuItem";
+            this.scannerToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.scannerToolStripMenuItem.Text = "Scanner";
+            // 
+            // selectScannerToolStripMenuItem
+            // 
+            this.selectScannerToolStripMenuItem.Name = "selectScannerToolStripMenuItem";
+            this.selectScannerToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.selectScannerToolStripMenuItem.Text = "Select Scanner";
+            this.selectScannerToolStripMenuItem.Click += new System.EventHandler(this.selectScannerToolStripMenuItem_Click);
+            // 
             // ScanningUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
@@ -888,6 +907,8 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripStatusLabel ScannerStatusLabel;
+        private System.Windows.Forms.ToolStripMenuItem scannerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectScannerToolStripMenuItem;
     }
 }
 

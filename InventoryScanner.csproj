@@ -12,6 +12,23 @@
     <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <PublishUrl>\\core.co.fairfield.oh.us\dfs1\fcdd\files\QA\Asset Management\Inventory Scanner\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Unc</InstallFrom>
+    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>10</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <CreateDesktopShortcut>true</CreateDesktopShortcut>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -31,6 +48,18 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>7374A30BA017BEEFF2ED575F633FC3A2D156D4ED</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>InventoryScanner_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AdvancedDialog">
@@ -64,6 +93,7 @@
     <Compile Include="Data\ClassMapping\ColumnNameAttribute.cs" />
     <Compile Include="Data\ClassMapping\DataMapObject.cs" />
     <Compile Include="Data\DataConsistency.cs" />
+    <Compile Include="Data\Functions\CacheFunctions.cs" />
     <Compile Include="Data\Functions\MapObjectFunctions.cs" />
     <Compile Include="Data\Functions\SqliteFunctions.cs" />
     <Compile Include="Data\Munis\MunisDatabase.cs" />
@@ -79,9 +109,12 @@
     <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridState.cs" />
+    <Compile Include="Helpers\GlobalSwitches.cs" />
+    <Compile Include="Helpers\Logging.cs" />
     <Compile Include="IScannerInput.cs" />
     <Compile Include="ItemNotFoundException.cs" />
     <Compile Include="LocationMismatchException.cs" />
+    <Compile Include="Paths.cs" />
     <Compile Include="PDFProcessing\RectAndText.cs" />
     <Compile Include="PDFProcessing\TextLocationExtractionStrategy.cs" />
     <Compile Include="PDFProcessing\WorksheetProcessor.cs" />
@@ -154,6 +187,10 @@
     <EmbeddedResource Include="UI\SelectScanner.resx">
       <DependentUpon>SelectScanner.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="cache.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="InventoryScanner_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -174,6 +211,18 @@
     <Content Include="x86\SQLite.Interop.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.1">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.1 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
