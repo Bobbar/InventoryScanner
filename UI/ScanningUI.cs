@@ -145,7 +145,7 @@ namespace InventoryScanner.UI
                     //    " was scanned at an unexpected location. \n \n Expected location: " +
                     //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
                     //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
-                    StatusMessage("Location Mismatch!", Color.Goldenrod);
+                    StatusMessage("Location Mismatch!", Color.DarkGoldenrod);
                 }
                 else if (e is ItemNotFoundException)
                 {
@@ -163,7 +163,7 @@ namespace InventoryScanner.UI
                 }
                 else if (e is DuplicateScanException)
                 {
-                    StatusMessage("Duplicate scan!", Color.DarkRed);
+                    StatusMessage("Duplicate scan!", Color.Red);
                 }
                 else if (e is ScanNotStartedException)
                 {

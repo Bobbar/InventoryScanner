@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -123,15 +124,22 @@ namespace InventoryScanner.UI.CustomControls
         /// <summary>
         /// Primary text renderer.
         /// </summary>
-        /// <param name="canvas"></param>
+        /// <param name = "canvas" ></ param >
         private void DrawText(Graphics canvas)
         {
-            if (currentMessage == null && !string.IsNullOrEmpty(currentMessage.Text)) return;
+            if (currentMessage == null || string.IsNullOrEmpty(currentMessage.Text)) return;
 
             canvas.Clear(this.Parent.BackColor);
 
+            canvas.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            canvas.SmoothingMode = SmoothingMode.HighQuality;
+            canvas.TextRenderingHint = System.Drawing.Text.TextRenderingHint.ClearTypeGridFit;
+            canvas.TextContrast = 10;
             using (var textBrush = new SolidBrush(currentMessage.TextColor))
             {
+                // Draw a fake drop shadow.
+                canvas.DrawString(currentMessage.Text, this.Font, Brushes.Black, currentMessage.Position.X + 1F, currentMessage.Position.Y + 0.45F);
+
                 canvas.DrawString(currentMessage.Text, this.Font, textBrush, currentMessage.Position.X, currentMessage.Position.Y);
             }
             lastPositionRect = new RectangleF(currentMessage.Position.X, currentMessage.Position.Y, currentMessage.TextSize.Width, currentMessage.TextSize.Height);
@@ -238,6 +246,7 @@ namespace InventoryScanner.UI.CustomControls
         public ToolStripControlHost ToToolStripControl(Control parentControl = null)
         {
             this.AutoSize = true;
+
             if (parentControl != null)
             {
                 this.Font = parentControl.Font;
@@ -400,13 +409,13 @@ namespace InventoryScanner.UI.CustomControls
             if (this.InvokeRequired)
             {
                 var del = new Action(() => SetControlSize(message));
-                this.BeginInvoke(del);
+                this.Invoke(del);
             }
             else
             {
                 if (this.AutoSize)
                 {
-                    this.Size = message.TextSize.ToSize();
+                    this.Size = new Size((int)message.TextSize.Width + 10, (int)(message.TextSize.Height));//message.TextSize.ToSize();
                 }
             }
         }
@@ -440,14 +449,14 @@ namespace InventoryScanner.UI.CustomControls
                     currentMessage.StartPosition.Y = ((this.Size.Height / 2) - (currentMessage.TextSize.Height / 2));
                     currentMessage.StartPosition.X = currentMessage.TextSize.Width;
                     currentMessage.Position = currentMessage.StartPosition;
-                    currentMessage.EndPosition.X = 0;
+                    currentMessage.EndPosition.X = this.Size.Width - currentMessage.TextSize.Width - 1;
                     break;
 
                 case SlideDirection.Right:
                     currentMessage.StartPosition.Y = ((this.Size.Height / 2) - (currentMessage.TextSize.Height / 2));
                     currentMessage.StartPosition.X = -currentMessage.TextSize.Width;
                     currentMessage.Position = currentMessage.StartPosition;
-                    currentMessage.EndPosition.X = 0;
+                    currentMessage.EndPosition.X = this.Size.Width - currentMessage.TextSize.Width - 1;
                     break;
             }
             slideTimer.Start();
