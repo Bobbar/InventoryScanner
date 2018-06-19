@@ -18,7 +18,7 @@ namespace InventoryScanner.UI
     public partial class ScanningUI : Form, IScanningUI
     {
         private ScanningController controller;
-        private Location location;
+        private Location scanLocation;
         private DBControlParser controlParser;
         private SliderLabel statusLabel = new SliderLabel();
 
@@ -27,19 +27,6 @@ namespace InventoryScanner.UI
             get
             {
                 return GetFilters();
-            }
-        }
-
-        public Location ScanLocation
-        {
-            get
-            {
-                return location;
-            }
-
-            set
-            {
-                location = value;
             }
         }
 
@@ -60,15 +47,6 @@ namespace InventoryScanner.UI
             this.Show();
         }
 
-        public void SetController(ScanningController controller)
-        {
-            this.controller = controller;
-            this.controller.ExceptionOccured += Controller_ExceptionOccured;
-            this.controller.ScannerStatusChanged += Controller_ScannerStatusChanged;
-            this.controller.SyncEvent += Controller_SuccessfulSync;
-            SelectScannerPort();
-        }
-
         public void SelectScannerPort()
         {
             var selectPort = new SelectScanner();
@@ -78,110 +56,10 @@ namespace InventoryScanner.UI
             }
         }
 
-        private void Controller_SuccessfulSync(object sender, bool e)
-        {
-            if (this.InvokeRequired)
-            {
-                var del = new Action(() => Controller_SuccessfulSync(sender, e));
-                this.BeginInvoke(del);
-            }
-            else
-            {
-                if (e)
-                {
-                    SyncStatusLabel.ForeColor = Color.Black;
-                    SyncStatusLabel.Text = "Last Sync: " + DateTime.Now.ToLongTimeString();
-                }
-                else
-                {
-                    SyncStatusLabel.ForeColor = Color.DarkRed;
-                }
-            }
-        }
-
-        private void Controller_ScannerStatusChanged(object sender, ScannerStatusEvent e)
-        {
-            if (this.InvokeRequired)
-            {
-                var del = new Action(() => Controller_ScannerStatusChanged(sender, e));
-                this.BeginInvoke(del);
-            }
-            else
-            {
-                switch (e)
-                {
-                    case ScannerStatusEvent.Connected:
-                        ScannerStatusLabel.Text = "Scanner: Connected";
-                        ScannerStatusLabel.ForeColor = Color.DarkGreen;
-                        break;
-
-                    case ScannerStatusEvent.LostConnection:
-                        ScannerStatusLabel.Text = "Scanner: Disconnected";
-                        ScannerStatusLabel.ForeColor = Color.DarkRed;
-                        break;
-
-                    case ScannerStatusEvent.Error:
-                        ScannerStatusLabel.Text = "Scanner: Error!";
-                        ScannerStatusLabel.ForeColor = Color.DarkRed;
-                        break;
-                }
-            }
-        }
-
-        private void Controller_ExceptionOccured(object sender, Exception e)
-        {
-            if (this.InvokeRequired)
-            {
-                var del = new Action(() => Controller_ExceptionOccured(sender, e));
-                this.BeginInvoke(del);
-            }
-            else
-            {
-                if (e is LocationMismatchException)
-                {
-                    //var lme = (LocationMismatchException)e;
-
-                    //var prompt = "Asset Tag: " + lme.ItemAssetTag +
-                    //    " was scanned at an unexpected location. \n \n Expected location: " +
-                    //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
-                    //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
-                    StatusMessage("Location Mismatch!", Color.DarkGoldenrod);
-                }
-                else if (e is ItemNotFoundException)
-                {
-                    StatusMessage("Asset not found!", Color.Red);
-                    var infe = (ItemNotFoundException)e;
-
-                    var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Asset Tag Not Found", this);
-                }
-                else if (e is BarcodeScanning.ScannerLostException)
-                {
-                    var prompt = "An error has occured with the scanner, it may have been disconnected. \n \n Please check the connection and select the scanner again.";
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scanner Error", this);
-                    SelectScannerPort();
-                }
-                else if (e is DuplicateScanException)
-                {
-                    StatusMessage("Duplicate scan!", Color.Red);
-                }
-                else if (e is ScanNotStartedException)
-                {
-                    var prompt = "Please start a new scan or select a previous one before scanning.";
-                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scan Not Started", this);
-                }
-            }
-        }
-
         private void StatusMessage(string text, Color color)
         {
             statusLabel.Clear();
             statusLabel.QueueMessage(text, color, 10);
-        }
-
-        private void ScanningUI_Load(object sender, EventArgs e)
-        {
-            //controller.GetPreviousScansList();
         }
 
         private void AttachFilterMenuEvents()
@@ -195,11 +73,6 @@ namespace InventoryScanner.UI
             FilterDUMenuItem.CheckedChanged += FilterItem_CheckedChanged;
             filtersToolStripMenuItem.DropDown.AutoClose = false;
             filtersToolStripMenuItem.DropDown.MouseLeave += DropDown_MouseLeave;
-        }
-
-        private void DropDown_MouseLeave(object sender, EventArgs e)
-        {
-            filtersToolStripMenuItem.DropDown.Close();
         }
 
         private void PopulateLocationsCombo()
@@ -226,6 +99,10 @@ namespace InventoryScanner.UI
             AssetTagTextBox.SetDBInfo(MunisFixedAssetTable.Asset);
         }
 
+        /// <summary>
+        /// Highlights and scrolls to the row containing the specified asset tag.
+        /// </summary>
+        /// <param name="assetTag"></param>
         private void SelectGridItem(string assetTag)
         {
             int itemRowIndex = -1;
@@ -335,42 +212,8 @@ namespace InventoryScanner.UI
 
         public void StartScan()
         {
-            controller.StartScan(ScanLocation, DateTime.Now, ScanEmployeeTextBox.Text.Trim());
+            controller.StartScan(scanLocation, DateTime.Now, ScanEmployeeTextBox.Text.Trim());
             LockControls();
-        }
-
-        public void LoadScanItems(DataTable data)
-        {
-            if (ScanItemsGrid.InvokeRequired)
-            {
-                var del = new Action(() => LoadScanItems(data));
-                ScanItemsGrid.BeginInvoke(del);
-            }
-            else
-            {
-                ScanItemsGrid.SuspendLayout();
-
-                var gridState = new GridState(ScanItemsGrid);
-
-                ScanItemsGrid.Populate(data, ScanItemsGridColumns());
-
-                // Bold tag and serial columns.
-                ScanItemsGrid.Columns[MunisFixedAssetTable.Asset].DefaultCellStyle.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
-                ScanItemsGrid.Columns[MunisFixedAssetTable.Asset].HeaderCell.Style.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
-
-                ScanItemsGrid.Columns[MunisFixedAssetTable.Serial].DefaultCellStyle.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
-                ScanItemsGrid.Columns[MunisFixedAssetTable.Serial].HeaderCell.Style.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
-
-                ScanItemsGrid.FastAutoSizeColumns();
-
-                gridState.RestoreState();
-
-                SetRowColors();
-
-                ScanItemsGrid.ResumeLayout();
-
-                DisplayDetailsOfSelected();
-            }
         }
 
         private void SetRowColors()
@@ -473,20 +316,6 @@ namespace InventoryScanner.UI
             System.Diagnostics.Process.Start(workSheetPath);
         }
 
-        public void UpdateScanItem(string serial, ScanType scanType)
-        {
-        }
-
-        public void LockScanInfoUI()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void SetScanInfo(Scan scan)
-        {
-            throw new NotImplementedException();
-        }
-
         private List<string> GetFilters()
         {
             var filterList = new List<string>();
@@ -530,6 +359,116 @@ namespace InventoryScanner.UI
             }
         }
 
+        #region Controller Events
+
+        private void Controller_SuccessfulSync(object sender, bool e)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => Controller_SuccessfulSync(sender, e));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                if (e)
+                {
+                    SyncStatusLabel.ForeColor = Color.Black;
+                    SyncStatusLabel.Text = "Last Sync: " + DateTime.Now.ToLongTimeString();
+                }
+                else
+                {
+                    SyncStatusLabel.ForeColor = Color.DarkRed;
+                }
+            }
+        }
+
+        private void Controller_ScannerStatusChanged(object sender, ScannerStatusEvent e)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => Controller_ScannerStatusChanged(sender, e));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                switch (e)
+                {
+                    case ScannerStatusEvent.Connected:
+                        ScannerStatusLabel.Text = "Scanner: Connected";
+                        ScannerStatusLabel.ForeColor = Color.DarkGreen;
+                        break;
+
+                    case ScannerStatusEvent.LostConnection:
+                        ScannerStatusLabel.Text = "Scanner: Disconnected";
+                        ScannerStatusLabel.ForeColor = Color.DarkRed;
+                        break;
+
+                    case ScannerStatusEvent.Error:
+                        ScannerStatusLabel.Text = "Scanner: Error!";
+                        ScannerStatusLabel.ForeColor = Color.DarkRed;
+                        break;
+                }
+            }
+        }
+
+        private void Controller_ExceptionOccured(object sender, Exception e)
+        {
+            if (this.InvokeRequired)
+            {
+                var del = new Action(() => Controller_ExceptionOccured(sender, e));
+                this.BeginInvoke(del);
+            }
+            else
+            {
+                if (e is LocationMismatchException)
+                {
+                    //var lme = (LocationMismatchException)e;
+
+                    //var prompt = "Asset Tag: " + lme.ItemAssetTag +
+                    //    " was scanned at an unexpected location. \n \n Expected location: " +
+                    //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
+                    //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
+                    StatusMessage("Location Mismatch!", Color.DarkGoldenrod);
+                }
+                else if (e is ItemNotFoundException)
+                {
+                    StatusMessage("Asset not found!", Color.Red);
+                    var infe = (ItemNotFoundException)e;
+
+                    var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Asset Tag Not Found", this);
+                }
+                else if (e is BarcodeScanning.ScannerLostException)
+                {
+                    var prompt = "An error has occured with the scanner, it may have been disconnected. \n \n Please check the connection and select the scanner again.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scanner Error", this);
+                    SelectScannerPort();
+                }
+                else if (e is DuplicateScanException)
+                {
+                    StatusMessage("Duplicate scan!", Color.Red);
+                }
+                else if (e is ScanNotStartedException)
+                {
+                    var prompt = "Please start a new scan or select a previous one before scanning.";
+                    OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Scan Not Started", this);
+                }
+            }
+        }
+
+        #endregion Controller Events
+
+        #region IScanningUI
+
+        public void SetController(ScanningController controller)
+        {
+            this.controller = controller;
+            this.controller.ExceptionOccured += Controller_ExceptionOccured;
+            this.controller.ScannerStatusChanged += Controller_ScannerStatusChanged;
+            this.controller.SyncEvent += Controller_SuccessfulSync;
+            SelectScannerPort();
+        }
+
         public void PopulateNewScan(string assetTag, DataTable itemDetail)
         {
             if (this.InvokeRequired)
@@ -544,11 +483,49 @@ namespace InventoryScanner.UI
             }
         }
 
+        public void LoadScanItems(DataTable data)
+        {
+            if (ScanItemsGrid.InvokeRequired)
+            {
+                var del = new Action(() => LoadScanItems(data));
+                ScanItemsGrid.BeginInvoke(del);
+            }
+            else
+            {
+                ScanItemsGrid.SuspendLayout();
+
+                var gridState = new GridState(ScanItemsGrid);
+
+                ScanItemsGrid.Populate(data, ScanItemsGridColumns());
+
+                // Bold tag and serial columns.
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Asset].DefaultCellStyle.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Asset].HeaderCell.Style.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Serial].DefaultCellStyle.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+                ScanItemsGrid.Columns[MunisFixedAssetTable.Serial].HeaderCell.Style.Font = new Font(ScanItemsGrid.Font, FontStyle.Bold);
+
+                ScanItemsGrid.FastAutoSizeColumns();
+
+                gridState.RestoreState();
+
+                SetRowColors();
+
+                ScanItemsGrid.ResumeLayout();
+
+                DisplayDetailsOfSelected();
+            }
+        }
+
+        #endregion IScanningUI
+
+        #region Control Events
+
         private void ScanLocationCombo_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (ScanLocationCombo.SelectedIndex > -1 && controller != null)
             {
-                ScanLocation = controller.GetLocation(ScanLocationCombo.SelectedValue.ToString());
+                scanLocation = controller.GetLocation(ScanLocationCombo.SelectedValue.ToString());
             }
         }
 
@@ -627,20 +604,6 @@ namespace InventoryScanner.UI
             DisplayDetailsOfSelected();
         }
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-                controller.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
         private void ClearButton_Click(object sender, EventArgs e)
         {
             controlParser.ClearFields();
@@ -659,6 +622,27 @@ namespace InventoryScanner.UI
         private void rebuildCacheToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CacheFunctions.CacheTables();
+        }
+
+        private void DropDown_MouseLeave(object sender, EventArgs e)
+        {
+            filtersToolStripMenuItem.DropDown.Close();
+        }
+
+        #endregion Control Events
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+                controller.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

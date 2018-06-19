@@ -26,24 +26,9 @@ namespace InventoryScanner.ScanController
 
         public event EventHandler<bool> SyncEvent;
 
-        private void OnSyncEvent(bool success)
-        {
-            SyncEvent?.Invoke(this, success);
-        }
-
         public event EventHandler<Exception> ExceptionOccured;
 
-        private void OnExceptionOccured(Exception ex)
-        {
-            ExceptionOccured?.Invoke(this, ex);
-        }
-
         public event EventHandler<ScannerStatusEvent> ScannerStatusChanged;
-
-        private void OnScannerStatusChanged(ScannerStatusEvent type)
-        {
-            ScannerStatusChanged?.Invoke(this, type);
-        }
 
         public ScanningController(IScanningUI view)
         {
@@ -69,7 +54,6 @@ namespace InventoryScanner.ScanController
 
                 if (scannerInput.StartScanner())
                     OnScannerStatusChanged(ScannerStatusEvent.Connected);
-
             }
             catch (Exception ex)
             {
@@ -78,33 +62,6 @@ namespace InventoryScanner.ScanController
                 OnExceptionOccured(ex);
                 OnScannerStatusChanged(ScannerStatusEvent.Error);
             }
-        }
-
-        private void ScannerInput_ExceptionOccured(object sender, Exception e)
-        {
-            OnExceptionOccured(e);
-            OnScannerStatusChanged(ScannerStatusEvent.LostConnection);
-        }
-
-
-
-        private void ScannerInput_NewScanReceived(object sender, string e)
-        {
-            // TODO: Validate data
-
-            SubmitNewScanItem(e, ScanType.Scanned);
-        }
-
-        private void InitSyncTimer()
-        {
-            syncTimer = new Timer();
-            syncTimer.Interval = 5000;
-            syncTimer.Elapsed += SyncTimer_Elapsed;
-        }
-
-        private void SyncTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            if (currentScan != null) SyncDataAsync();
         }
 
         public async void StartScan(Location location, DateTime datestamp, string scanEmployee)
@@ -155,6 +112,194 @@ namespace InventoryScanner.ScanController
             syncTimer.Start();
         }
 
+        public DataTable DetailOfAsset(string assetTag)
+        {
+            using (var results = DBFactory.GetSqliteScanDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag)))
+            {
+                return results;
+            }
+        }
+
+        public void SubmitNewScanItem(string assetTag, ScanType scanType)
+        {
+            if (currentScan == null)
+            {
+                scannerInput?.BadScan();
+                OnExceptionOccured(new ScanNotStartedException());
+                return;
+            }
+
+            using (var itemDetail = DetailOfAsset(assetTag))
+            {
+                if (itemDetail.Rows.Count < 1)
+                {
+                    scannerInput?.BadScan();
+                    OnExceptionOccured(new ItemNotFoundException(assetTag));
+                    return;
+                }
+
+                var itemRow = itemDetail.Rows[0];
+
+                // Return silently if the item has already been scanned.
+                if (!string.IsNullOrEmpty(itemRow[ScanItemsTable.ScanStatus].ToString()))
+                {
+                    scannerInput?.BadScan();
+                    OnExceptionOccured(new DuplicateScanException());
+                    return;
+                }
+
+                bool locationMismatch = false;
+
+                // Check if the scan location matches the location in inventory.
+                // Set the scan status and throw exception if there's a mismatch.
+                if (itemRow[MunisFixedAssetTable.Location].ToString() != currentScan.MunisLocation.MunisCode)
+                {
+                    locationMismatch = true;
+                    itemRow[ScanItemsTable.ScanStatus] = ScanStatus.LocationMismatch.ToString();
+                }
+                else
+                {
+                    locationMismatch = false;
+                    itemRow[ScanItemsTable.ScanStatus] = ScanStatus.OK.ToString();
+                }
+
+                itemRow[ScanItemsTable.Location] = currentScan.MunisLocation.MunisCode;
+                itemRow[ScanItemsTable.ScanType] = scanType.ToString();
+                itemRow[ScanItemsTable.ScanUser] = currentScan.User;
+                itemRow[ScanItemsTable.Datestamp] = DateTime.Now.ToString(DataConsistency.DBDateTimeFormat);
+                itemRow[ScanItemsTable.ScanYear] = DateTime.Now.Year.ToString();
+                itemRow[ScanItemsTable.ScanId] = currentScan.ID;
+
+                var updatedRows = DBFactory.GetSqliteScanDatabase(currentScan.ID).UpdateTable(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag), itemDetail);
+
+                LoadCurrentScanItems(view.LocationFilters);
+                view.PopulateNewScan(assetTag, itemDetail);
+
+                // Throw mismatch exception after adding the scan to the DB.
+                if (locationMismatch)
+                {
+                    var expectedLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[itemRow[MunisFixedAssetTable.Location].ToString()];
+                    var scanLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[currentScan.MunisLocation.MunisCode];
+
+                    scannerInput?.BadScan();
+                    OnExceptionOccured(new LocationMismatchException(expectedLocation.DisplayValue, scanLocation.DisplayValue, assetTag));
+                    return;
+                }
+
+                scannerInput?.GoodScan();
+            }
+        }
+
+        public async void SyncDataAsync()
+        {
+            if (syncRunning) return;
+
+            try
+            {
+                syncRunning = true;
+                var hasChanged = await Task.Run(() => { return TrySyncData(); });
+
+                // Refresh view.
+                if (hasChanged) LoadCurrentScanItems(view.LocationFilters);
+
+                OnSyncEvent(true);
+            }
+            catch (Exception)
+            {
+                OnSyncEvent(false);
+
+                // We want this to fail silently.
+            }
+            finally
+            {
+                syncRunning = false;
+            }
+        }
+
+        public Location GetLocation(string locationCode)
+        {
+            using (var results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Munis.SelectDepartmentByLocation(locationCode)))
+            {
+                return new Location(results);
+            }
+        }
+
+        public List<Scan> GetPreviousScansList()
+        {
+            var scanList = new List<Scan>();
+            var scanFiles = Directory.GetFiles(Paths.SQLiteScanPath, "*.db").ToList();
+
+            foreach (var scan in scanFiles)
+            {
+                var file = new FileInfo(scan);
+                var scanIdString = file.Name.Substring(5, 4);
+                var scanId = Convert.ToInt32(scanIdString);
+
+                using (var scanDetail = DBFactory.GetSqliteScanDatabase(scanId.ToString()).DataTableFromQueryString("SELECT * FROM " + ScansTable.TableName))
+                {
+                    var row = scanDetail.Rows[0];
+                    scanList.Add(new Scan(row[ScansTable.Id].ToString(), (DateTime)row[ScansTable.Datestamp], row[ScansTable.User].ToString(), new Location(row[ScansTable.Location].ToString())));
+                }
+            }
+
+            return scanList;
+        }
+
+        public List<ScanItem> GetListOfScannedItems()
+        {
+            var itemList = new List<ScanItem>();
+
+            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectCompletedScansByYear(currentScan.Datestamp.Year.ToString())))
+            {
+                foreach (DataRow row in results.Rows)
+                {
+                    itemList.Add(new ScanItem(row));
+                }
+            }
+
+            return itemList;
+        }
+
+        private void OnSyncEvent(bool success)
+        {
+            SyncEvent?.Invoke(this, success);
+        }
+
+        private void OnExceptionOccured(Exception ex)
+        {
+            ExceptionOccured?.Invoke(this, ex);
+        }
+
+        private void OnScannerStatusChanged(ScannerStatusEvent type)
+        {
+            ScannerStatusChanged?.Invoke(this, type);
+        }
+
+        private void ScannerInput_ExceptionOccured(object sender, Exception e)
+        {
+            OnExceptionOccured(e);
+            OnScannerStatusChanged(ScannerStatusEvent.LostConnection);
+        }
+
+        private void ScannerInput_NewScanReceived(object sender, string e)
+        {
+            // TODO: Validate data
+
+            SubmitNewScanItem(e, ScanType.Scanned);
+        }
+
+        private void InitSyncTimer()
+        {
+            syncTimer = new Timer();
+            syncTimer.Interval = 5000;
+            syncTimer.Elapsed += SyncTimer_Elapsed;
+        }
+
+        private void SyncTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (currentScan != null) SyncDataAsync();
+        }
+
         private void LoadCurrentScanItems(List<string> filterList = null)
         {
             if (currentScan == null) return;
@@ -173,14 +318,6 @@ namespace InventoryScanner.ScanController
             using (var detailResults = DBFactory.GetSqliteScanDatabase(currentScan.ID).DataTableFromQueryString(query))
             {
                 view.LoadScanItems(detailResults);
-            }
-        }
-
-        public DataTable DetailOfAsset(string assetTag)
-        {
-            using (var results = DBFactory.GetSqliteScanDatabase(currentScan.ID).DataTableFromQueryString(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag)))
-            {
-                return results;
             }
         }
 
@@ -281,102 +418,6 @@ namespace InventoryScanner.ScanController
 
             assetTable.TableName = DeviceTable.TableName;
             return assetTable;
-        }
-
-        public void SubmitNewScanItem(string assetTag, ScanType scanType)
-        {
-            if (currentScan == null)
-            {
-                scannerInput?.BadScan();
-                OnExceptionOccured(new ScanNotStartedException());
-                return;
-            }
-
-            using (var itemDetail = DetailOfAsset(assetTag))
-            {
-                if (itemDetail.Rows.Count < 1)
-                {
-                    scannerInput?.BadScan();
-                    OnExceptionOccured(new ItemNotFoundException(assetTag));
-                    return;
-                }
-
-                var itemRow = itemDetail.Rows[0];
-
-                // Return silently if the item has already been scanned.
-                if (!string.IsNullOrEmpty(itemRow[ScanItemsTable.ScanStatus].ToString()))
-                {
-                    scannerInput?.BadScan();
-                    OnExceptionOccured(new DuplicateScanException());
-                    return;
-                }
-
-                bool locationMismatch = false;
-
-                // Check if the scan location matches the location in inventory.
-                // Set the scan status and throw exception if there's a mismatch.
-                if (itemRow[MunisFixedAssetTable.Location].ToString() != currentScan.MunisLocation.MunisCode)
-                {
-                    locationMismatch = true;
-                    itemRow[ScanItemsTable.ScanStatus] = ScanStatus.LocationMismatch.ToString();
-                }
-                else
-                {
-                    locationMismatch = false;
-                    itemRow[ScanItemsTable.ScanStatus] = ScanStatus.OK.ToString();
-                }
-
-                itemRow[ScanItemsTable.Location] = currentScan.MunisLocation.MunisCode;
-                itemRow[ScanItemsTable.ScanType] = scanType.ToString();
-                itemRow[ScanItemsTable.ScanUser] = currentScan.User;
-                itemRow[ScanItemsTable.Datestamp] = DateTime.Now.ToString(DataConsistency.DBDateTimeFormat);
-                itemRow[ScanItemsTable.ScanYear] = DateTime.Now.Year.ToString();
-                itemRow[ScanItemsTable.ScanId] = currentScan.ID;
-
-                var updatedRows = DBFactory.GetSqliteScanDatabase(currentScan.ID).UpdateTable(Queries.Sqlite.SelectAssetDetailByAssetTag(assetTag), itemDetail);
-
-                LoadCurrentScanItems(view.LocationFilters);
-                view.PopulateNewScan(assetTag, itemDetail);
-
-                // Throw mismatch exception after adding the scan to the DB.
-                if (locationMismatch)
-                {
-                    var expectedLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[itemRow[MunisFixedAssetTable.Location].ToString()];
-                    var scanLocation = AttributeInstances.MunisAttributes.MunisToAssetLocations[currentScan.MunisLocation.MunisCode];
-
-                    scannerInput?.BadScan();
-                    OnExceptionOccured(new LocationMismatchException(expectedLocation.DisplayValue, scanLocation.DisplayValue, assetTag));
-                    return;
-                }
-
-                scannerInput?.GoodScan();
-            }
-        }
-
-        public async void SyncDataAsync()
-        {
-            if (syncRunning) return;
-
-            try
-            {
-                syncRunning = true;
-                var hasChanged = await Task.Run(() => { return TrySyncData(); });
-
-                // Refresh view.
-                if (hasChanged) LoadCurrentScanItems(view.LocationFilters);
-
-                OnSyncEvent(true);
-            }
-            catch (Exception)
-            {
-                OnSyncEvent(false);
-
-                // We want this to fail silently.
-            }
-            finally
-            {
-                syncRunning = false;
-            }
         }
 
         private bool TrySyncData()
@@ -523,14 +564,6 @@ namespace InventoryScanner.ScanController
             }
         }
 
-        public Location GetLocation(string locationCode)
-        {
-            using (var results = DBFactory.GetSqliteCacheDatabase().DataTableFromQueryString(Queries.Munis.SelectDepartmentByLocation(locationCode)))
-            {
-                return new Location(results);
-            }
-        }
-
         private Scan InsertNewScan(Location location, DateTime datestamp, string scanEmployee)
         {
             var newScan = new Scan(datestamp, scanEmployee, location);
@@ -552,42 +585,6 @@ namespace InventoryScanner.ScanController
                 scanTable.TableName = ScansTable.TableName;
                 SqliteFunctions.AddTableToScanDB(scanTable, ScansTable.Id, scan.ID);
             }
-        }
-
-        public List<Scan> GetPreviousScansList()
-        {
-            var scanList = new List<Scan>();
-            var scanFiles = Directory.GetFiles(Paths.SQLiteScanPath, "*.db").ToList();
-
-            foreach (var scan in scanFiles)
-            {
-                var file = new FileInfo(scan);
-                var scanIdString = file.Name.Substring(5, 4);
-                var scanId = Convert.ToInt32(scanIdString);
-
-                using (var scanDetail = DBFactory.GetSqliteScanDatabase(scanId.ToString()).DataTableFromQueryString("SELECT * FROM " + ScansTable.TableName))
-                {
-                    var row = scanDetail.Rows[0];
-                    scanList.Add(new Scan(row[ScansTable.Id].ToString(), (DateTime)row[ScansTable.Datestamp], row[ScansTable.User].ToString(), new Location(row[ScansTable.Location].ToString())));
-                }
-            }
-
-            return scanList;
-        }
-
-        public List<ScanItem> GetListOfScannedItems()
-        {
-            var itemList = new List<ScanItem>();
-
-            using (var results = DBFactory.GetMySqlDatabase().DataTableFromQueryString(Queries.Assets.SelectCompletedScansByYear(currentScan.Datestamp.Year.ToString())))
-            {
-                foreach (DataRow row in results.Rows)
-                {
-                    itemList.Add(new ScanItem(row));
-                }
-            }
-
-            return itemList;
         }
 
         public void Dispose()

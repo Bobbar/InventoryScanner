@@ -13,13 +13,7 @@ namespace InventoryScanner
     {
         void SetController(ScanningController controller);
 
-        Location ScanLocation { get; set; }
-
         void LoadScanItems(DataTable data);
-
-        void LockScanInfoUI();
-
-        void SetScanInfo(Scan scan);
 
         List<string> LocationFilters { get; }
 

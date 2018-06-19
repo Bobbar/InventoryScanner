@@ -104,26 +104,26 @@
     <Compile Include="Data\Functions\AttributeFunctions.cs" />
     <Compile Include="Data\Tables\MunisTables.cs" />
     <Compile Include="Data\Queries.cs" />
-    <Compile Include="DuplicateScanException.cs" />
+    <Compile Include="ScanController\Exceptions\DuplicateScanException.cs" />
     <Compile Include="Helpers\DataGridHelpers\DataGridViewExtensions.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridColumnAttrib.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridPopulation.cs" />
     <Compile Include="Helpers\DataGridHelpers\GridState.cs" />
     <Compile Include="Helpers\GlobalSwitches.cs" />
     <Compile Include="Helpers\Logging.cs" />
-    <Compile Include="IScannerInput.cs" />
-    <Compile Include="ItemNotFoundException.cs" />
-    <Compile Include="LocationMismatchException.cs" />
-    <Compile Include="Paths.cs" />
+    <Compile Include="BarcodeScanning\IScannerInput.cs" />
+    <Compile Include="ScanController\Exceptions\ItemNotFoundException.cs" />
+    <Compile Include="ScanController\Exceptions\LocationMismatchException.cs" />
+    <Compile Include="Helpers\Paths.cs" />
     <Compile Include="PDFProcessing\RectAndText.cs" />
     <Compile Include="PDFProcessing\TextLocationExtractionStrategy.cs" />
     <Compile Include="PDFProcessing\WorksheetProcessor.cs" />
     <Compile Include="ScanController\ScannerStatusEvent.cs" />
-    <Compile Include="ScanNotStartedException.cs" />
+    <Compile Include="ScanController\Exceptions\ScanNotStartedException.cs" />
     <Compile Include="UI Management\ComboBoxExtensions.cs" />
     <Compile Include="Helpers\MiscExtensions.cs" />
     <Compile Include="Helpers\OtherFunctions.cs" />
-    <Compile Include="IScanningUI.cs" />
+    <Compile Include="UI\IScanningUI.cs" />
     <Compile Include="Data\Classes\Location.cs" />
     <Compile Include="Data\Classes\Scan.cs" />
     <Compile Include="ScanController\ScanningController.cs" />
@@ -224,6 +224,7 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

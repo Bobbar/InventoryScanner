@@ -1,11 +1,7 @@
-﻿using System;
+﻿using InventoryScanner.Data.ClassMapping;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InventoryScanner.Data.ClassMapping;
-using InventoryScanner.Data;
 using System.Data;
+using System.Linq;
 
 namespace InventoryScanner.Data.Functions
 {
@@ -23,17 +19,6 @@ namespace InventoryScanner.Data.Functions
                 return DBFactory.GetMySqlDatabase().UpdateTable(selectQuery, results);
             }
         }
-
-        //public static void UpdateMapObject(DataMapObject mapObject)
-        //{
-        //    var guidProp = mapObject.GetType().GetProperty(nameof(mapObject.Guid));
-        //    var guidCol = ((DataColumnNameAttribute)guidProp.GetCustomAttributes(false)[0]).ColumnName;
-        //    var selectQuery = "SELECT * FROM " + mapObject.TableName + " WHERE " + guidCol + " = '" + mapObject.Guid + "'";
-            
-        //    using (var results = )
-
-
-        //}
 
         private static void PopulateRowFromObject(DataRow row, object obj)
         {
@@ -60,7 +45,6 @@ namespace InventoryScanner.Data.Functions
                             row[columnName] = propValue;
                         }
                     }
-
                 }
                 else
                 {
@@ -70,7 +54,6 @@ namespace InventoryScanner.Data.Functions
                         // Recurse with nested DataMapping properties.
                         var nestObject = prop.GetValue(obj, null);
                         PopulateRowFromObject(row, nestObject);
-                        // MapProperty(prop.GetValue(obj, null), row);
                     }
                 }
             }

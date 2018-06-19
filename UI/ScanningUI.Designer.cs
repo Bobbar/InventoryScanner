@@ -848,7 +848,6 @@
             this.Name = "ScanningUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Inventory Scanner";
-            this.Load += new System.EventHandler(this.ScanningUI_Load);
             this.MainLayoutPanel.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).EndInit();

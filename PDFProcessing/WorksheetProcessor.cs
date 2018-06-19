@@ -92,19 +92,22 @@ namespace InventoryScanner.PDFProcessing
                         {
                             var location = strategy.TextLocations[0];
 
-                            // Add a bullet point and scan info aligned with the "Verified" column.
+                            // Add a check mark and scan info aligned with the "Verified" column.
                             int verifyColumnXOffset = 85;
                             int verifyColumnYOffset = 9;
 
                             content.BeginText();
 
-                            // Bullet point.
+                            // Check mark font size.
                             content.SetFontAndSize(markFont, 10);
+
                             // content.ShowTextAligned(1, "·", size.Right - verifyColumnXOffset, location.Rect.Top - verifyColumnYOffset, 0);
                             content.ShowTextAligned(1, "ü", size.Right - verifyColumnXOffset, location.Rect.Top - verifyColumnYOffset, 0);
 
-                            // Scan user and datestamp.
+                            // Scan info font size.
                             content.SetFontAndSize(infoFont, 6);
+
+                            // Scan user and datestamp.
                             content.ShowTextAligned(0, item.ScanUser, size.Right - verifyColumnXOffset + 8, location.Rect.Top - 3, 0);
                             content.ShowTextAligned(0, item.Datestamp.ToString(@"MM/dd/yy HH:mm tt"), size.Right - verifyColumnXOffset + 8, location.Rect.Top - 9, 0);
 
