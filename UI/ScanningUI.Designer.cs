@@ -86,6 +86,7 @@
             this.ScannerStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.databaseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rebuildCacheToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.SyncStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.MainLayoutPanel.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ScanItemsGrid)).BeginInit();
@@ -782,7 +783,8 @@
             this.statusStrip1.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1,
-            this.ScannerStatusLabel});
+            this.ScannerStatusLabel,
+            this.SyncStatusLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 883);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1269, 32);
@@ -792,7 +794,7 @@
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(1078, 27);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(968, 27);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // ScannerStatusLabel
@@ -817,6 +819,13 @@
             this.rebuildCacheToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.rebuildCacheToolStripMenuItem.Text = "Rebuild Cache";
             this.rebuildCacheToolStripMenuItem.Click += new System.EventHandler(this.rebuildCacheToolStripMenuItem_Click);
+            // 
+            // SyncStatusLabel
+            // 
+            this.SyncStatusLabel.ForeColor = System.Drawing.Color.Black;
+            this.SyncStatusLabel.Name = "SyncStatusLabel";
+            this.SyncStatusLabel.Size = new System.Drawing.Size(79, 27);
+            this.SyncStatusLabel.Text = "Last Sync: ";
             // 
             // ScanningUI
             // 
@@ -930,6 +939,7 @@
         private System.Windows.Forms.ToolStripMenuItem selectScannerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem databaseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem rebuildCacheToolStripMenuItem;
+        private System.Windows.Forms.ToolStripStatusLabel SyncStatusLabel;
     }
 }
 

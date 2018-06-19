@@ -24,6 +24,13 @@ namespace InventoryScanner.ScanController
         private bool syncRunning = false;
         private IScannerInput scannerInput;
 
+        public event EventHandler SuccessfulSync;
+
+        private void OnSuccessfulSync()
+        {
+            SuccessfulSync?.Invoke(this, new EventArgs());
+        }
+
         public event EventHandler<Exception> ExceptionOccured;
 
         private void OnExceptionOccured(Exception ex)
@@ -91,7 +98,7 @@ namespace InventoryScanner.ScanController
         private void InitSyncTimer()
         {
             syncTimer = new Timer();
-            syncTimer.Interval = 1000;
+            syncTimer.Interval = 5000;
             syncTimer.Elapsed += SyncTimer_Elapsed;
         }
 
@@ -358,6 +365,7 @@ namespace InventoryScanner.ScanController
                 // Refresh view.
                 if (hasChanged) LoadCurrentScanItems(view.LocationFilters);
 
+                OnSuccessfulSync();
             }
             catch (Exception)
             {

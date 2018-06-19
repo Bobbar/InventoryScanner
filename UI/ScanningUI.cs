@@ -65,6 +65,7 @@ namespace InventoryScanner.UI
             this.controller = controller;
             this.controller.ExceptionOccured += Controller_ExceptionOccured;
             this.controller.ScannerStatusChanged += Controller_ScannerStatusChanged;
+            this.controller.SuccessfulSync += Controller_SuccessfulSync;
             SelectScannerPort();
         }
 
@@ -75,6 +76,11 @@ namespace InventoryScanner.UI
             {
                 controller.InitScanner(selectPort.SelectedPortName);
             }
+        }
+
+        private void Controller_SuccessfulSync(object sender, EventArgs e)
+        {
+            SyncStatusLabel.Text = "Last Sync: " + DateTime.Now.ToLongTimeString();
         }
 
         private void Controller_ScannerStatusChanged(object sender, ScannerStatusEvent e)
