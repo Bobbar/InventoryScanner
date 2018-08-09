@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Database.Data;
+using Databases.Data;
 using System.IO;
 
 namespace InventoryScanner.Data

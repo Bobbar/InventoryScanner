@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using InventoryScanner.Data.ClassMapping;
+
 using InventoryScanner.Data.Tables;
 using System.Data;
+using Databases.Data;
+using Databases.Data.Mapping;
 
 namespace InventoryScanner.Data.Classes
 {
-    public class Location : DataMapObject
+    public class Location : MappedObject
     {
         [DataColumnName(MunisDepartmentsTable.AssetLocation)]
         public string AssetCode { get; private set; }
@@ -28,6 +30,14 @@ namespace InventoryScanner.Data.Classes
 
         // [DataColumnName(MunisDepartments.TableName)]
         public override string TableName { get; set; } = MunisDepartmentsTable.TableName;
+
+        public override IDatabase Database
+        {
+            get
+            {
+                return DBFactory.GetMySqlDatabase();
+            }
+        }
 
         public Location(string assetCode, string departmentCode, string munisCode)
         {

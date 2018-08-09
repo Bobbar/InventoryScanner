@@ -65,8 +65,9 @@
     <Reference Include="AdvancedDialog">
       <HintPath>..\..\AssetManagerCSharp\AdvancedDialog\bin\Release\AdvancedDialog.dll</HintPath>
     </Reference>
-    <Reference Include="Databases">
-      <HintPath>..\..\AssetManagerCSharp\Databases\bin\Release\Databases.dll</HintPath>
+    <Reference Include="Databases, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\DatabaseAssistant\Databases\bin\Release\Databases.dll</HintPath>
     </Reference>
     <Reference Include="itextsharp">
       <HintPath>..\..\AssetManagerCSharp\AssetManager\itextsharp.dll</HintPath>
@@ -90,11 +91,8 @@
     <Compile Include="Data\Classes\ScanItem.cs" />
     <Compile Include="Data\Classes\ScanStatus.cs" />
     <Compile Include="Data\Classes\ScanType.cs" />
-    <Compile Include="Data\ClassMapping\ColumnNameAttribute.cs" />
-    <Compile Include="Data\ClassMapping\DataMapObject.cs" />
     <Compile Include="Data\DataConsistency.cs" />
     <Compile Include="Data\Functions\CacheFunctions.cs" />
-    <Compile Include="Data\Functions\MapObjectFunctions.cs" />
     <Compile Include="Data\Functions\SqliteFunctions.cs" />
     <Compile Include="Data\Munis\MunisDatabase.cs" />
     <Compile Include="Data\Tables\AssetTables.cs" />

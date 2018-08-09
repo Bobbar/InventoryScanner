@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using InventoryScanner.Data.ClassMapping;
 using InventoryScanner.Data.Tables;
+using Databases.Data;
+using Databases.Data.Mapping;
 
 namespace InventoryScanner.Data.Classes
 {
-    public class Scan : DataMapObject
+    public class Scan : MappedObject
     {
         //[DataColumnName(Scans.Id)]
         public string ID { get; set; }
@@ -33,6 +34,13 @@ namespace InventoryScanner.Data.Classes
         // [DataColumnName(Scans.TableName)]
         public override string TableName { get; set; } = ScansTable.TableName;
 
+        public override IDatabase Database
+        {
+            get
+            {
+                return DBFactory.GetMySqlDatabase();
+            }
+        }
 
         public Scan(string id, string employee, Location location)
         {

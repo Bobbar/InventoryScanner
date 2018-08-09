@@ -1,13 +1,13 @@
 ﻿using System;
-using InventoryScanner.Data.ClassMapping;
 using InventoryScanner.Data.Tables;
 using System.Data;
 using System.Data.Common;
-
+using Databases.Data;
+using Databases.Data.Mapping;
 
 namespace InventoryScanner.Data.Classes
 {
-    public class ScanItem : DataMapObject
+    public class ScanItem : MappedObject
     {
 
         public string ID { get; set; }
@@ -47,6 +47,14 @@ namespace InventoryScanner.Data.Classes
         {
             get { return ID; }
             set { ID = value; }
+        }
+
+        public override IDatabase Database
+        {
+            get
+            {
+                return DBFactory.GetMySqlDatabase();
+            }
         }
 
         public ScanItem()

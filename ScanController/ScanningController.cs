@@ -567,7 +567,9 @@ namespace InventoryScanner.ScanController
         private Scan InsertNewScan(Location location, DateTime datestamp, string scanEmployee)
         {
             var newScan = new Scan(datestamp, scanEmployee, location);
-            MapObjectFunctions.InsertMapObject(newScan);
+            newScan.Insert();
+
+            //MapObjectFunctions.InsertMapObject(newScan);
 
             var scanId = (int)DBFactory.GetMySqlDatabase().ExecuteScalarFromQueryString("SELECT MAX(" + ScansTable.Id + ") FROM " + ScansTable.TableName);
 
