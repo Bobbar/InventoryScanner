@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using DialogToast;
 
 namespace InventoryScanner.UI
 {
@@ -20,7 +21,8 @@ namespace InventoryScanner.UI
         private ScanningController controller;
         private Location scanLocation;
         private DBControlParser controlParser;
-        private SliderLabel statusLabel = new SliderLabel();
+        //private SliderLabel statusLabel = new SliderLabel();
+        private Toast statusLabel;// = new Toast();
 
         public List<string> LocationFilters
         {
@@ -39,10 +41,10 @@ namespace InventoryScanner.UI
             PopulateLocationsCombo();
             ScanDateTimeTextBox.Text = DateTime.Now.ToString();
             AttachFilterMenuEvents();
-
-            statusLabel.FlashStripOnNewMessage = true;
-            statusLabel.AutoSize = true;
-            statusStrip1.Items.Insert(0, statusLabel.ToToolStripControl(statusStrip1));
+            statusLabel = new Toast(ScanItemsGrid);
+            //statusLabel.FlashStripOnNewMessage = true;
+            //statusLabel.AutoSize = true;
+            //statusStrip1.Items.Insert(0, statusLabel.ToToolStripControl(statusStrip1));
 
             this.Show();
         }
@@ -59,7 +61,7 @@ namespace InventoryScanner.UI
         private void StatusMessage(string text, Color color)
         {
             statusLabel.Clear();
-            statusLabel.QueueMessage(text, color, 10);
+            statusLabel.QueueMessage(text, Color.Black, color, DialogToast.SlideDirection.Up, DialogToast.SlideDirection.Left, 4);
         }
 
         private void AttachFilterMenuEvents()
@@ -428,11 +430,11 @@ namespace InventoryScanner.UI
                     //    " was scanned at an unexpected location. \n \n Expected location: " +
                     //    lme.ExpectedLocation + "\n Scan Location: " + lme.ScannedLocation;
                     //OtherFunctions.Message(prompt, MessageBoxButtons.OK, MessageBoxIcon.Warning, "Location Mismatch", this);
-                    StatusMessage("Location Mismatch!", Color.DarkGoldenrod);
+                    StatusMessage("Location Mismatch!", Color.FromArgb(255, 231, 76));
                 }
                 else if (e is ItemNotFoundException)
                 {
-                    StatusMessage("Asset not found!", Color.Red);
+                    StatusMessage("Asset not found!", Color.FromArgb(255,76,76));
                     var infe = (ItemNotFoundException)e;
 
                     var prompt = "Asset Tag: " + infe.AssetTag + " was not found in the list of scan items.";
@@ -446,7 +448,7 @@ namespace InventoryScanner.UI
                 }
                 else if (e is DuplicateScanException)
                 {
-                    StatusMessage("Duplicate scan!", Color.Red);
+                    StatusMessage("Duplicate scan!", Color.FromArgb(255, 76, 76));
                 }
                 else if (e is ScanNotStartedException)
                 {

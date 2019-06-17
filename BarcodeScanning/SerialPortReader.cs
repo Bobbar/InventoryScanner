@@ -190,10 +190,14 @@ namespace InventoryScanner.BarcodeScanning
                 if (disposing)
                 {
                     readCancelTokenSource?.Cancel();
-                    port?.DiscardInBuffer();
-                    port?.DiscardOutBuffer();
-                    port?.Close();
-                    port?.Dispose();
+
+                    if (port != null && port.IsOpen)
+                    {
+                        port?.DiscardInBuffer();
+                        port?.DiscardOutBuffer();
+                        port?.Close();
+                        port?.Dispose();
+                    }
                 }
 
                 disposedValue = true;

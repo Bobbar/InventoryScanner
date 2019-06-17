@@ -56,9 +56,6 @@ namespace InventoryScanner.Data.Functions
 
         private static string BuildCreateStatement(DataTable table, string primaryKeyColumn)
         {
-            // List for primary keys.
-            var keys = new List<string>();
-
             string statement = "CREATE TABLE ";
 
             // Add the table name from the results parameter.

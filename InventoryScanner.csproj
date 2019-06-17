@@ -68,6 +68,9 @@
     <Reference Include="Databases">
       <HintPath>..\..\AssetManagerCSharp\Databases\bin\Release\Databases.dll</HintPath>
     </Reference>
+    <Reference Include="DialogToastLib">
+      <HintPath>..\..\DialogToast\DialogToastLib\bin\Release\DialogToastLib.dll</HintPath>
+    </Reference>
     <Reference Include="itextsharp">
       <HintPath>..\..\AssetManagerCSharp\AssetManager\itextsharp.dll</HintPath>
     </Reference>
